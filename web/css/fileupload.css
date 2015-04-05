@@ -1,0 +1,41 @@
+#preview {
+    background-color:#fff;
+    display:block;
+}
+#upload_area > div {
+    margin-bottom:10px;
+}
+.clear_both {
+    clear:both;
+}
+#preview { width: 90px; margin: auto; }
+#upload_area { 
+	border-radius: 5px;
+	border: 2px dashed #ccc;
+	padding: 5px;
+	text-align: center;
+	display: inline-block;
+	margin-bottom: 10px;
+}
+#upload_area * { 
+	padding: 5px;
+}
+#fileinfo,#error,#error2,#abort,#warnsize {
+    color:#aaa;
+    display:none;
+    font-size:10pt;
+    font-style:italic;
+    margin-top:10px;
+}
+#upload_response {
+    margin-top: 10px;
+    padding: 20px;
+    overflow: hidden;
+    display: none;
+    border: 1px solid #ccc;
+    border-radius:10px;
+    box-shadow: 0 0 5px #ccc;
+    background: linear-gradient(#bbb, #eee);
+}
+
+#image_file { width: 250px; }

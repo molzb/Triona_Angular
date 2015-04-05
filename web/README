@@ -1,0 +1,15 @@
+Performance
+-----------
+1) Images: Expiry-Tag (filter in web.xml)
+2) CSS/JS: Pack files (concatenate files with Ant)
+3) Compression inside server.xml
+4)
+
+JAAS
+----
+Inside context.xml of Web-App
+
+Gedanken
+--------
+Hohe Lernkurve
+

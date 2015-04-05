@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/Triona_Angular">
+	<Resource name="jdbc/triona" auth="Container" type="javax.sql.DataSource"
+			  maxActive="100" maxIdle="30" maxWait="10000"
+			  username="root" password="root" driverClassName="com.mysql.jdbc.Driver"
+			  url="jdbc:mysql://localhost:3306/triona"/>
+	<Realm className="org.apache.catalina.realm.JDBCRealm"
+		   driverName="com.mysql.jdbc.Driver"
+		   connectionURL="jdbc:mysql://localhost:3306/triona"
+		   connectionName="root"
+		   connectionPassword="root"
+		   userTable="employee" userNameCol="email" userCredCol="password"
+		   userRoleTable="employee" roleNameCol="role_name"/>
+</Context>

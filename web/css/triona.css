@@ -1,0 +1,10 @@
+#contentPane {
+	margin-top: 40px;
+}
+
+.trionaList table { clear: both; }
+.trionaList { margin: 10px; }
+.trionaList .search, .trionaList .addEmp { display: inline; }
+.trionaList .search { float: left; }
+.trionaList .addEmp { float: right; }
+.trionaList .addEmp a { margin-bottom: 10px; }

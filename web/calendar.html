@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Calendar</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width">
+		<script type="text/javascript" src="js/angular.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/moment-with-locales.js"></script>
+		<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
+		<script type="text/javascript">
+			var calApp = angular.module('calApp', []);
+			var myScope;
+			calApp.controller('calCtrl', function ($scope) {
+				myScope = $scope;
+				$scope.year = new Date().getFullYear();
+				$scope.today = new Date();
+				$scope.months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+				$scope.chgYear = function (chg) {
+					this.year += chg;
+					this.initYear();
+				};
+
+				$scope.initMonth = function (monthNumber) {
+					var first = new Date($scope.year, monthNumber, 1, 0, 0, 0, 0);
+					var firstOfNextMth = new Date($scope.year, monthNumber + 1, 1, 0, 0, 0, 0);
+					var d = new Date(first.getTime());
+					var dayInMs = 1000 * 60 * 60 * 24;
+					while (d.getDay() !== 1) {	// monday
+						d.setTime(d.getTime() - dayInMs);
+					}
+					var id = $scope.months[monthNumber];
+					var tdsOfI = $("#" + id + " tbody td");
+					tdsOfI.each(function (i) {
+						if (i > 36)
+							return;	// it can't go any farther
+
+						var tdOfI = $(this);
+						if (d.getTime() < first.getTime()) {					// previous month
+							tdOfI.addClass("outOfMth").text(d.getDate());
+						} else if (d.getTime() < firstOfNextMth.getTime()) {	// current month
+							tdOfI.removeClass("outOfMth").text(d.getDate());
+						} else {												// next month
+							tdOfI.addClass("outOfMth").text(d.getDate());
+							if (i > 34)
+								tdOfI.html("&nbsp;");
+						}
+						if (tdOfI.hasClass("today")) {
+							tdOfI.removeClass("today");
+						}
+						if (d.getFullYear() === $scope.today.getFullYear() &&
+								d.getMonth() === $scope.today.getMonth() &&
+								d.getDate() === $scope.today.getDate() &&
+								!tdOfI.hasClass("outOfMth")) {
+							tdOfI.addClass("today");
+						}
+						d.setTime(d.getTime() + dayInMs);
+					});
+				};
+
+				$scope.initYear = function () {
+					var t1 = window.performance.now();
+					for (var i = 0; i < 12; i++)
+						this.initMonth(i);
+					console.log("initYear took " + (window.performance.now() - t1) + " ms");
+				};
+
+				$scope.gotoToday = function () {
+					$scope.year = new Date().getFullYear();
+					$scope.initYear();
+				};
+
+				$scope.markDate = function (year, month, day) {
+					var tblOfMonth = $("#" + $scope.months[month] + " tbody");
+					var tdOfMonth = tblOfMonth.find("td").not(".outOfMth");
+					tdOfMonth.each(function () {
+						if ($(this)[0].innerHTML === day)
+							$(this).addClass("btn-danger");
+					});
+				};
+
+				$(document).ready(function () {
+					$scope.initYear();
+				});
+			});
+		</script>
+		<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+		<link href="css/triona.css" type="text/css" rel="stylesheet">
+		<style type="text/css">
+			#calendar table { width: 99%; }
+			#calendar table td, #calendar table th { padding: 5px;  }
+			#calendar table td, #calendar table th { text-align: right; }
+			#calendar table td.today { background: #fcf8e3; }
+			#calendar table .red { color: red; font-weight: bold; }
+			#calendar table .outOfMth { color: #dddddd; }
+			#calendar h3 { text-align: center; }
+		</style>
+	</head>
+	<body>
+
+		<div class="container" ng-app="calApp" ng-controller="calCtrl">
+			<h1>Calendar</h1>
+
+			<div class="row">
+				<div class="btn-group col-md-4" role="group">
+					<button type="button" class="btn btn-primary" ng-click="chgYear(-1)">&lt;</button>
+					<button type="button" class="btn btn-default" ng-click="gotoToday()">Today</button>
+					<button type="button" class="btn btn-primary" ng-click="chgYear(1)">&gt;</button>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class='col-sm-6'>
+					<div class="form-group">
+						<div class='input-group date' id='datetimepicker1'>
+							<input type='text' class="form-control" />
+							<span class="input-group-addon">
+								<span class="glyphicon glyphicon-calendar"></span>
+							</span>
+						</div>
+					</div>
+				</div>
+				<script type="text/javascript">
+							$(function () {
+								$('#datetimepicker1').datetimepicker({locale: 'de'});
+							});
+				</script>
+			</div>
+
+
+			<div id="calendar" class="row">
+				<div class="col-md-4" ng-repeat="m in months">
+					<h3 ng-click="initMonth($index)">{{m + ' ' + year}}</h3>
+					<table id="{{m}}" class="table-bordered table-hover">
+						<thead>
+							<tr>
+								<th>Mo</th>
+								<th>Di</th>
+								<th>Mi</th>
+								<th>Do</th>
+								<th>Fr</th>
+								<th class="red">Sa</th>
+								<th class="red">So</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td> </td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
+							</tr>
+							<tr>
+								<td></td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
+							</tr>
+							<tr>
+								<td></td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
+							</tr>
+							<tr>
+								<td></td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
+							</tr>
+							<tr>
+								<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+							</tr>
+							<tr>
+								<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

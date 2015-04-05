@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="TrionaModule">
+	<head>
+		<title>Test Triona Project</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width">
+		<script type="text/javascript" src="js/angular.js"></script>
+		<script type="text/javascript" src="js/employeesController.js"></script>
+		<script type="text/javascript" src="js/projectsController.js"></script>
+		<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+		<link href="css/triona.css" type="text/css" rel="stylesheet">
+	</head>
+	<body>
+		<div id="listProjects" ng-controller="ProjectsController as pc" class="trionaList">
+			<h1 class="page-header">Projects</h1>
+			<table class="table table-striped table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>&nbsp;</th>
+						<th>Kunde</th>
+						<th>Projektname</th>
+						<th>Stadt</th>
+						<th>Mitarbeiter</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="proj in pc.projects| orderBy: pc.orderBy">
+						<td><img ng-src="images/{{proj.icon}}" alt="{{proj.image}}" width="90"/></td>
+						<td>{{proj.client}}</td>
+						<td>{{proj.projectName}}</td>
+						<td>{{proj.city}}</td>
+						<td>
+							<a ng-repeat="empName in proj.empNames" ng-href="detailEmployee.html?id={{proj.empIds[$index]}}">{{empName}}<br/></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>
