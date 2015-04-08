@@ -1,3 +1,4 @@
+"use strict";
 routeApp.controller('ProjectsController', ['$http', '$log', function ($http, $log) {
 		var ctrl = this;
 

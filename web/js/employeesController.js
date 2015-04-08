@@ -1,5 +1,5 @@
 //var app = angular.module('TrionaModule', []);
-
+"use strict";
 routeApp.controller('EmployeesController', ['$http', '$log', function($http, $log) {
 		var ctrl = this;
 		
