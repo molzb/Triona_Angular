@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Shows a table in the database as JSON
  * http://localhost:8080/Triona_Angular/GetServlet?type=employees
+ * http://localhost:8080/Triona_Angular/GetServlet?type=employees&id=4
  * http://localhost:8080/Triona_Angular/GetServlet?type=holidays
+ * http://localhost:8080/Triona_Angular/GetServlet?type=holidays&id=4
  * http://localhost:8080/Triona_Angular/GetServlet?type=projects
  * @author Bernhard
  */
@@ -26,15 +28,17 @@ public class GetServlet extends BaseServlet {
 		response.setContentType("application/json;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		String param = request.getParameter(TYPE);
+		String employeeId = request.getParameter("id");
 		switch (param) {
 			case EMPLOYEES:
-				out.println(service.getEmployeesAsJson());
+				out.println(employeeId == null ? service.getEmployeesAsJson() :
+												 service.getEmployeeAsJson(employeeId));
 				break;
 			case PROJECTS:
 				out.println(service.getProjectsAsJson());
 				break;
 			case HOLIDAYS:
-				out.println(service.getHolidaysAsJson());
+				out.println(service.getHolidaysAsJson(employeeId));
 				break;
 			default:
 				String msg = "select=" + param + " is not supported";

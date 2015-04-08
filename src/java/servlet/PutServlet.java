@@ -80,14 +80,14 @@ public class PutServlet extends BaseServlet {
 							getIntParam(req, "employeeId"),
 							getDateParam(req, "fromDate"),
 							getDateParam(req, "toDate"),
-							getIntParam(req, "days")));
+							getIntParam(req, "workingDays")));
 				} else {
 					out.println(service.insertOrUpdateHoliday(UPDATE,
 							getLongParam(req, ID),
 							getIntParam(req, "employeeId"),
 							getDateParam(req, "fromDate"),
 							getDateParam(req, "toDate"),
-							getIntParam(req, "days")));
+							getIntParam(req, "workingDays")));
 				}
 				break;
 			default:

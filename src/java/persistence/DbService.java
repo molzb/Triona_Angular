@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +74,8 @@ public class DbService {
 
 	public boolean insertOrUpdateHoliday(SQL_INSERT_OR_UPDATE type, long id,
 			long employeeId, Date from, Date to, int days) {
-		String sqlInsert = "INSERT INTO holiday (employee_id, from_date, to_date, days) VALUES (?,?,?,?)";
-		String sqlUpdate = "UPDATE holiday SET employee_id=?, from_date=?, to_date=?, days=? WHERE id=?";
+		String sqlInsert = "INSERT INTO holiday (employee_id, from_date, to_date, working_days) VALUES (?,?,?,?)";
+		String sqlUpdate = "UPDATE holiday SET employee_id=?, from_date=?, to_date=?, working_days=? WHERE id=?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(type == INSERT ? sqlInsert : sqlUpdate);
@@ -115,11 +117,23 @@ public class DbService {
 		}
 	}
 
+	public String getEmployeeAsJson(String id) {
+		Calendar cal = new GregorianCalendar();
+		return getEmployeesAsJson(id, cal.get(Calendar.YEAR));
+	}
+
 	public String getEmployeesAsJson() {
+		Calendar cal = new GregorianCalendar();
+		return getEmployeesAsJson(null, cal.get(Calendar.YEAR));
+	}
+
+	private String getEmployeesAsJson(String id, int year) {
 		String sql = "SELECT e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, "
-				+ "e.project_id, p.project_name, p.city AS pcity "
-				+ "FROM employee e "
-				+ "INNER JOIN project p ON e.project_id = p.id ORDER BY e.id";
+				+ "e.project_id, p.project_name, p.city AS pcity, h.number_of_days AS holiday2015 "
+				+ "FROM employee e, project p, holiday_employee h "
+				+ "	 WHERE e.project_id = p.id AND e.id = h.employee_id AND h.year = " + year;
+		if (id != null && !id.isEmpty())
+			sql += " AND e.id = " + id;
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();
@@ -134,6 +148,7 @@ public class DbService {
 				jsonMap.put("projectId", rs.getInt("project_id"));
 				jsonMap.put("projectName", rs.getString("project_name"));
 				jsonMap.put("projectCity", rs.getString("pcity"));
+				jsonMap.put("holiday2015", rs.getInt("holiday2015"));
 				jsonMap.put("text", rs.getString("text"));
 
 				jsonArray.add(jsonMap);
@@ -182,11 +197,12 @@ public class DbService {
 		return "";
 	}
 
-	public String getHolidaysAsJson() {
-		String sql = "SELECT e.id, e.first_name, e.last_name, p.project_name, h.from_date, h.to_date  "
+	public String getHolidaysAsJson(String employeeId) {
+		String sql = "SELECT e.id, e.first_name, e.last_name, p.project_name, h.from_date, h.to_date, h.working_days  "
 				+ "	FROM employee e "
 				+ "	INNER JOIN project p on e.project_id = p.id "
 				+ "	LEFT JOIN holiday h on e.id = h.employee_id "
+				+ (employeeId != null && !employeeId.isEmpty() ? " WHERE e.id = " + employeeId : "")
 				+ "	ORDER BY e.last_name ";
 		ResultSet rs = doSelect(sql);
 		try {
@@ -199,6 +215,7 @@ public class DbService {
 				jsonMap.put("projectName", rs.getString("project_name"));
 				jsonMap.put("from", rs.getString("from_date"));
 				jsonMap.put("to", rs.getString("to_date"));
+				jsonMap.put("workingDays", rs.getInt("working_days"));
 
 				jsonArray.add(jsonMap);
 			}
