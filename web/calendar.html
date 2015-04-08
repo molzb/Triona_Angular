@@ -10,26 +10,92 @@
 		<script type="text/javascript" src="js/moment-with-locales.js"></script>
 		<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
 		<script type="text/javascript">
+			"use strict";
 			var calApp = angular.module('calApp', []);
 			var myScope;
-			calApp.controller('calCtrl', function ($scope) {
+			var DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+			calApp.controller('calCtrl', function ($scope, $http) {
 				myScope = $scope;
 				$scope.year = new Date().getFullYear();
 				$scope.today = new Date();
 				$scope.months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+				$scope.from = null, $scope.to = null;
+				$scope.workingDays = 0;
+				$scope.remainingDays = 0;
+				$scope.takenDays = 0;
+				$scope.fromDate = null;
+				$scope.toDate = null;
+				$scope.myHolidays = [];
+
+				$scope.me = {};
+
+				$http.get('GetServlet?type=employees&id=4').success(function (data) {
+					$scope.me = data[0];
+
+					$http.get('GetServlet?type=holidays&id=4').success(function (data) {
+						$scope.myHolidays = data;
+						$scope.countTakenDays();
+					}).error(function () {
+						console.log("FAIL getHolidays");
+					});
+					
+				}).error(function () {
+					console.log("FAIL getEmployee");
+				});
 
 				$scope.chgYear = function (chg) {
 					this.year += chg;
 					this.initYear();
 				};
 
+				$scope.countTakenDays = function () {
+					this.remainingDays = this.me.holiday2015;
+					for (var i = 0; i < this.myHolidays.length; i++) {
+						var workingDays = this.myHolidays[i].workingDays;
+						this.takenDays += workingDays;
+						this.remainingDays -= workingDays;
+					}
+					console.log("taken=" + this.takenDays + ", remaining=" + this.remainingDays);
+				};
+
+				$scope.updateFrom = function () {
+					this.from = $("#datepickerFrom input").val();
+					console.log("from=" + this.from);
+					this.calcDays();
+				};
+				$scope.updateTo = function () {
+					this.to = $("#datepickerTo input").val();
+					console.log("to=" + this.to);
+					this.calcDays();
+				};
+
+				$scope.calcDays = function () {
+					if (this.from === null || this.to === null)
+						return;
+					this.workingDays = 0;
+					this.remainingDays = this.me.holiday2015 - this.takenDays;
+					var fromTokens = this.from.split(".");
+					var toTokens = this.to.split(".");
+					this.fromDate = new Date(fromTokens[2], fromTokens[1] - 1, fromTokens[0], 0, 0, 0, 0);
+					this.toDate = new Date(toTokens[2], toTokens[1] - 1, toTokens[0], 0, 0, 0, 0);
+					while (this.toDate.getTime() >= this.fromDate.getTime()) {
+						if (this.toDate.getDay() >= 1 && this.toDate.getDay() <= 5) {
+							this.workingDays++;
+							this.markDate(this.toDate.getFullYear(), this.toDate.getMonth(), this.toDate.getDate());
+						}
+						this.toDate.setTime(this.toDate.getTime() - DAY_IN_MS);	// set to previous day
+					}
+					this.remainingDays -= this.workingDays;
+				};
+
 				$scope.initMonth = function (monthNumber) {
 					var first = new Date($scope.year, monthNumber, 1, 0, 0, 0, 0);
 					var firstOfNextMth = new Date($scope.year, monthNumber + 1, 1, 0, 0, 0, 0);
 					var d = new Date(first.getTime());
-					var dayInMs = 1000 * 60 * 60 * 24;
 					while (d.getDay() !== 1) {	// monday
-						d.setTime(d.getTime() - dayInMs);
+						d.setTime(d.getTime() - DAY_IN_MS);
 					}
 					var id = $scope.months[monthNumber];
 					var tdsOfI = $("#" + id + " tbody td");
@@ -56,7 +122,7 @@
 								!tdOfI.hasClass("outOfMth")) {
 							tdOfI.addClass("today");
 						}
-						d.setTime(d.getTime() + dayInMs);
+						d.setTime(d.getTime() + DAY_IN_MS);
 					});
 				};
 
@@ -73,20 +139,33 @@
 				};
 
 				$scope.markDate = function (year, month, day) {
+					if (year !== this.year)
+						return;
+
 					var tblOfMonth = $("#" + $scope.months[month] + " tbody");
-					var tdOfMonth = tblOfMonth.find("td").not(".outOfMth");
+					var tdOfMonth = tblOfMonth.find("td").not(".outOfMth,.red");
+					console.log("mark " + year + "/" + month + "/" + day + ", tdOfMonth len=" + tdOfMonth.length);
 					tdOfMonth.each(function () {
-						if ($(this)[0].innerHTML === day)
+						if ($(this)[0].innerHTML == day) {
 							$(this).addClass("btn-danger");
+							console.log()
+						}
 					});
+				};
+
+				$scope.reset = function () {
+					$scope.from = "", $scope.to = "";
 				};
 
 				$(document).ready(function () {
 					$scope.initYear();
+					var options = {locale: "de", format: "DD.MM.YYYY", minDate: new Date()};
+					$("#datepickerFrom, #datepickerTo").datetimepicker(options);
 				});
 			});
 		</script>
 		<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+		<link href="css/bootstrap-datetimepicker.css" type="text/css" rel="stylesheet">
 		<link href="css/triona.css" type="text/css" rel="stylesheet">
 		<style type="text/css">
 			#calendar table { width: 99%; }
@@ -96,6 +175,8 @@
 			#calendar table .red { color: red; font-weight: bold; }
 			#calendar table .outOfMth { color: #dddddd; }
 			#calendar h3 { text-align: center; }
+
+			#listHolidays, #divExistingHolidays { margin-left: 0; }
 		</style>
 	</head>
 	<body>
@@ -111,25 +192,77 @@
 				</div>
 			</div>
 
-			<div class="row">
-				<div class='col-sm-6'>
-					<div class="form-group">
-						<div class='input-group date' id='datetimepicker1'>
-							<input type='text' class="form-control" />
-							<span class="input-group-addon">
-								<span class="glyphicon glyphicon-calendar"></span>
-							</span>
-						</div>
-					</div>
+			<div class="row">&nbsp;</div>
+			<div id="listHolidays" class="row">
+				<div class="col-md-4 alert alert-success">
+					<b>Urlaub in {{year}}: </b>{{me.holiday2015}} Tage
 				</div>
-				<script type="text/javascript">
-							$(function () {
-								$('#datetimepicker1').datetimepicker({locale: 'de'});
-							});
-				</script>
+				<div class="col-md-4 alert alert-success">
+					<b>Genommen in {{year}}: </b>{{takenDays}} Tage
+				</div>
+				<div class="col-md-4 alert" ng-class="remainingDays > 0 ? 'alert-success' : 'alert-danger'">
+					<b>Resturlaub:</b>			{{remainingDays}} Tage
+				</div>
 			</div>
 
+			<div class="row">&nbsp;</div>
+			<form class="row" action="PutServlet">
+				<input type="hidden" name="sqlType" value="INSERT"/>
+				<input type="hidden" name="type" value="holidays"/>
+				<input type="hidden" name="employeeId" value="4"/>
+				<div class="col-md-3">
+					<div class="input-group date" id="datepickerFrom">
+						<input id="fromDate" name="fromDate" type="text" class="form-control" ng-model="from" ng-blur="updateFrom()"
+							   placeholder="First day of your vacation"/>
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="input-group date" id="datepickerTo">
+						<input id="toDate" name="toDate" type="text" class="form-control" ng-model="to" ng-blur="updateTo()"
+							   placeholder="Last day of your vacation" />
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<span>Werktage:</span><span class="label label-default" ng-bind="workingDays"></span>
+					<input type="hidden" name="workingDays" id="workingDays" ng-value="workingDays"/>
+				</div>
+				<div class="col-md-3">
+					<div class="control-group">
+						<a class="btn btn-warning" href="/Triona_Angular">Cancel</a>
+						<button type="submit" class="btn btn-success">Save</button>
+						<button type="reset"  ng-click="reset()" class="btn btn-danger">Reset</button>
+					</div>
+				</div>
+			</form>
 
+			<!-- Tabelle mit bestehendem Urlaub -->
+			<div class="row" ng-show="myHolidays.length > 0">&nbsp;</div>
+			<div id="divExistingHolidays" class="row" ng-show="myHolidays.length > 0">
+				<table id="tblExistingHolidays" class="table-bordered table table-striped table-hover">
+					<thead>
+						<tr>
+							<th>From</th>
+							<th>To</th>
+							<th>Workdays</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="h in myHolidays">
+							<td>{{h.from}}</td>
+							<td>{{h.to}}</td>
+							<td>{{h.workingDays}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Calendar for the year -->
 			<div id="calendar" class="row">
 				<div class="col-md-4" ng-repeat="m in months">
 					<h3 ng-click="initMonth($index)">{{m + ' ' + year}}</h3>
