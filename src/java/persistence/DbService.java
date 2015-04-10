@@ -72,14 +72,15 @@ public class DbService {
 		}
 	}
 
+	//TODO email ist FALSCH!!!
 	public boolean insertOrUpdateHoliday(SQL_INSERT_OR_UPDATE type, long id,
-			long employeeId, Date from, Date to, int days) {
+			String email, Date from, Date to, int days) {
 		String sqlInsert = "INSERT INTO holiday (employee_id, from_date, to_date, working_days) VALUES (?,?,?,?)";
 		String sqlUpdate = "UPDATE holiday SET employee_id=?, from_date=?, to_date=?, working_days=? WHERE id=?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(type == INSERT ? sqlInsert : sqlUpdate);
-			pstmt.setLong(1, employeeId);
+			pstmt.setString(1, email);
 			pstmt.setDate(2, from);
 			pstmt.setDate(3, to);
 			pstmt.setLong(4, days);
@@ -117,9 +118,9 @@ public class DbService {
 		}
 	}
 
-	public String getEmployeeAsJson(String id) {
+	public String getEmployeeAsJson(String email) {
 		Calendar cal = new GregorianCalendar();
-		return getEmployeesAsJson(id, cal.get(Calendar.YEAR));
+		return getEmployeesAsJson(email, cal.get(Calendar.YEAR));
 	}
 
 	public String getEmployeesAsJson() {
@@ -127,13 +128,14 @@ public class DbService {
 		return getEmployeesAsJson(null, cal.get(Calendar.YEAR));
 	}
 
-	private String getEmployeesAsJson(String id, int year) {
+	private String getEmployeesAsJson(String email, int year) {
 		String sql = "SELECT e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, "
 				+ "e.project_id, p.project_name, p.city AS pcity, h.number_of_days AS holiday2015 "
 				+ "FROM employee e, project p, holiday_employee h "
 				+ "	 WHERE e.project_id = p.id AND e.id = h.employee_id AND h.year = " + year;
-		if (id != null && !id.isEmpty())
-			sql += " AND e.id = " + id;
+		if (email != null && !email.isEmpty())
+			sql += " AND e.email = '" + email + "'";
+		LOG.info("sql=" + sql);
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();
@@ -197,13 +199,14 @@ public class DbService {
 		return "";
 	}
 
-	public String getHolidaysAsJson(String employeeId) {
+	public String getHolidaysAsJson(String email) {
 		String sql = "SELECT e.id, e.first_name, e.last_name, p.project_name, h.from_date, h.to_date, h.working_days  "
 				+ "	FROM employee e "
 				+ "	INNER JOIN project p on e.project_id = p.id "
 				+ "	LEFT JOIN holiday h on e.id = h.employee_id "
-				+ (employeeId != null && !employeeId.isEmpty() ? " WHERE e.id = " + employeeId : "")
+				+ (email != null && !email.isEmpty() ? " WHERE e.email = '" + email + "'": "")
 				+ "	ORDER BY e.last_name ";
+		System.out.println("sql=" + sql);
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();

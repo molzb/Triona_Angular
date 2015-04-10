@@ -77,14 +77,14 @@ public class PutServlet extends BaseServlet {
 			case HOLIDAYS:
 				if (isInsert) {
 					out.println(service.insertOrUpdateHoliday(INSERT, 0,
-							getIntParam(req, "employeeId"),
+							req.getParameter("email"),
 							getDateParam(req, "fromDate"),
 							getDateParam(req, "toDate"),
 							getIntParam(req, "workingDays")));
 				} else {
 					out.println(service.insertOrUpdateHoliday(UPDATE,
 							getLongParam(req, ID),
-							getIntParam(req, "employeeId"),
+							req.getParameter("email"),
 							getDateParam(req, "fromDate"),
 							getDateParam(req, "toDate"),
 							getIntParam(req, "workingDays")));
