@@ -20,15 +20,9 @@
     <body>
 		<div class="col-md-offset-5 col-md-3 form-login">
 			<h2>Triona Project</h2><br>
-			<form method="post" action="j_security_check">
-				<input type="text" name="j_username" placeholder="username" id="userName"
-					   class="form-control input-sm">
-				<br>
-				<input type="password" name="j_password" placeholder="password" id="j_password"
-					   class="form-control input-sm">
-				<br>
-				<input class="btn btn-primary" type="submit" value="Login">
-			</form>
+			<span class="text-danger">Login oder Passwort falsch!</span>
+			<br><br>
+			<a href="login.jsp" class="btn btn-primary">Zurück</a>
 		</div>
 	</body>
 </html>

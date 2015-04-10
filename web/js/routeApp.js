@@ -5,7 +5,7 @@ routeApp.config(['$routeProvider',
 				when('/home', {templateUrl: 'home.html'}).
 				when('/team', {templateUrl: 'teamPlain.html'}).
 				when('/projects', {templateUrl: 'projects.html'}).
-				when('/holidays', {templateUrl: 'holidays.html'}).
+				when('/holidays', {templateUrl: 'holidaysPlain.html'}).
 				otherwise({redirectTo: '/home'});
 	}]);
 routeApp.controller('RouteController', function ($scope, $location) {
@@ -15,5 +15,5 @@ routeApp.controller('RouteController', function ($scope, $location) {
 
 	$scope.classActive = function (viewLocation) {
 		return $scope.isActive(viewLocation) ? "active" : "";
-	}
+	};
 });

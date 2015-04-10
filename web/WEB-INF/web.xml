@@ -3,7 +3,7 @@
     <description>An experimental project showcasing Angular with Bootstrap</description>
     <display-name>Triona Project</display-name>
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <security-constraint>
         <display-name>EmployeeConstraint</display-name>
@@ -15,6 +15,7 @@
         <auth-constraint>
             <description>employeeAuthConstraint</description>
             <role-name>employee</role-name>
+            <role-name>admin</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>
@@ -34,10 +35,9 @@
         <realm-name>TrionaRealm</realm-name>
         <form-login-config>
             <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/loginError.html</form-error-page>
+            <form-error-page>/loginError.jsp</form-error-page>
         </form-login-config>
     </login-config>
-
     <security-role>
         <description/>
         <role-name>employee</role-name>
@@ -46,8 +46,7 @@
         <description/>
         <role-name>admin</role-name>
     </security-role>
-
-	<filter>
+    <filter>
         <filter-name>ExpiresFilter</filter-name>
         <filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class>
         <init-param>
@@ -60,7 +59,6 @@
         <url-pattern>/images/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
-
     <resource-ref>
         <description>DB Connection Triona_Angular</description>
         <res-ref-name>jdbc/triona</res-ref-name>

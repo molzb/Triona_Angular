@@ -19,20 +19,13 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 
 	$scope.me = {};
 
-	$http.get('GetServlet?type=employees&id=4').success(function (data) {
+	$http.get('GetServlet?type=employees&email=bernhard.molz@triona.de').success(function (data) {
 		$scope.me = data[0];
 
-		$http.get('GetServlet?type=holidays&id=4').success(function (data) {
+		$http.get('GetServlet?type=holidays&email=bernhard.molz@triona.de').success(function (data) {
 			$scope.myHolidays = data;
 			$scope.countTakenDays();
-
-			for (var i = 0; i < $scope.myHolidays.length; i++) {
-				var fromTokens = $scope.myHolidays[i].from.split("-");
-				var toTokens   = $scope.myHolidays[i].to.split("-");
-				var fromDate = new Date(fromTokens[0], fromTokens[1]-1, fromTokens[2], 0, 0, 0, 0);
-				var toDate   = new Date(toTokens[0], toTokens[1]-1, toTokens[2], 0, 0, 0, 0);
-				$scope.markDates(fromDate, toDate, true);
-			}
+			$scope.markMyHolidays();
 		}).error(function () {
 			console.log("FAIL getHolidays");
 		});
@@ -80,6 +73,16 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 		this.remainingDays -= this.workingDays;
 	};
 
+	$scope.markMyHolidays = function() {
+			for (var i = 0; i < $scope.myHolidays.length; i++) {
+			var fromTokens = $scope.myHolidays[i].from.split("-");
+			var toTokens   = $scope.myHolidays[i].to.split("-");
+			var fromDate = new Date(fromTokens[0], fromTokens[1]-1, fromTokens[2], 0, 0, 0, 0);
+			var toDate   = new Date(toTokens[0], toTokens[1]-1, toTokens[2], 0, 0, 0, 0);
+			$scope.markDates(fromDate, toDate, true);
+		}
+	};
+
 	$scope.markDates = function (fromDate, toDate, isTaken) {
 		var workingDays = 0;
 		while (toDate.getTime() >= fromDate.getTime()) {
@@ -100,7 +103,7 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 		var tdOfMonth = tblOfMonth.find("td").not(".outOfMth,.red");
 		console.log("mark " + day + "." + $scope.months[month] + " " + year + ", tdOfMonth len=" + tdOfMonth.length);
 		tdOfMonth.each(function () {
-			if ($(this)[0].innerHTML == day) {
+			if (parseInt($(this)[0].innerHTML) === day) {
 				$(this).addClass(isTaken ? "btn-success" : "btn-danger");
 			}
 		});
