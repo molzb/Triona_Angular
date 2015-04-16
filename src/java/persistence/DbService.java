@@ -40,11 +40,25 @@ public class DbService {
 		this.ds = ds;
 	}
 
+	public int getUserId(String email) {
+		String sql = "SELECT id FROM employee WHERE email = '" + email + "'";
+		ResultSet rs = doSelect(sql);
+		try {
+			rs.next();
+			return rs.getInt("id");
+		} catch (SQLException ex) {
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
+		} finally {
+			DbUtil.closeQuietly(conn, null, rs);
+		}
+		return 0;
+	}
+
 	public boolean insertOrUpdateEmployee(SQL_INSERT_OR_UPDATE type,
 			long id, String firstName, String lastName, long projectId, String jobTitle,
 			String city, String image, String text, String email, String password) {
 		String sqlInsert = "INSERT INTO employee (first_name, last_name, project_id, jobtitle, city, image, text, email, password) "
-				+ "VALUES (?,?,?,?,?,  ?,?,?,sha2(?,256))";
+				+ "VALUES (?,?,?,?,?,  ?,?,?,sha(?))";
 		String sqlUpdate = "UPDATE employee SET first_name=?, last_name=?, project_id=?, jobtitle=?, city=?, image=?, text=?, email=? "
 				+ "WHERE id = ?";
 		try {
@@ -96,7 +110,7 @@ public class DbService {
 		}
 	}
 
-	public boolean insertOrUpdateProject(SQL_INSERT_OR_UPDATE type, long id, 
+	public boolean insertOrUpdateProject(SQL_INSERT_OR_UPDATE type, long id,
 			String client, String projectName, String city) {
 		String sqlInsert = "INSERT INTO project (client, project_name, city) VALUES (?,?,?)";
 		String sqlUpdate = "UPDATE project SET client=?, project_name=?, city=? WHERE id=?";
@@ -133,9 +147,9 @@ public class DbService {
 				+ "e.project_id, p.project_name, p.city AS pcity, h.number_of_days AS holiday2015 "
 				+ "FROM employee e, project p, holiday_employee h "
 				+ "	 WHERE e.project_id = p.id AND e.id = h.employee_id AND h.year = " + year;
-		if (email != null && !email.isEmpty())
+		if (email != null && !email.isEmpty()) {
 			sql += " AND e.email = '" + email + "'";
-		LOG.info("sql=" + sql);
+		}
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();
@@ -204,9 +218,8 @@ public class DbService {
 				+ "	FROM employee e "
 				+ "	INNER JOIN project p on e.project_id = p.id "
 				+ "	LEFT JOIN holiday h on e.id = h.employee_id "
-				+ (email != null && !email.isEmpty() ? " WHERE e.email = '" + email + "'": "")
+				+ (email != null && !email.isEmpty() ? " WHERE e.email = '" + email + "'" : "")
 				+ "	ORDER BY e.last_name ";
-		System.out.println("sql=" + sql);
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();
@@ -287,5 +300,4 @@ public class DbService {
 			DbUtil.closeQuietly(conn, pstmt, null);
 		}
 	}
-
 }

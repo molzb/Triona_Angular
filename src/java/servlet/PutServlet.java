@@ -12,8 +12,8 @@ import static persistence.DbService.SQL_INSERT_OR_UPDATE.*;
 
 /**
  * Insert or update an entry in the database<br>
- * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=employees&firstName=Hans&lastName=Dampf&projectId=1&city=Frankfurt&image=hd.jpg&text=...&email=hd@triona.de&password=geheim
- * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=employees&firstName=Hans&lastName=Sumpf&projectId=2&city=Frankfurt&image=hd.jpg&text=...&email=hs@triona.de&id=14
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=employees&firstName=Hans&lastName=Dampf&projectId=1&city=Frankfurt&image=hd.jpg&text=...&email=hd@triona.de&password=geheim&jobtitle=consultant
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=employees&firstName=Hans&lastName=Sumpf&projectId=2&city=Frankfurt&image=hd.jpg&text=...&email=hs@triona.de&jobtitle=consultant&id=14
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=projects&client=DB&projectName=test&city=Frankfurt
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=projects&client=BD&projectName=TEST&city=Darmstadt&id=9
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=03.03.2015&days=3
@@ -32,6 +32,7 @@ public class PutServlet extends BaseServlet {
 		String typeParam = req.getParameter(TYPE);
 		String sqlTypeParam = req.getParameter("sqlType");
 		boolean isInsert = sqlTypeParam.equals(INSERT.name());
+		System.out.println("userName=" + getUsername(req) + ", userId=" + getUserId(req));
 
 		switch (typeParam) {
 			case EMPLOYEES:
@@ -48,7 +49,7 @@ public class PutServlet extends BaseServlet {
 							req.getParameter("password")));
 				} else {
 					out.println(service.insertOrUpdateEmployee(UPDATE,
-							getLongParam(req, ID),
+							getUserId(req),
 							req.getParameter("firstName"),
 							req.getParameter("lastName"),
 							getLongParam(req, "projectId"),
