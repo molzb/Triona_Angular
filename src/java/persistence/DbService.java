@@ -132,9 +132,9 @@ public class DbService {
 		}
 	}
 
-	public String getEmployeeAsJson(String email) {
+	public String getEmployeeAsJson(String id) {
 		Calendar cal = new GregorianCalendar();
-		return getEmployeesAsJson(email, cal.get(Calendar.YEAR));
+		return getEmployeesAsJson(id, cal.get(Calendar.YEAR));
 	}
 
 	public String getEmployeesAsJson() {
@@ -142,19 +142,19 @@ public class DbService {
 		return getEmployeesAsJson(null, cal.get(Calendar.YEAR));
 	}
 
-	private String getEmployeesAsJson(String email, int year) {
-		String sql = "SELECT e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, "
+	private String getEmployeesAsJson(String id, int year) {
+		String sql = "SELECT e.id, e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, "
 				+ "e.project_id, p.project_name, p.city AS pcity, h.number_of_days AS holiday2015 "
 				+ "FROM employee e, project p, holiday_employee h "
 				+ "	 WHERE e.project_id = p.id AND e.id = h.employee_id AND h.year = " + year;
-		if (email != null && !email.isEmpty()) {
-			sql += " AND e.email = '" + email + "'";
-		}
+		if (id != null && !id.isEmpty())
+			sql += " AND e.id = " + id;
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();
 			while (rs.next()) {
 				Map<String, Object> jsonMap = new HashMap<String, Object>();
+				jsonMap.put("id", rs.getString("id"));
 				jsonMap.put("image", rs.getString("image"));
 				jsonMap.put("firstName", rs.getString("first_name"));
 				jsonMap.put("lastName", rs.getString("last_name"));
@@ -213,14 +213,15 @@ public class DbService {
 		return "";
 	}
 
-	public String getHolidaysAsJson(String email) {
+	public String getHolidaysAsJson(String employeeId) {
 		String sql = "SELECT e.id, e.first_name, e.last_name, p.project_name, h.from_date, h.to_date, h.working_days  "
 				+ "	FROM employee e "
 				+ "	INNER JOIN project p on e.project_id = p.id "
 				+ "	LEFT JOIN holiday h on e.id = h.employee_id "
-				+ (email != null && !email.isEmpty() ? " WHERE e.email = '" + email + "'" : "")
+				+ (employeeId != null && !employeeId.isEmpty() ? " WHERE e.id = " + employeeId : "")
 				+ "	ORDER BY e.last_name ";
 		ResultSet rs = doSelect(sql);
+		System.out.println("sql=" + sql);
 		try {
 			List jsonArray = new ArrayList();
 			while (rs.next()) {

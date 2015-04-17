@@ -21,11 +21,11 @@ import persistence.DbService;
 public class BaseServlet extends HttpServlet {
 
 	private static final Logger LOG = Logger.getLogger(BaseServlet.class.getName());
-	protected static final String 
-			TYPE = "type",
+	protected static final String TYPE = "type",
 			EMPLOYEES = "employees",
 			PROJECTS = "projects",
-			HOLIDAYS = "holidays";
+			HOLIDAYS = "holidays",
+			ME = "me";
 	protected static final String ID = "id";
 
 	@Resource(mappedName = "jdbc/triona", name = "jdbc/triona")
@@ -48,7 +48,7 @@ public class BaseServlet extends HttpServlet {
 		if (sess.getAttribute("userId") == null) {
 			sess.setAttribute("userId", service.getUserId(getUsername(req)));
 		}
-		return (Integer)sess.getAttribute("userId");
+		return (Integer) sess.getAttribute("userId");
 	}
 
 	protected Date getDateParam(HttpServletRequest req, String dateStr) {
@@ -59,6 +59,21 @@ public class BaseServlet extends HttpServlet {
 			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		return null;
+	}
+
+	protected boolean getBooleanParam(HttpServletRequest req, String boolStr) {
+		String boolPrm = req.getParameter(boolStr);
+		if (boolPrm == null)
+			return false;
+		switch (boolPrm) {
+			case "true":
+				return true;
+			case "false":
+				return false;
+			default:
+				LOG.warning("boolStr =" + boolStr + " is undefined, return null");
+				return false;
+		}
 	}
 
 	protected int getIntParam(HttpServletRequest req, String intStr) {
