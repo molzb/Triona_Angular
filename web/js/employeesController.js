@@ -1,8 +1,9 @@
 //var app = angular.module('TrionaModule', []);
 "use strict";
-routeApp.controller('EmployeesController', ['$http', '$log', function($http, $log) {
-		var ctrl = this;
-		
+var myScope;
+routeApp.controller('EmployeesController', ['$http', '$routeParams', '$location', function ($http, $routeParams, $location) {
+		var ctrl = myScope = this;
+
 		ctrl.employees = [];
 		ctrl.projects = [];
 		ctrl.jobTitles = [
@@ -17,34 +18,42 @@ routeApp.controller('EmployeesController', ['$http', '$log', function($http, $lo
 		ctrl.newEmployee = {};
 		ctrl.emp = {};
 
-
-		$http.get('GetServlet?type=employees').success(function(data) {
+		var idParam = $routeParams.id ? '&id=' + $routeParams.id : '';
+		$http.get('GetServlet?type=employees' + idParam).success(function (data) {
 			ctrl.employees = data;
 			ctrl.emp = ctrl.employees[0];
-		}).error(function() {
+		}).error(function () {
 			console.log("FAIL");
 		});
 
-//		$http.get('GetServlet?type=projects').success(function (data) {
-//			ctrl.projects = data;
-//		}).error(function () {
-//			console.log("FAIL");
-//		});
-
-		this.getEmp = function(idx) {
-			return employees[idx];
+		this.loadProjects = function () {
+			console.log("loadProjects");
+			$http.get('GetServlet?type=projects' + idParam).success(function (data) {
+				ctrl.projects = data;
+			}).error(function () {
+				console.log("FAIL");
+			});
 		};
 
-		this.search = function(searchT) {
+		this.getEmp = function (idx) {
+			return this.employees[idx];
+		};
+
+		this.search = function (searchT) {
 			console.log(searchT);
 			this.searchTerm = searchT;
 		};
 
-		this.addEmployee = function() {
+		this.addEmployee = function (data) {
 			console.log("addEmployee");
+			$http.post('PutServlet', JSON.stringify(data)).success(function(){/*success callback*/});
+			$location.path("#team");
 		};
 
-		this.delete = function() {
+		this.redirect = function() {
+		};
+
+		this.delete = function () {
 			//check, if ID in form is present
 		};
 	}

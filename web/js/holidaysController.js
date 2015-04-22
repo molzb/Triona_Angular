@@ -1,14 +1,13 @@
 "use strict";
-var holidayApp = angular.module('holidayApp', []);
 var myScope;
-var DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-holidayApp.controller('holidayCtrl', function ($scope, $http) {
+routeApp.controller('holidayCtrl', function ($scope, $http) {
 	myScope = $scope;
 	$scope.year = new Date().getFullYear();
 	$scope.today = new Date();
 	$scope.months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+	$scope.DAY_IN_MS = 1000 * 60 * 60 * 24;
 	$scope.from = null, $scope.to = null;
 	$scope.workingDays = 0;
 	$scope.remainingDays = 0;
@@ -16,16 +15,21 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 	$scope.fromDate = null;
 	$scope.toDate = null;
 	$scope.myHolidays = [];
+	$scope.holidayListVisible = false;
 
 	$scope.me = {};
+	$scope.userId = 0;
 
-	$http.get('GetServlet?type=employees&email=bernhard.molz@triona.de').success(function (data) {
+	$http.get('GetServlet?type=employees&me=true').success(function (data) {
 		$scope.me = data[0];
+		$scope.userId = data[0].id;
 
-		$http.get('GetServlet?type=holidays&email=bernhard.molz@triona.de').success(function (data) {
+		$http.get('GetServlet?type=holidays&me=true').success(function (data) {
 			$scope.myHolidays = data;
 			$scope.countTakenDays();
 			$scope.markMyHolidays();
+
+			$scope.init();
 		}).error(function () {
 			console.log("FAIL getHolidays");
 		});
@@ -34,13 +38,18 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 		console.log("FAIL getEmployee");
 	});
 
+	$scope.toggleHolidayList = function() {
+		this.holidayListVisible = !this.holidayListVisible;
+		return false;
+	};
+
 	$scope.chgYear = function (chg) {
 		this.year += chg;
 		this.initYear();
 	};
 
 	$scope.countTakenDays = function () {
-		this.remainingDays = this.me.holiday2015;
+		this.remainingDays = this.me.holidays;
 		for (var i = 0; i < this.myHolidays.length; i++) {
 			var workingDays = this.myHolidays[i].workingDays;
 			this.takenDays += workingDays;
@@ -64,7 +73,7 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 		if (this.from === null || this.to === null)
 			return;
 		this.workingDays = 0;
-		this.remainingDays = this.me.holiday2015 - this.takenDays;
+		this.remainingDays = this.me.holidays - this.takenDays;
 		var fromTokens = this.from.split(".");
 		var toTokens = this.to.split(".");
 		this.fromDate = new Date(fromTokens[2], fromTokens[1] - 1, fromTokens[0], 0, 0, 0, 0);
@@ -90,7 +99,7 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 				workingDays++;
 				this.markDate(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), isTaken);
 			}
-			toDate.setTime(toDate.getTime() - DAY_IN_MS);	// set to previous day
+			toDate.setTime(toDate.getTime() - $scope.DAY_IN_MS);	// set to previous day
 		}
 		return workingDays;
 	};
@@ -114,7 +123,7 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 		var firstOfNextMth = new Date($scope.year, monthNumber + 1, 1, 0, 0, 0, 0);
 		var d = new Date(first.getTime());
 		while (d.getDay() !== 1) {	// monday
-			d.setTime(d.getTime() - DAY_IN_MS);
+			d.setTime(d.getTime() - $scope.DAY_IN_MS);
 		}
 		var id = $scope.months[monthNumber];
 		var tdsOfI = $("#" + id + " tbody td");
@@ -145,7 +154,7 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 					!tdOfI.hasClass("outOfMth")) {
 				tdOfI.addClass("today");
 			}
-			d.setTime(d.getTime() + DAY_IN_MS);
+			d.setTime(d.getTime() + $scope.DAY_IN_MS);
 		});
 	};
 
@@ -165,9 +174,9 @@ holidayApp.controller('holidayCtrl', function ($scope, $http) {
 		$scope.from = "", $scope.to = "";
 	};
 
-	$(document).ready(function () {
+	$scope.init = function () {
 		$scope.initYear();
 		var options = {locale: "de", format: "DD.MM.YYYY", minDate: new Date()};
 		$("#datepickerFrom, #datepickerTo").datetimepicker(options);
-	});
+	};
 });

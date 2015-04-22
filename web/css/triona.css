@@ -8,3 +8,7 @@
 .trionaList .search { float: left; }
 .trionaList .addEmp { float: right; }
 .trionaList .addEmp a { margin-bottom: 10px; }
+
+#frmEmployee input[type=text],
+#frmEmployee input[type=email] { width: 100%; }
+#frmEmployee textarea#text { width: 100%; height: 150px; }
