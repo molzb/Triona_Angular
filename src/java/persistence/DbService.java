@@ -33,6 +33,7 @@ public class DbService {
 	private PreparedStatement pstmt;
 
 	public enum SQL_INSERT_OR_UPDATE {
+
 		INSERT, UPDATE
 	};
 
@@ -143,12 +144,13 @@ public class DbService {
 	}
 
 	private String getEmployeesAsJson(String id, int year) {
-		String sql = "SELECT e.id, e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, "
-				+ "e.project_id, p.project_name, p.city AS pcity, h.number_of_days AS holiday2015 "
-				+ "FROM employee e, project p, holiday_employee h "
-				+ "	 WHERE e.project_id = p.id AND e.id = h.employee_id AND h.year = " + year;
-		if (id != null && !id.isEmpty())
+		String sql = "SELECT e.id, e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, e.holidays,"
+				+ "	e.project_id, p.project_name, p.city AS pcity"
+				+ "		FROM employee e, project p"
+				+ "		WHERE e.project_id = p.id";
+		if (id != null && !id.isEmpty()) {
 			sql += " AND e.id = " + id;
+		}
 		ResultSet rs = doSelect(sql);
 		try {
 			List jsonArray = new ArrayList();
@@ -164,7 +166,7 @@ public class DbService {
 				jsonMap.put("projectId", rs.getInt("project_id"));
 				jsonMap.put("projectName", rs.getString("project_name"));
 				jsonMap.put("projectCity", rs.getString("pcity"));
-				jsonMap.put("holiday2015", rs.getInt("holiday2015"));
+				jsonMap.put("holidays", rs.getInt("holidays"));
 				jsonMap.put("text", rs.getString("text"));
 
 				jsonArray.add(jsonMap);
@@ -221,7 +223,6 @@ public class DbService {
 				+ (employeeId != null && !employeeId.isEmpty() ? " WHERE e.id = " + employeeId : "")
 				+ "	ORDER BY e.last_name ";
 		ResultSet rs = doSelect(sql);
-		System.out.println("sql=" + sql);
 		try {
 			List jsonArray = new ArrayList();
 			while (rs.next()) {
