@@ -30,7 +30,7 @@
 						<td>{{proj.projectName}}</td>
 						<td>{{proj.city}}</td>
 						<td>
-							<a ng-repeat="empName in proj.empNames" ng-href="detailEmployee.html?id={{proj.empIds[$index]}}">{{empName}}<br/></a>
+							<a ng-repeat="empName in proj.empNames" ng-href="#employee?id={{proj.empIds[$index]}}">{{empName}}<br/></a>
 						</td>
 					</tr>
 				</tbody>

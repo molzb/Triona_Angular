@@ -12,3 +12,14 @@
 #frmEmployee input[type=text],
 #frmEmployee input[type=email] { width: 100%; }
 #frmEmployee textarea#text { width: 100%; height: 150px; }
+
+#calendar table { width: 99%; }
+#calendar table td, #calendar table th { padding: 5px;  }
+#calendar table td, #calendar table th { text-align: right; }
+#calendar table td.today { background: #fcf8e3; }
+#calendar table .red { color: red; font-weight: bold; }
+#calendar table .outOfMth { color: #dddddd; }
+#calendar h3 { text-align: center; }
+
+#listHolidays, #divExistingHolidays { margin-left: 0; }
+

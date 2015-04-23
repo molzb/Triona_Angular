@@ -6,7 +6,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello Employee <%=request.getRemoteUser()%></h1>
+        <h1>Hello <%=request.getRemoteUser()%></h1>
 		Admin: <%=request.isUserInRole("admin")%><br/>
 		Employee: <%=request.isUserInRole("employee")%><br/>
     </body>

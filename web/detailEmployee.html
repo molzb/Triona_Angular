@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html ng-app="TrionaModule">
-	<head>
-		<title>Details </title>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<script type="text/javascript" src="js/angular.js"></script>
-		<script type="text/javascript" src="js/employeesController.js"></script>
-		<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
 		<style type="text/css">
 			#detailEmployee table tr { vertical-align: top; }
 			#detailEmployee table img { padding-right: 10px; }
 			body { padding: 10px; }
 		</style>
-	</head>
-	<body ng-controller="EmployeesController as ec">
+	<div ng-controller="EmployeesController as ec">
 		<h1>Details about {{ec.emp.fullName}}</h1>
 		<div id="detailEmployee" class="panel panel-default">
 			<div class="panel-heading">
@@ -28,11 +18,7 @@
 							<h3>{{ec.emp.jobTitle}}</h3>
 						</td>
 					</tr>
-					<tr>
-
-					</tr>
 				</table>
 			</div>
 		</div>
-	</body>
-</html>
+	</div>

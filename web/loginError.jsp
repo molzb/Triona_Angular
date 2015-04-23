@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Login to Triona Project</title>
+        <title>Login error</title>
 		<style type="text/css">
 			<jsp:include page="css/bootstrap.min.css"></jsp:include>
 			html, body { height: 100%; }

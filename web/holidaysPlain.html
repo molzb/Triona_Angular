@@ -1,17 +1,5 @@
 		<link href="css/bootstrap-datetimepicker.css" type="text/css" rel="stylesheet">
 
-		<style type="text/css">
-			#calendar table { width: 99%; }
-			#calendar table td, #calendar table th { padding: 5px;  }
-			#calendar table td, #calendar table th { text-align: right; }
-			#calendar table td.today { background: #fcf8e3; }
-			#calendar table .red { color: red; font-weight: bold; }
-			#calendar table .outOfMth { color: #dddddd; }
-			#calendar h3 { text-align: center; }
-
-			#listHolidays, #divExistingHolidays { margin-left: 0; }
-		</style>
-
 		<div class="container" ng-controller="holidayCtrl">
 			<h1 class="page-header">Holidays</h1>
 
@@ -26,7 +14,7 @@
 			<div class="row">&nbsp;</div>
 			<div id="listHolidays" class="row">
 				<div class="col-md-4 alert alert-success">
-					<b>Urlaub in {{year}}: </b>{{me.holiday2015}} Tage
+					<b>Urlaub in {{year}}: </b>{{me.holidays}} Tage
 				</div>
 				<div class="col-md-4 alert alert-success">
 					<b>Genommen in {{year}}: </b>{{takenDays}} Tage
@@ -70,11 +58,15 @@
 						<button type="reset"  ng-click="reset()" class="btn btn-danger">Reset</button>
 					</div>
 				</div>
+				<div class="col-md-1">
+					<button title="Show/hide holidays" ng-click="toggleHolidayList()" class="btn btn-default ng-binding" type="button">
+						More <span class="glyphicon glyphicon-list-alt"></span></button>
+				</div>
 			</form>
 
 			<!-- Tabelle mit bestehendem Urlaub -->
 			<div class="row" ng-show="myHolidays.length > 0">&nbsp;</div>
-			<div id="divExistingHolidays" class="row" ng-show="myHolidays.length > 0">
+			<div id="divExistingHolidays" class="row" ng-show="myHolidays.length > 0 && holidayListVisible">
 				<table id="tblExistingHolidays" class="table-bordered table table-striped table-hover">
 					<thead>
 						<tr>

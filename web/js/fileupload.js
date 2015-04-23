@@ -11,7 +11,6 @@ function bytesToSize(bytes) {
 	var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
 	return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
 }
-;
 
 function fileSelected() {
 	// hide different warnings
@@ -52,8 +51,8 @@ function fileSelected() {
 			sResultFileSize = bytesToSize(oFile.size);
 			document.getElementById('fileinfo').style.display = 'block';
 			document.getElementById('filename').innerHTML = 'Name: ' + oFile.name;
-			document.getElementById('filesize').innerHTML = 'Size: ' + sResultFileSize;
-			document.getElementById('filedim').innerHTML = 'Dimension: ' + oImage.naturalWidth + ' x ' + oImage.naturalHeight;
+//			document.getElementById('filesize').innerHTML = 'Size: ' + sResultFileSize;
+//			document.getElementById('filedim').innerHTML = 'Dimension: ' + oImage.naturalWidth + ' x ' + oImage.naturalHeight;
 		};
 	};
 

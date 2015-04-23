@@ -7,16 +7,18 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link href="css/template.css" rel="stylesheet" type="text/css">
+		<link href="css/template.css"	rel="stylesheet" type="text/css">
 		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link href="css/triona.css" rel="stylesheet" type="text/css">
+		<link href="css/triona.css"		rel="stylesheet" type="text/css">
+		<link href="css/fileupload.css" rel="stylesheet" type="text/css" />
 
+		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/angular.js"></script>
 		<script type="text/javascript" src="js/angular-route.js"></script>
 		<script type="text/javascript" src="js/routeApp.js"></script>
 		<script type="text/javascript" src="js/employeesController.js"></script>
 		<script type="text/javascript" src="js/projectsController.js"></script>
-		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/holidaysController.js"></script>
 
 		<script type="text/javascript" src="js/moment-with-locales.js"></script>
 		<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
@@ -37,7 +39,7 @@
 								<input type="text" class="form-control" placeholder="Search...">
 							</form>
 						</li>
-						<li><a href="logout.jsp">Logout</a></li>
+						<li><a href="#logout">Logout</a></li>
 					</ul>
 				</div>
 			</div>
@@ -54,14 +56,7 @@
 					</ul>
 				</div>
 				<div id="contentPane" class="col-sm-9 col-md-10 main" ng-view>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
-					<h1 class="page-header">Dashboard</h1>
+					<h1 class="page-header">Content</h1>
 				</div>
 			</div>
 		</div>

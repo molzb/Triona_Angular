@@ -8,7 +8,7 @@
 			<span class="glyphicon glyphicon-search" ng-click="ec.search(ec.searchTerm)"></span>
 		</div>
 		<div class="addEmp">
-			<a href="addEmployee.html" class="btn-primary btn btn-success">
+			<a href="#addEmployee" class="btn-primary btn btn-success" ng-show="ec.emp.roleName == 'admin'">
 				<span class="glyphicon glyphicon-plus">&nbsp;</span>Add employee
 			</a>
 		</div>
@@ -22,6 +22,7 @@
 				<th>City</th>
 				<th>Project</th>
 				<th>&nbsp;</th>
+				<th ng-show="ec.emp.roleName == 'admin'">&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -32,6 +33,10 @@
 				<td>{{emp.city}}</td>
 				<td>{{emp.projectName}}, {{emp.projectCity}}</td>
 				<td>{{emp.text}}</td>
+				<td ng-show="ec.emp.roleName == 'admin'">
+					<span class="glyphicon glyphicon-pencil" title="Edit"></span>
+					<span class="glyphicon glyphicon-remove" title="Delete"></span>
+				</td>
 			</tr>
 		</tbody>
 	</table>
