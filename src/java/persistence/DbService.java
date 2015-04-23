@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,18 +132,16 @@ public class DbService {
 	}
 
 	public String getEmployeeAsJson(String id) {
-		Calendar cal = new GregorianCalendar();
-		return getEmployeesAsJson(id, cal.get(Calendar.YEAR));
+		return getEmployeesAsJson(id);
 	}
 
 	public String getEmployeesAsJson() {
-		Calendar cal = new GregorianCalendar();
-		return getEmployeesAsJson(null, cal.get(Calendar.YEAR));
+		return getEmployeesAsJson(null);
 	}
 
-	private String getEmployeesAsJson(String id, int year) {
+	private String getEmployeesAsJson(String id) {
 		String sql = "SELECT e.id, e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, e.holidays,"
-				+ "	e.project_id, p.project_name, p.city AS pcity"
+				+ "	e.role_name, e.project_id, p.project_name, p.city AS pcity"
 				+ "		FROM employee e, project p"
 				+ "		WHERE e.project_id = p.id";
 		if (id != null && !id.isEmpty()) {
@@ -163,6 +159,7 @@ public class DbService {
 				jsonMap.put("fullName", rs.getString("first_name") + " " + rs.getString("last_name"));
 				jsonMap.put("jobTitle", rs.getString("jobtitle"));
 				jsonMap.put("city", rs.getString("city"));
+				jsonMap.put("roleName", rs.getString("role_name"));
 				jsonMap.put("projectId", rs.getInt("project_id"));
 				jsonMap.put("projectName", rs.getString("project_name"));
 				jsonMap.put("projectCity", rs.getString("pcity"));
