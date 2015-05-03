@@ -78,6 +78,7 @@ public class DbService {
 			}
 			return pstmt.executeUpdate() > 0;
 		} catch (SQLException ex) {
+			ex.printStackTrace();
 			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 			return false;
 		} finally {
@@ -85,15 +86,14 @@ public class DbService {
 		}
 	}
 
-	//TODO email ist FALSCH!!!
 	public boolean insertOrUpdateHoliday(SQL_INSERT_OR_UPDATE type, long id,
-			String email, Date from, Date to, int days) {
+			long employeeId, Date from, Date to, int days) {
 		String sqlInsert = "INSERT INTO holiday (employee_id, from_date, to_date, working_days) VALUES (?,?,?,?)";
 		String sqlUpdate = "UPDATE holiday SET employee_id=?, from_date=?, to_date=?, working_days=? WHERE id=?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(type == INSERT ? sqlInsert : sqlUpdate);
-			pstmt.setString(1, email);
+			pstmt.setLong(1, employeeId);
 			pstmt.setDate(2, from);
 			pstmt.setDate(3, to);
 			pstmt.setLong(4, days);
@@ -141,7 +141,7 @@ public class DbService {
 
 	private String getEmployeesAsJson(String id) {
 		String sql = "SELECT e.id, e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, e.holidays,"
-				+ "	e.role_name, e.project_id, p.project_name, p.city AS pcity"
+				+ "	e.role_name, e.email, e.project_id, p.project_name, p.city AS pcity"
 				+ "		FROM employee e, project p"
 				+ "		WHERE e.project_id = p.id";
 		if (id != null && !id.isEmpty()) {
@@ -160,6 +160,7 @@ public class DbService {
 				jsonMap.put("jobTitle", rs.getString("jobtitle"));
 				jsonMap.put("city", rs.getString("city"));
 				jsonMap.put("roleName", rs.getString("role_name"));
+				jsonMap.put("email", rs.getString("email"));
 				jsonMap.put("projectId", rs.getInt("project_id"));
 				jsonMap.put("projectName", rs.getString("project_name"));
 				jsonMap.put("projectCity", rs.getString("pcity"));
@@ -213,7 +214,7 @@ public class DbService {
 	}
 
 	public String getHolidaysAsJson(String employeeId) {
-		String sql = "SELECT e.id, e.first_name, e.last_name, p.project_name, h.from_date, h.to_date, h.working_days  "
+		String sql = "SELECT e.first_name, e.last_name, p.project_name, h.from_date, h.id, h.to_date, h.working_days  "
 				+ "	FROM employee e "
 				+ "	INNER JOIN project p on e.project_id = p.id "
 				+ "	LEFT JOIN holiday h on e.id = h.employee_id "

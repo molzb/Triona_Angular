@@ -39,7 +39,7 @@ public class BaseServlet extends HttpServlet {
 		resp.getWriter().println("Don't call me directly");
 	}
 
-	protected String getUsername(HttpServletRequest req) {
+	public String getUsername(HttpServletRequest req) {
 		return req.getRemoteUser() == null ? "bernhard.molz@triona.de" : req.getRemoteUser();
 	}
 

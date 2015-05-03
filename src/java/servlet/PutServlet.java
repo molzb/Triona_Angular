@@ -16,8 +16,8 @@ import static persistence.DbService.SQL_INSERT_OR_UPDATE.*;
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=employees&firstName=Hans&lastName=Sumpf&projectId=2&city=Frankfurt&image=hd.jpg&text=...&email=hs@triona.de&jobtitle=consultant&id=14
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=projects&client=DB&projectName=test&city=Frankfurt
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=projects&client=BD&projectName=TEST&city=Darmstadt&id=9
- * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=03.03.2015&days=3
- * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=04.03.2015&days=4&id=3
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=03.03.2015&workingDays=3
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=04.03.2015&workingDays=4&id=3
  * @author Bernhard
  */
 @WebServlet(name = "PutServlet", urlPatterns = {"/PutServlet"})
@@ -78,14 +78,14 @@ public class PutServlet extends BaseServlet {
 			case HOLIDAYS:
 				if (isInsert) {
 					out.println(service.insertOrUpdateHoliday(INSERT, 0,
-							req.getParameter("email"),
+							getLongParam(req, "employeeId"),
 							getDateParam(req, "fromDate"),
 							getDateParam(req, "toDate"),
 							getIntParam(req, "workingDays")));
 				} else {
 					out.println(service.insertOrUpdateHoliday(UPDATE,
 							getLongParam(req, ID),
-							req.getParameter("email"),
+							getLongParam(req, "employeeId"),
 							getDateParam(req, "fromDate"),
 							getDateParam(req, "toDate"),
 							getIntParam(req, "workingDays")));
