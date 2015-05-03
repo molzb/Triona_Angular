@@ -46,13 +46,9 @@ function fileSelected() {
 		oImage.src = e.target.result;
 
 		oImage.onload = function () { // binding onload event
-
-			// we are going to display some custom image information here
 			sResultFileSize = bytesToSize(oFile.size);
 			document.getElementById('fileinfo').style.display = 'block';
 			document.getElementById('filename').innerHTML = 'Name: ' + oFile.name;
-//			document.getElementById('filesize').innerHTML = 'Size: ' + sResultFileSize;
-//			document.getElementById('filedim').innerHTML = 'Dimension: ' + oImage.naturalWidth + ' x ' + oImage.naturalHeight;
 		};
 	};
 
@@ -77,6 +73,15 @@ function startUploading() {
 	oXHR.addEventListener('abort', uploadAbort, false);
 	oXHR.open('POST', 'UploadServlet');
 	oXHR.send(vFD);
+
+	setImgSrc($('#tblPreview tbody img'));
+}
+
+function setImgSrc(img) {
+	var file = $('#image_file').val();
+	if (file.indexOf('\\') > -1)
+		file = file.substring(file.lastIndexOf('\\')+1);
+	$('#tblPreview tbody img').attr('src', 'images/' + file);
 }
 
 function uploadError(e) { // upload error

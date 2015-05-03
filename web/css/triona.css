@@ -1,6 +1,13 @@
 #contentPane {
 	margin-top: 40px;
+	margin-left: 240px;
 }
+.w90 { width: 90px; }
+
+.sidebar { position: fixed; }
+#triona #hiUser { color: white; font-weight: bold; }
+
+#frmEmployee .marginTop10 { margin-top: 10px; }
 
 .trionaList table { clear: both; }
 .trionaList { margin: 10px; }
@@ -20,6 +27,7 @@
 #calendar table .red { color: red; font-weight: bold; }
 #calendar table .outOfMth { color: #dddddd; }
 #calendar h3 { text-align: center; }
+#tblExistingHolidays .w20 { width: 20px; }
 
 #listHolidays, #divExistingHolidays { margin-left: 0; }
 

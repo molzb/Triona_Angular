@@ -3,11 +3,12 @@ routeApp.config(['$routeProvider',
 	function ($routeProvider) {
 		$routeProvider.
 				when('/home',		{templateUrl: 'home.html'}).
-				when('/team',		{templateUrl: 'teamPlain.html'}).
+				when('/team',		{templateUrl: 'team.html'}).
 				when('/projects',	{templateUrl: 'projects.html'}).
-				when('/holidays',	{templateUrl: 'holidaysPlain.html'}).
+				when('/holidays',	{templateUrl: 'holidays.html'}).
 				when('/employee',	{templateUrl: 'detailEmployee.html'}).
 				when('/addEmployee',{templateUrl: 'addEmployee.html'}).
+				when('/editEmployee/:id',{templateUrl: 'addEmployee.html'}).
 				when('/logout',		{templateUrl: 'logout.jsp'}).
 				otherwise({redirectTo: '/home'});
 	}]);
@@ -26,3 +27,10 @@ function redirectToLogin() {
 		window.location.href = "login.jsp";
 	}, 2000);
 }
+
+String.prototype.format = function () {
+	var args = arguments;
+	return this.replace(/{(\d+)}/g, function (match, number) {
+		return typeof args[number] != 'undefined' ? args[number] : match;
+	});
+};

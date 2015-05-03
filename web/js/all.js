@@ -1,7 +1,144 @@
+var routeApp = angular.module('routeApp', ['ngRoute']);
+routeApp.config(['$routeProvider',
+	function ($routeProvider) {
+		$routeProvider.
+				when('/home',		{templateUrl: 'home.html'}).
+				when('/team',		{templateUrl: 'team.html'}).
+				when('/projects',	{templateUrl: 'projects.html'}).
+				when('/holidays',	{templateUrl: 'holidays.html'}).
+				when('/employee',	{templateUrl: 'detailEmployee.html'}).
+				when('/addEmployee',{templateUrl: 'addEmployee.html'}).
+				when('/logout',		{templateUrl: 'logout.jsp'}).
+				otherwise({redirectTo: '/home'});
+	}]);
+routeApp.controller('RouteController', function ($scope, $location) {
+	$scope.isActive = function (viewLocation) {
+		return viewLocation === $location.path();
+	};
+
+	$scope.classActive = function (viewLocation) {
+		return $scope.isActive(viewLocation) ? "active" : "";
+	};
+});
+
+function redirectToLogin() {
+	window.setTimeout(function() {
+		window.location.href = "login.jsp";
+	}, 2000);
+}"use strict";
+var myScope;
+routeApp.controller('EmployeesController', function ($http, $routeParams, $location) {
+	var ctrl = myScope = this;
+
+	ctrl.employees = [];
+	ctrl.projects = [];
+	ctrl.jobTitles = [
+		{name: 'Junior-Consultant', id: 0},
+		{name: 'Consultant', id: 1},
+		{name: 'Lead Consultant', id: 2},
+		{name: 'Senior Consultant', id: 3},
+		{name: 'CEO', id: 4}];
+
+	ctrl.searchTerm = '';
+	ctrl.orderBy = '';
+	ctrl.newEmployee = {};
+	ctrl.emp = {};
+	ctrl.isEditMode = false;
+
+	var idParam = $routeParams.id ? '&id=' + $routeParams.id : '';
+	$http.get('GetServlet?type=employees' + idParam).success(function (data) {
+		ctrl.employees = data;
+		ctrl.emp = ctrl.findEmp($('#user').text());
+		window.setTimeout(function () {
+			$(".glyphicon").tooltip();
+		}, 1000);
+	}).error(function () {
+		console.log("FAIL");
+	});
+
+	this.findEmp = function (email) {
+		for (var i = 0; i < ctrl.employees.length; i++) {
+			if (ctrl.employees[i].email === email)
+				return ctrl.employees[i];
+		}
+		return ctrl.employees[0];
+	};
+
+	this.loadProjects = function () {
+		console.log("loadProjects");
+		$http.get('GetServlet?type=projects' + idParam).success(function (data) {
+			ctrl.projects = data;
+		}).error(function () {
+			console.log("FAIL");
+		});
+	};
+
+	this.getEmp = function (idx) {
+		return this.employees[idx];
+	};
+
+	this.search = function (searchT) {
+		console.log(searchT);
+		this.searchTerm = searchT;
+	};
+
+	this.addEmployee = function () {
+		console.log("addEmployee");
+		$http.post('PutServlet', JSON.stringify(ctrl.newEmployee)).success(function () {
+			$location.path("#team");
+		});
+	};
+
+	this.delete = function (id) {
+		if (window.confirm("Do you really want to delete?")) {
+			$http.get('DeleteServlet?type=employees&id=' + id).success(function (data) {
+				console.log("Return-Code" + data);
+				$rootScope.$apply(function () {
+					$location.path("#team");
+				});
+			});
+		}
+	};
+
+	this.edit = function (id) {
+		console.log("edit");
+	};
+}
+);
+"use strict";
+routeApp.controller('ProjectsController', ['$http', '$log', function ($http, $log) {
+		var ctrl = this;
+
+		ctrl.projects = [];
+
+		ctrl.searchTerm = '';
+		ctrl.orderBy = '';
+
+		$http.get('GetServlet?type=projects').success(function (data) {
+			ctrl.projects = data;
+		}).error(function () {
+			console.log("FAIL");
+		});
+
+		this.range = function (n) {
+			console.log("range " + n);
+			return new Array(n);
+		};
+
+		this.search = function (searchT) {
+			console.log(searchT);
+			this.searchTerm = searchT;
+		};
+
+		this.addProject = function () {
+			console.log("addProject");
+		};
+	}
+]);
 "use strict";
 var myScope;
 
-routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
+routeApp.controller('holidayCtrl', function ($scope, $http) {
 	myScope = $scope;
 	$scope.year = new Date().getFullYear();
 	$scope.today = new Date();
@@ -29,7 +166,6 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 			$scope.countTakenDays();
 			window.setTimeout(function() {
 				$scope.markMyHolidays();
-				$(".glyphicon").tooltip();
 			}, 500);
 
 			$scope.init();
@@ -72,16 +208,6 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 		this.calcDays();
 	};
 
-	$scope.delete = function(id) {
-		if (window.confirm('Do you really want to delete this?')) {
-			$http.get('DeleteServlet?type=holidays&id=' + id).success(function (data) {
-				$route.reload();
-			}).error(function (error) {
-				console.log("FAIL delete holiday " + id);
-			});
-		}
-	};
-
 	$scope.calcDays = function () {
 		if (this.from === null || this.to === null)
 			return;
@@ -107,9 +233,6 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 
 	$scope.markDates = function (fromDate, toDate, isTaken) {
 		var workingDays = 0;
-		for (var i = 0; i < $scope.months.length; i++)
-			$("#" + $scope.months[i] + " tbody td.btn-danger").removeClass("btn-danger");
-
 		while (toDate.getTime() >= fromDate.getTime()) {
 			if (toDate.getDay() >= 1 && toDate.getDay() <= 5) {
 				workingDays++;
@@ -126,7 +249,7 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 
 		var tblOfMonth = $("#" + $scope.months[month] + " tbody");
 		var tdOfMonth = tblOfMonth.find("td").not(".outOfMth,.red");
-//		console.log("mark " + day + "." + $scope.months[month] + " " + year + ", tdOfMonth len=" + tdOfMonth.length);
+		console.log("mark " + day + "." + $scope.months[month] + " " + year + ", tdOfMonth len=" + tdOfMonth.length);
 		tdOfMonth.each(function () {
 			if (parseInt($(this)[0].innerHTML) === day) {
 				$(this).addClass(isTaken ? "btn-success" : "btn-danger");
@@ -184,17 +307,6 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 	$scope.gotoToday = function () {
 		$scope.year = new Date().getFullYear();
 		$scope.initYear();
-	};
-
-	$scope.save = function() {
-		console.log($scope.from + "-" + $scope.to + ":" + $scope.workingDays);
-		var qParam = "?sqlType={0}&type={1}&employeeId={2}&fromDate={3}&toDate={4}&workingDays={5}".
-				format("INSERT", "holidays", $scope.userId, $scope.from, $scope.to, $scope.workingDays);
-		$http.get("PutServlet" + qParam).success(function (data) {
-			$route.reload();
-		}).error(function() {
-			console.log("error in save()");
-		});
 	};
 
 	$scope.reset = function () {

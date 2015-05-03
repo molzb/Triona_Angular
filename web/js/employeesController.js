@@ -1,7 +1,8 @@
 "use strict";
 var myScope;
-routeApp.controller('EmployeesController', function ($http, $routeParams, $location) {
+routeApp.controller('EmployeesController', function ($http, $routeParams, $route, $location) {
 	var ctrl = myScope = this;
+	ctrl.myLocation = $location;
 
 	ctrl.employees = [];
 	ctrl.projects = [];
@@ -18,17 +19,35 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $locat
 	ctrl.emp = {};
 	ctrl.isEditMode = false;
 
-	var idParam = $routeParams.id ? '&id=' + $routeParams.id : '';
-	$http.get('GetServlet?type=employees' + idParam).success(function (data) {
+	ctrl.idParam = $routeParams.id ? '&id=' + $routeParams.id : '';
+	console.log("param id=" + $routeParams.id);
+
+	$http.get('GetServlet?type=employees' + ctrl.idParam).success(function (data) {
 		ctrl.employees = data;
-		ctrl.emp = ctrl.employees[0];
+		ctrl.emp = ctrl.findEmp($('#user').text());
+		if ($routeParams.id !== undefined) {
+			ctrl.newEmployee = data[0];
+			ctrl.isEditMode = true;
+		}
+
+		window.setTimeout(function () {
+			$(".glyphicon").tooltip();
+		}, 1000);
 	}).error(function () {
 		console.log("FAIL");
 	});
 
+	this.findEmp = function (email) {
+		for (var i = 0; i < ctrl.employees.length; i++) {
+			if (ctrl.employees[i].email === email)
+				return ctrl.employees[i];
+		}
+		return ctrl.employees[0];
+	};
+
 	this.loadProjects = function () {
 		console.log("loadProjects");
-		$http.get('GetServlet?type=projects' + idParam).success(function (data) {
+		$http.get('GetServlet?type=projects' + ctrl.idParam).success(function (data) {
 			ctrl.projects = data;
 		}).error(function () {
 			console.log("FAIL");
@@ -44,18 +63,31 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $locat
 		this.searchTerm = searchT;
 	};
 
-	this.addEmployee = function () {
+	this.addEmployee = function (e) {
 		console.log("addEmployee");
-		$http.post('PutServlet', JSON.stringify(ctrl.newEmployee)).success(function () {/*success callback*/
-			$location.path("#team");
+		var qParam = "?sqlType={0}&type={1}&firstName={2}&lastName={3}&email={4}&jobtitle={5}&city={6}&projectId={7}&text={8}".
+				format("INSERT", "employees", e.firstName, e.lastName, e.email, e.jobtitle, e.city, e.projectId, e.text);
+		$http.get('PutServlet' + qParam).success(function () {
+			console.log("location=" + $location);
+			console.log("ctrl.$location=" + ctrl.myLocation);
+			$location.path("/team");
+		}).error(function() {
+			console.log("error in addEmployee");
 		});
 	};
 
-	this.redirect = function () {
+	this.delete = function (id) {
+		if (window.confirm("Do you really want to delete?")) {
+			$http.get('DeleteServlet?type=employees&id=' + id).success(function (data) {
+				console.log("Return-Code" + data);
+				$route.reload();
+			}).error(function() {
+				console.log("error in delete");
+			});
+		}
 	};
 
-	this.delete = function () {
-		//check, if ID in form is present
+	this.edit = function (id) {
+		$location.path("/editEmployee/" + id);
 	};
-}
-);
+});

@@ -1,3 +1,4 @@
+<%@page import="servlet.BaseServlet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -11,19 +12,20 @@
 		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link href="css/triona.css"		rel="stylesheet" type="text/css">
 		<link href="css/fileupload.css" rel="stylesheet" type="text/css" />
+		<link href="images/favicon.gif"		rel="shortcut icon" type="image/x-icon" />
 
-		<script type="text/javascript" src="js/jquery.js"></script>
+<!--		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/angular.js"></script>
 		<script type="text/javascript" src="js/angular-route.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/moment-with-locales.js"></script>
+		<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>-->
+		<script type="text/javascript" src="js/thirdParty.js"></script>
+
 		<script type="text/javascript" src="js/routeApp.js"></script>
 		<script type="text/javascript" src="js/employeesController.js"></script>
 		<script type="text/javascript" src="js/projectsController.js"></script>
 		<script type="text/javascript" src="js/holidaysController.js"></script>
-
-		<script type="text/javascript" src="js/moment-with-locales.js"></script>
-		<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-		<script type="text/javascript" src="js/holidaysController.js"></script>
-
 	</head>
 	<body>
 		<nav id="triona" class="navbar navbar-inverse navbar-fixed-top">
@@ -33,7 +35,7 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
-						<li><a style="color: white; font-weight: bold">Hallo, <%=request.getRemoteUser()%>!</a></li>
+						<li><a id="hiUser">Hi, <span id="user"><%=new BaseServlet().getUsername(request)%></span>!</a></li>
 						<li>
 							<form class="navbar-form navbar-right">
 								<input type="text" class="form-control" placeholder="Search...">

@@ -1,6 +1,4 @@
-<script type="text/javascript" src="js/employeesController.js"></script>
-
-<div id="listEmployees" ng-controller="EmployeesController as ec" class="trionaList">
+<div id="divTeam" ng-controller="EmployeesController as ec" class="trionaList">
 	<h1 class="page-header">The team</h1>
 	<div id="actions">
 		<div class="search">
@@ -18,24 +16,26 @@
 			<tr>
 				<th>&nbsp;</th>
 				<th>Name</th>
-				<th>&nbsp;</th>
 				<th>City</th>
 				<th>Project</th>
 				<th>&nbsp;</th>
-				<th ng-show="ec.emp.roleName == 'admin'">&nbsp;</th>
+				<th ng-if="ec.emp.roleName == 'admin'">&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="emp in ec.employees| orderBy: ec.orderBy | filter: ec.searchTerm">
+			<tr ng-repeat="emp in ec.employees| filter: ec.searchTerm">
 				<td><img ng-src="images/{{emp.image}}" alt="{{emp.firstName}}" width="90"/></td>
-				<td>{{emp.firstName}}</td>
-				<td>{{emp.lastName}}</td>
+				<td>{{emp.firstName}} {{emp.lastName}}</td>
 				<td>{{emp.city}}</td>
 				<td>{{emp.projectName}}, {{emp.projectCity}}</td>
 				<td>{{emp.text}}</td>
-				<td ng-show="ec.emp.roleName == 'admin'">
-					<span class="glyphicon glyphicon-pencil" title="Edit"></span>
-					<span class="glyphicon glyphicon-remove" title="Delete"></span>
+				<td ng-if="ec.emp.roleName == 'admin'">
+					<a ng-click="ec.edit(emp.id)">	<!-- Achtung, kein href/ng-href angeben!!! -->
+						<span class="glyphicon glyphicon-pencil" title="Edit this team member"></span>
+					</a>
+					<a ng-click="ec.delete(emp.id)">
+						<span class="glyphicon glyphicon-remove" title="Delete this team member"></span>
+					</a>
 				</td>
 			</tr>
 		</tbody>

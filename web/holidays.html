@@ -25,7 +25,7 @@
 			</div>
 
 			<div class="row">&nbsp;</div>
-			<form class="row" action="PutServlet">
+			<form class="row" action="PutServlet" novalidate>
 				<input type="hidden" name="sqlType" value="INSERT"/>
 				<input type="hidden" name="type" value="holidays"/>
 				<input type="hidden" name="employeeId" value="4"/>
@@ -54,7 +54,7 @@
 				<div class="col-md-3">
 					<div class="control-group">
 						<a class="btn btn-warning" href="/Triona_Angular">Cancel</a>
-						<button type="submit" class="btn btn-success">Save</button>
+						<button type="button" class="btn btn-success" ng-disabled="remainingDays < 0" ng-click="save()">Save</button>
 						<button type="reset"  ng-click="reset()" class="btn btn-danger">Reset</button>
 					</div>
 				</div>
@@ -73,6 +73,7 @@
 							<th>From</th>
 							<th>To</th>
 							<th>Workdays</th>
+							<th>&nbsp;</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -80,6 +81,11 @@
 							<td>{{h.from}}</td>
 							<td>{{h.to}}</td>
 							<td>{{h.workingDays}}</td>
+							<td class="w20">
+								<a href="#" ng-click="delete(h.id)">
+									<span class="glyphicon glyphicon-remove" title="Delete this hoiday"></span>
+								</a>
+							</td>
 						</tr>
 					</tbody>
 				</table>
