@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PackMe" default="all" basedir=".">
+	<target name="packCss">
+		<concat destfile="web/all.css">
+			<fileset dir="web/css" includes="*.css"/>
+		</concat>
+	</target>
+	<target name="packJs">
+		<concat destfile="web/js/all.js">
+			<filelist dir="web/js" files="routeApp.js,employeesController.js,projectsController.js,holidaysController.js"/>
+		</concat>
+	</target>
+	<target name="packThirdParty">
+		<concat destfile="web/js/thirdParty.js">
+			<filelist dir="web/js" files="jquery.js,angular.js,angular-route.js,bootstrap.min.js,moment-with-locales.js,bootstrap-datetimepicker.js"/>
+		</concat>
+	</target>
+	<target name="packAndMinJs" depends="packJs">
+		<java jar="/java/yuicompressor-2.4.8.jar" fork="true">
+			<arg value="web/all.js" /> <!-- input path for JS files -->
+			<arg value="-o" />
+			<arg value="web/all.min.js" /> <!-- output path for JS files -->
+			<classpath>
+				<pathelement location="/java/yuicompressor-2.4.8.jar"/>
+			</classpath>
+		</java>
+	</target>
+	<target name="packAndMinCss" depends="packCss">
+		<java jar="/java/yuicompressor-2.4.8.jar" fork="true">
+			<arg value="web/all.css" /> <!-- input path for JS files -->
+			<arg value="-o" />
+			<arg value="web/all.min.css" /> <!-- output path for JS files -->
+			<classpath>
+				<pathelement location="/java/yuicompressor-2.4.8.jar"/>
+			</classpath>
+		</java>
+	</target>
+</project>
