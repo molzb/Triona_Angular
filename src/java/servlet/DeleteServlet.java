@@ -31,13 +31,13 @@ public class DeleteServlet extends BaseServlet {
 		try {
 			switch (param) {
 				case EMPLOYEES:
-					out.println(serviceUtils.deleteEmployee(getLongParam(req, ID)));
+					out.println(dbService.deleteEmployee(getLongParam(req, ID)));
 					break;
 				case PROJECTS:
-					out.println(serviceUtils.deleteProject(getLongParam(req, ID)));
+					out.println(dbService.deleteProject(getLongParam(req, ID)));
 					break;
 				case HOLIDAYS:
-					out.println(serviceUtils.deleteHoliday(getLongParam(req, ID)));
+					out.println(dbService.deleteHoliday(getLongParam(req, ID)));
 					break;
 				default:
 					String msg = "delete=" + param + " is not supported";

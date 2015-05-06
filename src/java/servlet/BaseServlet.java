@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import persistence.DbService;
 
 @WebServlet(name = "BaseServlet", urlPatterns = {"/BaseServlet"})
 public class BaseServlet extends HttpServlet {
@@ -32,7 +33,7 @@ public class BaseServlet extends HttpServlet {
 	@Resource(mappedName = "jdbc/triona", name = "jdbc/triona")
 	private DataSource ds;
 	private final DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-	protected persistence.DbService serviceUtils;
+	protected DbService dbService;
 
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -48,7 +49,7 @@ public class BaseServlet extends HttpServlet {
 		HttpSession sess = req.getSession(true);
 		if (sess.getAttribute("userId") == null) {
 			try {
-				sess.setAttribute("userId", serviceUtils.getUserId(getUsername(req)));
+				sess.setAttribute("userId", dbService.getUserId(getUsername(req)));
 			} catch (SQLException ex) {
 				LOG.log(Level.SEVERE, null, ex);
 			}
@@ -92,7 +93,7 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		serviceUtils = new persistence.DbService(ds);
+		dbService = new persistence.DbService(ds);
 	}
 
 	@Override

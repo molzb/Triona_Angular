@@ -35,13 +35,12 @@ public class PutServlet extends BaseServlet {
 		String typeParam = req.getParameter(TYPE);
 		String sqlTypeParam = req.getParameter("sqlType");
 		boolean isInsert = sqlTypeParam.equals(INSERT.name());
-		System.out.println("userName=" + getUsername(req) + ", userId=" + getUserId(req));
 
 		try {
 			switch (typeParam) {
 				case EMPLOYEES:
 					if (isInsert) {
-						out.println(serviceUtils.insertOrUpdateEmployee(INSERT, 0L,
+						out.println(dbService.insertOrUpdateEmployee(INSERT, 0L,
 								req.getParameter("firstName"),
 								req.getParameter("lastName"),
 								getLongParam(req, "projectId"),
@@ -52,7 +51,7 @@ public class PutServlet extends BaseServlet {
 								req.getParameter("email"),
 								req.getParameter("password")));
 					} else {
-						out.println(serviceUtils.insertOrUpdateEmployee(UPDATE,
+						out.println(dbService.insertOrUpdateEmployee(UPDATE,
 								getUserId(req),
 								req.getParameter("firstName"),
 								req.getParameter("lastName"),
@@ -67,12 +66,12 @@ public class PutServlet extends BaseServlet {
 					break;
 				case PROJECTS:
 					if (isInsert) {
-						out.println(serviceUtils.insertOrUpdateProject(INSERT, 0,
+						out.println(dbService.insertOrUpdateProject(INSERT, 0,
 								req.getParameter("client"),
 								req.getParameter("projectName"),
 								req.getParameter("city")));
 					} else {	// UPDATE
-						out.println(serviceUtils.insertOrUpdateProject(UPDATE,
+						out.println(dbService.insertOrUpdateProject(UPDATE,
 								getLongParam(req, ID),
 								req.getParameter("client"),
 								req.getParameter("projectName"),
@@ -81,13 +80,13 @@ public class PutServlet extends BaseServlet {
 					break;
 				case HOLIDAYS:
 					if (isInsert) {
-						out.println(serviceUtils.insertOrUpdateHoliday(INSERT, 0,
+						out.println(dbService.insertOrUpdateHoliday(INSERT, 0,
 								getLongParam(req, "employeeId"),
 								getDateParam(req, "fromDate"),
 								getDateParam(req, "toDate"),
 								getIntParam(req, "workingDays")));
 					} else {
-						out.println(serviceUtils.insertOrUpdateHoliday(UPDATE,
+						out.println(dbService.insertOrUpdateHoliday(UPDATE,
 								getLongParam(req, ID),
 								getLongParam(req, "employeeId"),
 								getDateParam(req, "fromDate"),

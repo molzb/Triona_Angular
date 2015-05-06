@@ -37,19 +37,19 @@ public class GetServlet extends BaseServlet {
 		try {
 			switch (param) {
 				case EMPLOYEES:
-					out.println(meAsId ? serviceUtils.getEmployeeAsJson(myId) : serviceUtils.getEmployeeAsJson(id));
+					out.println(meAsId ? dbService.getEmployeeAsJson(myId) : dbService.getEmployeeAsJson(id));
 					break;
 				case PROJECTS:
-					out.println(serviceUtils.getProjectsAsJson());
+					out.println(dbService.getProjectsAsJson());
 					break;
 				case HOLIDAYS:
-					out.println(meAsId ? serviceUtils.getHolidaysAsJson(myId) : serviceUtils.getHolidaysAsJson(null));
+					out.println(meAsId ? dbService.getHolidaysAsJson(myId) : dbService.getHolidaysAsJson(null));
 					break;
 				case SPECIALDAYS:
-					out.println(serviceUtils.getSpecialDaysAsJson());
+					out.println(dbService.getSpecialDaysAsJson());
 					break;
 				default:
-					String msg = "select=%s is not supported".format(param);
+					String msg = "select=" + param + " is not supported";
 					LOG.log(Level.SEVERE, msg, param);
 					out.println(msg);
 			}
