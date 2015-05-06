@@ -16,6 +16,7 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 	$scope.toDate = null;
 	$scope.myHolidays = [];
 	$scope.holidayListVisible = false;
+	$scope.specialDays = [];
 
 	$scope.me = {};
 	$scope.userId = 0;
@@ -31,6 +32,11 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 				$scope.markMyHolidays();
 				$(".glyphicon").tooltip();
 			}, 500);
+
+			$http.get('GetServlet?type=specialdays').success(function (data) {
+				$scope.specialDays = data;
+				$scope.markSpecialDays();
+			});
 
 			$scope.init();
 		}).error(function () {
@@ -105,10 +111,19 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 		}
 	};
 
-	$scope.markDates = function (fromDate, toDate, isTaken) {
+	$scope.markSpecialDays = function() {
+		for (var i = 0; i < $scope.specialDays.length; i++) {
+			var tokens = $scope.specialDays[i].day.split("-");
+			var d = new Date(tokens[0], tokens[1]-1, tokens[2], 0, 0, 0, 0);
+			console.log("special " + d);
+			$scope.markDate(d.getFullYear(), d.getMonth(), d.getDate(), false, $scope.specialDays[i].type);
+		}
+	};
+
+	$scope.markDates = function (fromDate, toDate, isTaken, type) {
 		var workingDays = 0;
 		for (var i = 0; i < $scope.months.length; i++)
-			$("#" + $scope.months[i] + " tbody td.btn-danger").removeClass("btn-danger");
+			$("#" + $scope.months[i] + " tbody td.btn-danger").removeClass("btn-danger,btn-info,btn-warning,btn-success");
 
 		while (toDate.getTime() >= fromDate.getTime()) {
 			if (toDate.getDay() >= 1 && toDate.getDay() <= 5) {
@@ -120,7 +135,7 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 		return workingDays;
 	};
 
-	$scope.markDate = function (year, month, day, isTaken) {
+	$scope.markDate = function (year, month, day, isTaken,type) {
 		if (year !== this.year)
 			return;
 
@@ -129,7 +144,14 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 //		console.log("mark " + day + "." + $scope.months[month] + " " + year + ", tdOfMonth len=" + tdOfMonth.length);
 		tdOfMonth.each(function () {
 			if (parseInt($(this)[0].innerHTML) === day) {
-				$(this).addClass(isTaken ? "btn-success" : "btn-danger");
+				if (type === "meeting")
+					$(this).addClass("btn-info");
+				else if (type === "holiday")
+					$(this).addClass("btn-danger");
+				else if (isTaken)
+					$(this).addClass("btn-success");
+				else if (!isTaken)
+					$(this).addClass("btn-warning");
 			}
 		});
 	};

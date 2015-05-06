@@ -1,6 +1,10 @@
 #contentPane {
 	margin-top: 40px;
-	margin-left: 240px;
+	margin-left: 16.67%;
+}
+#trionaBody .container {
+	margin-left: 0;
+	padding-left: 0;
 }
 .w90 { width: 90px; }
 
@@ -30,4 +34,3 @@
 #tblExistingHolidays .w20 { width: 20px; }
 
 #listHolidays, #divExistingHolidays { margin-left: 0; }
-

@@ -8,18 +8,12 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link href="css/template.css"	rel="stylesheet" type="text/css">
-		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link href="css/triona.css"		rel="stylesheet" type="text/css">
-		<link href="css/fileupload.css" rel="stylesheet" type="text/css" />
+		<link href="css/template.css"		rel="stylesheet" type="text/css">
+		<link href="css/bootstrap.min.css"	rel="stylesheet" type="text/css">
+		<link href="css/triona.css"			rel="stylesheet" type="text/css">
+		<link href="css/fileupload.css"		rel="stylesheet" type="text/css" />
 		<link href="images/favicon.gif"		rel="shortcut icon" type="image/x-icon" />
 
-<!--		<script type="text/javascript" src="js/jquery.js"></script>
-		<script type="text/javascript" src="js/angular.js"></script>
-		<script type="text/javascript" src="js/angular-route.js"></script>
-		<script type="text/javascript" src="js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="js/moment-with-locales.js"></script>
-		<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>-->
 		<script type="text/javascript" src="js/thirdParty.js"></script>
 
 		<script type="text/javascript" src="js/routeApp.js"></script>
@@ -27,7 +21,7 @@
 		<script type="text/javascript" src="js/projectsController.js"></script>
 		<script type="text/javascript" src="js/holidaysController.js"></script>
 	</head>
-	<body>
+	<body id="trionaBody">
 		<nav id="triona" class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container-fluid">
 				<div class="navbar-header">

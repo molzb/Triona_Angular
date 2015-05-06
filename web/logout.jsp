@@ -1,6 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-	System.out.println("Log out " + request.getRemoteUser());
 	session.invalidate();
 %>
 <script type="text/javascript">
