@@ -1,21 +1,16 @@
 package persistence;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sql.DataSource;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.json.simple.JSONValue;
-import static persistence.DbService.SQL_INSERT_OR_UPDATE.*;
+import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
 
 /**
  * Einfacher DB-Service mit CRUD-Methoden
@@ -24,13 +19,9 @@ import static persistence.DbService.SQL_INSERT_OR_UPDATE.*;
  */
 public class DbService {
 
-	private static final Logger LOG = Logger.getLogger(DbService.class.getName());
 	private final DataSource ds;
-	private Connection conn;
-	private Statement stmt;
-	private PreparedStatement pstmt;
 
-	public enum SQL_INSERT_OR_UPDATE {
+	public enum SQL_INSERT_UPDATE {
 
 		INSERT, UPDATE
 	};
@@ -39,265 +30,123 @@ public class DbService {
 		this.ds = ds;
 	}
 
-	public int getUserId(String email) {
+	public int getUserId(String email) throws SQLException {
 		String sql = "SELECT id FROM employee WHERE email = '" + email + "'";
-		ResultSet rs = doSelect(sql);
-		try {
-			rs.next();
-			return rs.getInt("id");
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-		} finally {
-			DbUtil.closeQuietly(conn, null, rs);
-		}
-		return 0;
+		return new QueryRunner(ds).query(sql, new ScalarHandler<Integer>("id"));
 	}
 
-	public boolean insertOrUpdateEmployee(SQL_INSERT_OR_UPDATE type,
+	public boolean insertOrUpdateEmployee(SQL_INSERT_UPDATE type,
 			long id, String firstName, String lastName, long projectId, String jobTitle,
-			String city, String image, String text, String email, String password) {
+			String city, String image, String text, String email, String password) throws SQLException {
 		String sqlInsert = "INSERT INTO employee (first_name, last_name, project_id, jobtitle, city, image, text, email, password) "
 				+ "VALUES (?,?,?,?,?,  ?,?,?,sha(?))";
 		String sqlUpdate = "UPDATE employee SET first_name=?, last_name=?, project_id=?, jobtitle=?, city=?, image=?, text=?, email=? "
 				+ "WHERE id = ?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(type == INSERT ? sqlInsert : sqlUpdate);
-			pstmt.setString(1, firstName);
-			pstmt.setString(2, lastName);
-			pstmt.setLong(3, projectId);
-			pstmt.setString(4, jobTitle);
-			pstmt.setString(5, city);
-			pstmt.setString(6, image);
-			pstmt.setString(7, text);
-			pstmt.setString(8, email);
-			if (type == INSERT) {
-				pstmt.setString(9, password);
-			} else {	// UPDATE
-				pstmt.setLong(9, id);
-			}
-			return pstmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			return false;
-		} finally {
-			DbUtil.closeQuietly(conn, pstmt, null);
+
+		if (type == UPDATE) {
+			return new QueryRunner(ds).update(sqlUpdate, firstName, lastName, projectId, jobTitle, city, image, text, email, id) > 0;
+		} else //if (type == INSERT)
+		{
+			return new QueryRunner(ds).update(sqlInsert, firstName, lastName, projectId, jobTitle, city, image, text, email, password) > 0;
 		}
 	}
 
-	public boolean insertOrUpdateHoliday(SQL_INSERT_OR_UPDATE type, long id,
-			long employeeId, Date from, Date to, int days) {
+	public boolean insertOrUpdateHoliday(SQL_INSERT_UPDATE type, long id,
+			long employeeId, Date from, Date to, int days) throws SQLException {
 		String sqlInsert = "INSERT INTO holiday (employee_id, from_date, to_date, working_days) VALUES (?,?,?,?)";
 		String sqlUpdate = "UPDATE holiday SET employee_id=?, from_date=?, to_date=?, working_days=? WHERE id=?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(type == INSERT ? sqlInsert : sqlUpdate);
-			pstmt.setLong(1, employeeId);
-			pstmt.setDate(2, from);
-			pstmt.setDate(3, to);
-			pstmt.setLong(4, days);
-			if (type == UPDATE) {
-				pstmt.setLong(5, id);
-			}
-			return pstmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			return false;
-		} finally {
-			DbUtil.closeQuietly(conn, pstmt, null);
+
+		if (type == UPDATE) {
+			return new QueryRunner(ds).update(sqlUpdate, employeeId, from, to, days, id) > 0;
+		} else //if (type == INSERT)
+		{
+			return new QueryRunner(ds).update(sqlInsert, employeeId, from, to, days) > 0;
 		}
 	}
 
-	public boolean insertOrUpdateProject(SQL_INSERT_OR_UPDATE type, long id,
-			String client, String projectName, String city) {
+	public boolean insertOrUpdateProject(SQL_INSERT_UPDATE type, long id,
+			String client, String projectName, String city) throws SQLException {
 		String sqlInsert = "INSERT INTO project (client, project_name, city) VALUES (?,?,?)";
 		String sqlUpdate = "UPDATE project SET client=?, project_name=?, city=? WHERE id=?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(type == INSERT ? sqlInsert : sqlUpdate);
-			pstmt.setString(1, client);
-			pstmt.setString(2, projectName);
-			pstmt.setString(3, city);
-			if (type == UPDATE) {
-				pstmt.setLong(4, id);
-			}
-			return pstmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			return false;
-		} finally {
-			DbUtil.closeQuietly(conn, pstmt, null);
+
+		if (type == UPDATE) {
+			return new QueryRunner(ds).update(sqlUpdate, client, projectName, city, id) > 0;
+		} else //if (type == INSERT)
+		{
+			return new QueryRunner(ds).update(sqlInsert, client, projectName, city) > 0;
 		}
 	}
 
-	public String getEmployeeAsJson(String id) {
+	public String getEmployeeAsJson(String id) throws SQLException {
 		return getEmployeesAsJson(id);
 	}
 
-	public String getEmployeesAsJson() {
+	public String getEmployeesAsJson() throws SQLException {
 		return getEmployeesAsJson(null);
 	}
 
-	private String getEmployeesAsJson(String id) {
-		String sql = "SELECT e.id, e.image, e.first_name, e.last_name, e.jobtitle, e.city, e.text, e.holidays,"
-				+ "	e.role_name, e.email, e.project_id, p.project_name, p.city AS pcity"
+	private String getEmployeesAsJson(String id) throws SQLException {
+		String sql = "SELECT e.id, e.image, e.first_name as firstName, e.last_name as lastName, "
+				+ " CONCAT(e.first_name, ' ', e.last_name) as fullName, e.jobtitle as jobTitle, e.city, e.text, e.holidays,"
+				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.project_name AS projectName, p.city AS projectCity"
 				+ "		FROM employee e, project p"
 				+ "		WHERE e.project_id = p.id";
 		if (id != null && !id.isEmpty()) {
 			sql += " AND e.id = " + id;
 		}
-		ResultSet rs = doSelect(sql);
-		try {
-			List jsonArray = new ArrayList();
-			while (rs.next()) {
-				Map<String, Object> jsonMap = new HashMap<String, Object>();
-				jsonMap.put("id", rs.getString("id"));
-				jsonMap.put("image", rs.getString("image"));
-				jsonMap.put("firstName", rs.getString("first_name"));
-				jsonMap.put("lastName", rs.getString("last_name"));
-				jsonMap.put("fullName", rs.getString("first_name") + " " + rs.getString("last_name"));
-				jsonMap.put("jobTitle", rs.getString("jobtitle"));
-				jsonMap.put("city", rs.getString("city"));
-				jsonMap.put("roleName", rs.getString("role_name"));
-				jsonMap.put("email", rs.getString("email"));
-				jsonMap.put("projectId", rs.getInt("project_id"));
-				jsonMap.put("projectName", rs.getString("project_name"));
-				jsonMap.put("projectCity", rs.getString("pcity"));
-				jsonMap.put("holidays", rs.getInt("holidays"));
-				jsonMap.put("text", rs.getString("text"));
-
-				jsonArray.add(jsonMap);
-			}
-			return JSONValue.toJSONString(jsonArray);
-
-		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			DbUtil.closeQuietly(conn, stmt, rs);
-		}
-		return "";
+		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
+		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getProjectsAsJson() {
+	public String getProjectsAsJson() throws SQLException {
 		String sql = "SELECT p.id, p.icon, p.client, p.project_name, p.city, "
-				+ "group_concat(e.id) as emp_ids, group_concat(concat(e.first_name, \" \", e.last_name)) as emp_names "
+				+ "group_concat(e.id) as empIds, group_concat(concat(e.first_name, ' ', e.last_name)) as empNames "
 				+ "FROM project p "
 				+ "INNER JOIN employee e on e.project_id = p.id "
 				+ "GROUP BY p.project_name "
 				+ "ORDER by p.project_name";
-		ResultSet rs = doSelect(sql);
-		try {
-			List jsonArray = new ArrayList();
-			while (rs.next()) {
-				Map<String, Object> jsonMap = new HashMap<String, Object>();
-				jsonMap.put("id", rs.getInt("id"));
-				jsonMap.put("icon", rs.getString("icon"));
-				jsonMap.put("client", rs.getString("client"));
-				jsonMap.put("projectName", rs.getString("project_name"));
-				jsonMap.put("city", rs.getString("city"));
-				List<String> empIds = Arrays.asList(rs.getString("emp_ids").split(","));
-				List<String> empNames = Arrays.asList(rs.getString("emp_names").split(","));
-				jsonMap.put("empNames", empNames);
-				jsonMap.put("empIds", empIds);
-
-				jsonArray.add(jsonMap);
-			}
-			return JSONValue.toJSONString(jsonArray);
-
-		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			DbUtil.closeQuietly(conn, stmt, rs);
+		List<Map<String, Object>> mapList = new QueryRunner(ds).query(sql, new MapListHandler());
+		for (Map m : mapList) {
+			List empIdList = Arrays.asList(m.get("empIds"));
+			List empNamesList = Arrays.asList(m.get("empNames"));
+			m.put("empIds", empIdList);
+			m.put("empNames", empNamesList);
 		}
-		return "";
+
+		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getHolidaysAsJson(String employeeId) {
-		String sql = "SELECT e.first_name, e.last_name, p.project_name, h.from_date, h.id, h.to_date, h.working_days  "
-				+ "	FROM employee e "
-				+ "	INNER JOIN project p on e.project_id = p.id "
-				+ "	LEFT JOIN holiday h on e.id = h.employee_id "
+	public String getHolidaysAsJson(String employeeId) throws SQLException {
+		String sql = "SELECT e.first_name, e.last_name, p.project_name, CAST(h.from_date AS char) AS 'from', h.id, "
+				+ " CAST(to_date AS char) AS 'to', h.working_days AS workingDays "
+				+ "		FROM employee e "
+				+ "		INNER JOIN project p on e.project_id = p.id "
+				+ "		LEFT JOIN holiday h on e.id = h.employee_id "
 				+ (employeeId != null && !employeeId.isEmpty() ? " WHERE e.id = " + employeeId : "")
 				+ "	ORDER BY e.last_name ";
-		ResultSet rs = doSelect(sql);
-		try {
-			List jsonArray = new ArrayList();
-			while (rs.next()) {
-				Map<String, Object> jsonMap = new HashMap<String, Object>();
-				jsonMap.put("id", rs.getInt("id"));
-				jsonMap.put("firstName", rs.getString("first_name"));
-				jsonMap.put("lastName", rs.getString("last_name"));
-				jsonMap.put("projectName", rs.getString("project_name"));
-				jsonMap.put("from", rs.getString("from_date"));
-				jsonMap.put("to", rs.getString("to_date"));
-				jsonMap.put("workingDays", rs.getInt("working_days"));
 
-				jsonArray.add(jsonMap);
-			}
-			return JSONValue.toJSONString(jsonArray);
-
-		} catch (SQLException e) {
-			LOG.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			DbUtil.closeQuietly(conn, stmt, rs);
-		}
-		return "";
+		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
+		return JSONValue.toJSONString(mapList);
 	}
 
-	private ResultSet doSelect(String sql) {
-		try {
-			conn = ds.getConnection();
-			stmt = conn.createStatement();
-			return stmt.executeQuery(sql);
-		} catch (SQLException sqle) {
-			LOG.log(Level.SEVERE, sqle.getMessage(), sqle);
-		}
-		return null;
+	public String getSpecialDaysAsJson() throws SQLException {
+		String sql = "SELECT CAST(day AS char) AS day, type FROM specialday";
+		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
+		return JSONValue.toJSONString(mapList);
 	}
 
-	public boolean deleteEmployee(long id) {
+	public boolean deleteEmployee(long id) throws SQLException {
 		String sql = "DELETE FROM employee WHERE id = ?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, id);
-			return pstmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			return false;
-		} finally {
-			DbUtil.closeQuietly(conn, pstmt, null);
-		}
+		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 
-	public boolean deleteProject(long id) {
+	public boolean deleteProject(long id) throws SQLException {
 		String sql = "DELETE FROM project WHERE id = ?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, id);
-			return pstmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			return false;
-		} finally {
-			DbUtil.closeQuietly(conn, pstmt, null);
-		}
+		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 
-	public boolean deleteHoliday(long id) {
+	public boolean deleteHoliday(long id) throws SQLException {
 		String sql = "DELETE FROM holiday WHERE id = ?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, id);
-			return pstmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-			return false;
-		} finally {
-			DbUtil.closeQuietly(conn, pstmt, null);
-		}
+		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 }

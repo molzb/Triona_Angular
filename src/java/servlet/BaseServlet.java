@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import persistence.DbService;
 
 @WebServlet(name = "BaseServlet", urlPatterns = {"/BaseServlet"})
 public class BaseServlet extends HttpServlet {
@@ -25,13 +25,14 @@ public class BaseServlet extends HttpServlet {
 			EMPLOYEES = "employees",
 			PROJECTS = "projects",
 			HOLIDAYS = "holidays",
+			SPECIALDAYS = "specialdays",
 			ME = "me";
 	protected static final String ID = "id";
 
 	@Resource(mappedName = "jdbc/triona", name = "jdbc/triona")
 	private DataSource ds;
 	private final DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-	protected DbService service;
+	protected persistence.DbService serviceUtils;
 
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -46,7 +47,11 @@ public class BaseServlet extends HttpServlet {
 	protected int getUserId(HttpServletRequest req) {
 		HttpSession sess = req.getSession(true);
 		if (sess.getAttribute("userId") == null) {
-			sess.setAttribute("userId", service.getUserId(getUsername(req)));
+			try {
+				sess.setAttribute("userId", serviceUtils.getUserId(getUsername(req)));
+			} catch (SQLException ex) {
+				LOG.log(Level.SEVERE, null, ex);
+			}
 		}
 		return (Integer) sess.getAttribute("userId");
 	}
@@ -87,7 +92,7 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		service = new DbService(ds);
+		serviceUtils = new persistence.DbService(ds);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -27,26 +28,33 @@ public class GetServlet extends BaseServlet {
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("application/json;charset=UTF-8");
-		PrintWriter out = response.getWriter();
-		String param = request.getParameter(TYPE);
-		String myId = String.valueOf(getUserId(request));
-		boolean meAsId = getBooleanParam(request, ME);
-		String id = request.getParameter(ID);
-		switch (param) {
-			case EMPLOYEES:
-				out.println(meAsId ? service.getEmployeeAsJson(myId) : service.getEmployeeAsJson(id));
-				break;
-			case PROJECTS:
-				out.println(service.getProjectsAsJson());
-				break;
-			case HOLIDAYS:
-				out.println(meAsId ? service.getHolidaysAsJson(myId) : service.getHolidaysAsJson(null));
-				break;
-			default:
-				String msg = "select=" + param + " is not supported";
-				LOG.log(Level.SEVERE, msg, param);
-				out.println(msg);
+			response.setContentType("application/json;charset=UTF-8");
+			PrintWriter out = response.getWriter();
+			String param = request.getParameter(TYPE);
+			String myId = String.valueOf(getUserId(request));
+			boolean meAsId = getBooleanParam(request, ME);
+			String id = request.getParameter(ID);
+		try {
+			switch (param) {
+				case EMPLOYEES:
+					out.println(meAsId ? serviceUtils.getEmployeeAsJson(myId) : serviceUtils.getEmployeeAsJson(id));
+					break;
+				case PROJECTS:
+					out.println(serviceUtils.getProjectsAsJson());
+					break;
+				case HOLIDAYS:
+					out.println(meAsId ? serviceUtils.getHolidaysAsJson(myId) : serviceUtils.getHolidaysAsJson(null));
+					break;
+				case SPECIALDAYS:
+					out.println(serviceUtils.getSpecialDaysAsJson());
+					break;
+				default:
+					String msg = "select=%s is not supported".format(param);
+					LOG.log(Level.SEVERE, msg, param);
+					out.println(msg);
+			}
+		} catch (SQLException ex) {
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 }
