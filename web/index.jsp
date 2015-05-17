@@ -8,10 +8,8 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link href="css/template.css"		rel="stylesheet" type="text/css">
-		<link href="css/bootstrap.min.css"	rel="stylesheet" type="text/css">
+		<link href="css/thirdParty.css"		rel="stylesheet" type="text/css">
 		<link href="css/triona.css"			rel="stylesheet" type="text/css">
-		<link href="css/fileupload.css"		rel="stylesheet" type="text/css" />
 		<link href="images/favicon.gif"		rel="shortcut icon" type="image/x-icon" />
 
 		<script type="text/javascript" src="js/thirdParty.js"></script>
@@ -20,6 +18,7 @@
 		<script type="text/javascript" src="js/employeesController.js"></script>
 		<script type="text/javascript" src="js/projectsController.js"></script>
 		<script type="text/javascript" src="js/holidaysController.js"></script>
+		<script type="text/javascript" src="js/timesheetsController.js"></script>
 	</head>
 	<body id="trionaBody">
 		<nav id="triona" class="navbar navbar-inverse navbar-fixed-top">
@@ -42,13 +41,14 @@
 		</nav>
 
 		<div class="container-fluid" ng-app="routeApp">
-			<div class="row" ng-controller="RouteController">
+			<div class="row" ng-controller="RouteCtrl">
 				<div class="col-sm-3 col-md-2 sidebar">
 					<ul class="nav nav-sidebar">
 						<li ng-class="classActive('/home')"><a href="#home">Home</a></li>
 						<li ng-class="classActive('/team')"><a href="#team">The team</a></li>
 						<li ng-class="classActive('/projects')"><a href="#projects">Projects</a></li>
 						<li ng-class="classActive('/holidays')"><a href="#holidays">Holidays</a></li>
+						<li ng-class="classActive('/timesheets')"><a href="#timesheets">Timesheets</a></li>
 					</ul>
 				</div>
 				<div id="contentPane" class="col-sm-9 col-md-10 main" ng-view>

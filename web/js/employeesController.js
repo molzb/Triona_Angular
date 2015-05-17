@@ -19,6 +19,11 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 	ctrl.emp = {};
 	ctrl.isEditMode = false;
 
+	//sorting
+	ctrl.sortNameAsc = true, ctrl.sortCityAsc = true, ctrl.sortProjectAsc = true;
+	ctrl.predicate = 'id';
+	ctrl.reverse = false;
+
 	ctrl.idParam = $routeParams.id ? '&id=' + $routeParams.id : '';
 	console.log("param id=" + $routeParams.id);
 
@@ -37,6 +42,28 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 		console.log("FAIL");
 	});
 
+	this.sortCol = function(pred) {
+		ctrl.predicate = pred;
+		switch (pred) {
+			case "lastName":	ctrl.sortNameAsc = !ctrl.sortNameAsc;		break;
+			case "city":		ctrl.sortCityAsc = !ctrl.sortCityAsc;		break;
+			case "projectName": ctrl.sortProjectAsc = !ctrl.sortProjectAsc; break;
+		}
+		ctrl.reverse=!ctrl.reverse;
+		return false;
+	};
+
+	this.sortNameClass = function() {
+		return "sort glyphicon glyphicon-sort-by-alphabet" + (ctrl.sortNameAsc ? "" : "-alt");
+	};
+
+	this.sortProjectClass = function() {
+		return "sort glyphicon glyphicon-sort-by-alphabet" + (ctrl.sortProjectAsc ? "" : "-alt");
+	};
+
+	this.sortCityClass = function() {
+		return "sort glyphicon glyphicon-sort-by-alphabet" + (ctrl.sortCityAsc ? "" : "-alt");
+	};
 	this.findEmp = function (email) {
 		for (var i = 0; i < ctrl.employees.length; i++) {
 			if (ctrl.employees[i].email === email)
@@ -67,7 +94,7 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 		console.log("addEmployee");
 		var qParam = "?sqlType={0}&type={1}&firstName={2}&lastName={3}&email={4}&jobtitle={5}&city={6}&projectId={7}&text={8}".
 				format("INSERT", "employees", e.firstName, e.lastName, e.email, e.jobtitle, e.city, e.projectId, e.text);
-		$http.get('PutServlet' + qParam).success(function () {
+		$http.post('PutServlet' + qParam).success(function () {
 			console.log("location=" + $location);
 			console.log("ctrl.$location=" + ctrl.myLocation);
 			$location.path("/team");
@@ -78,7 +105,7 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 
 	this.delete = function (id) {
 		if (window.confirm("Do you really want to delete?")) {
-			$http.get('DeleteServlet?type=employees&id=' + id).success(function (data) {
+			$http.post('DeleteServlet?type=employees&id=' + id).success(function (data) {
 				console.log("Return-Code" + data);
 				$route.reload();
 			}).error(function() {

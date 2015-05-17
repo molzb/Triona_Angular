@@ -11,20 +11,28 @@
 			</a>
 		</div>
 	</div>
-	<table class="table table-striped table-hover table-bordered">
+	<table id="tblTeam" class="table table-striped table-hover table-bordered">
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
-				<th>Name</th>
-				<th>City</th>
-				<th>Project</th>
+				<th>Name	<a ng-class="ec.sortNameClass()"	ng-click="ec.sortCol('lastName');"> </a></th>
+				<th>City	<a ng-class="ec.sortCityClass()"	ng-click="ec.sortCol('city');">		</a></th>
+				<th>Project	<a ng-class="ec.sortProjectClass()" ng-click="ec.sortCol('projectName');"></a></th>
 				<th>&nbsp;</th>
 				<th ng-if="ec.emp.roleName == 'admin'">&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="emp in ec.employees| filter: ec.searchTerm">
-				<td><img ng-src="images/{{emp.image}}" alt="{{emp.firstName}}" width="90"/></td>
+			<tr ng-repeat="emp in ec.employees| filter: ec.searchTerm | orderBy: ec.predicate: ec.reverse">
+				<td>
+					<img ng-src="images/{{emp.image}}" alt="{{emp.firstName}}" class="imgEmployee"/>
+					<a href="#detailEmployee/{{emp.id}}" class="detail">
+						<span class="glyphicon glyphicon-chevron-right">&nbsp;</span>More
+					</a>
+					<a ng-href="emp.image" class="detail">
+						<span class="glyphicon glyphicon-download">&nbsp;</span>Profile
+					</a>
+				</td>
 				<td>{{emp.firstName}} {{emp.lastName}}</td>
 				<td>{{emp.city}}</td>
 				<td>{{emp.projectName}}, {{emp.projectCity}}</td>

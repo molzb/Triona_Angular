@@ -8,11 +8,14 @@ routeApp.config(['$routeProvider',
 				when('/holidays',	{templateUrl: 'holidays.html'}).
 				when('/employee',	{templateUrl: 'detailEmployee.html'}).
 				when('/addEmployee',{templateUrl: 'addEmployee.html'}).
-				when('/editEmployee/:id',{templateUrl: 'addEmployee.html'}).
-				when('/logout',		{templateUrl: 'logout.jsp'}).
+				when('/detailEmployee/:id', {templateUrl: 'detailEmployee.html'}).
+				when('/editEmployee/:id',	{templateUrl: 'addEmployee.html'}).
+				when('/timesheets',			{templateUrl: 'timesheets.html'}).
+				when('/editTimesheet/:id',	{templateUrl: 'addTimesheet.html'}).
+				when('/logout',				{templateUrl: 'logout.jsp'}).
 				otherwise({redirectTo: '/home'});
 	}]);
-routeApp.controller('RouteController', function ($scope, $location) {
+routeApp.controller('RouteCtrl', function ($scope, $location) {
 	$scope.isActive = function (viewLocation) {
 		return viewLocation === $location.path();
 	};

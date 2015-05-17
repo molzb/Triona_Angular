@@ -11,8 +11,13 @@
 .sidebar { position: fixed; }
 #triona #hiUser { color: white; font-weight: bold; }
 
-#frmEmployee .marginTop10 { margin-top: 10px; }
+#detailEmployee table tr { vertical-align: top; }
+#detailEmployee table img { padding-right: 10px; }
 
+#frmEmployee .marginTop10 { margin-top: 10px; }
+#divTeam #tblTeam th a.sort		{ float: right; }
+#divTeam #tblTeam a.detail		{ display: inline-block; width: 100%; padding-left: 10px; }
+#divTeam #tblTeam .imgEmployee	{ width: 90px; margin-bottom: 8px; }
 .trionaList table { clear: both; }
 .trionaList { margin: 10px; }
 .trionaList .search, .trionaList .addEmp { display: inline; }
@@ -34,3 +39,19 @@
 #tblExistingHolidays .w20 { width: 20px; }
 
 #listHolidays, #divExistingHolidays { margin-left: 0; }
+
+#timesheet .panel-body .content { height: 40px; }
+#timesheet .panel .left { font-weight: bold; display: inline-block; width: 150px; }
+#timesheet .bestMonth, #timesheet .worstMonth { float: right; }
+#timesheet #editTimesheet { float: right; }
+
+#tblTimesheetHead { margin-bottom: 0; }
+#tblTimesheetHead td { border: 0; }
+#tblTimesheet tbody td.date { width: 80px; }
+#tblTimesheet tbody td.date input { width: 80px; }
+#tblTimesheet tfoot { font-weight: bold; }
+#tblTimesheet tbody td.weekend { font-weight: bold; color: red; }
+#tblTimesheet tbody tr.weekend { background: #f5f5f5; }
+#tblTimesheet tbody td b.specialDay { color: #ddd; }
+
+#frmHoliday #toggleHolidayList { padding-left: 5px; }

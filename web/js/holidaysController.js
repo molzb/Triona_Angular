@@ -1,7 +1,12 @@
 "use strict";
 var myScope;
 
-routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
+Date.prototype.getWeek = function() {
+	var onejan = new Date(this.getFullYear(),0,1);
+	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+}
+
+routeApp.controller('HolidayCtrl', function ($scope, $http, $route) {
 	myScope = $scope;
 	$scope.year = new Date().getFullYear();
 	$scope.today = new Date();
@@ -17,35 +22,61 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 	$scope.myHolidays = [];
 	$scope.holidayListVisible = false;
 	$scope.specialDays = [];
+	$scope.calWeek = 0;
 
 	$scope.me = {};
 	$scope.userId = 0;
 
-	$http.get('GetServlet?type=employees&me=true').success(function (data) {
-		$scope.me = data[0];
-		$scope.userId = data[0].id;
+	var meInited = false;
+
+	$scope.initMe = function(callback) {
+		$http.get('GetServlet?type=employees&me=true').success(function (data) {
+			$scope.me = data[0];
+			$scope.userId = data[0].id;
+			meInited = true;
+
+			callback();
+		});
+	};
+
+	$scope.init = function () {
+		console.log("init");
+		var options = {locale: "de", format: "DD.MM.YYYY", minDate: new Date()};
+		$("#datepickerFrom, #datepickerTo").datetimepicker(options);
+
+		if (!meInited)
+			$scope.initMe(function() {
+				$scope.initYear();
+				$scope.initHolidayRequests();
+			});
+		else
+			$scope.initHolidayRequests();
+	};
+
+	$scope.getCalWeek = function() {
+		return this.calWeek++;
+	};
+
+	$scope.initHolidayRequests = function() {
+		console.log("initHolidayRequests");
 
 		$http.get('GetServlet?type=holidays&me=true').success(function (data) {
+			$scope.takenDays = 0;
 			$scope.myHolidays = data;
 			$scope.countTakenDays();
-			window.setTimeout(function() {
-				$scope.markMyHolidays();
-				$(".glyphicon").tooltip();
-			}, 500);
+			$scope.markMyHolidays();
+			$("#tblExistingHolidays .glyphicon").tooltip();
 
-			$http.get('GetServlet?type=specialdays').success(function (data) {
+			$http.get('GetServlet?type=specialdays&year=' + $scope.year).success(function (data) {
 				$scope.specialDays = data;
 				$scope.markSpecialDays();
+//				http://stackoverflow.com/questions/13268361/bootstrap-tooltip-and-popover-add-extra-size-in-table
+				$(".triona,.publicholiday").tooltip({container : 'body'});
 			});
-
-			$scope.init();
 		}).error(function () {
 			console.log("FAIL getHolidays");
 		});
-
-	}).error(function () {
-		console.log("FAIL getEmployee");
-	});
+	};
 
 	$scope.toggleHolidayList = function() {
 		this.holidayListVisible = !this.holidayListVisible;
@@ -53,13 +84,17 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 	};
 
 	$scope.chgYear = function (chg) {
+		this.calWeek = 0;
 		this.year += chg;
 		this.initYear();
+		this.initHolidayRequests();
 	};
 
 	$scope.countTakenDays = function () {
 		this.remainingDays = this.me.holidays;
 		for (var i = 0; i < this.myHolidays.length; i++) {
+			if (this.year !== parseInt(this.myHolidays[i].from.substring(0,4)))
+				continue;
 			var workingDays = this.myHolidays[i].workingDays;
 			this.takenDays += workingDays;
 			this.remainingDays -= workingDays;
@@ -69,12 +104,10 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 
 	$scope.updateFrom = function () {
 		this.from = $("#datepickerFrom input").val();
-		console.log("from=" + this.from);
 		this.calcDays();
 	};
 	$scope.updateTo = function () {
 		this.to = $("#datepickerTo input").val();
-		console.log("to=" + this.to);
 		this.calcDays();
 	};
 
@@ -113,21 +146,23 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 
 	$scope.markSpecialDays = function() {
 		for (var i = 0; i < $scope.specialDays.length; i++) {
-			var tokens = $scope.specialDays[i].day.split("-");
+			var specialDay = $scope.specialDays[i];
+			var tokens = specialDay.day.split("-");
 			var d = new Date(tokens[0], tokens[1]-1, tokens[2], 0, 0, 0, 0);
-			console.log("special " + d);
-			$scope.markDate(d.getFullYear(), d.getMonth(), d.getDate(), false, $scope.specialDays[i].type);
+			$scope.markDate(d.getFullYear(), d.getMonth(), d.getDate(), false, specialDay.type, specialDay.name);
 		}
 	};
 
 	$scope.markDates = function (fromDate, toDate, isTaken, type) {
 		var workingDays = 0;
 		for (var i = 0; i < $scope.months.length; i++)
-			$("#" + $scope.months[i] + " tbody td.btn-danger").removeClass("btn-danger,btn-info,btn-warning,btn-success");
+			$("#" + $scope.months[i] + " tbody td.btn-warning").removeClass("btn-warning");
 
 		while (toDate.getTime() >= fromDate.getTime()) {
 			if (toDate.getDay() >= 1 && toDate.getDay() <= 5) {
-				workingDays++;
+				var tdOfDay = $("#" + $scope.months[toDate.getMonth()] + " td.publicholiday:contains(" + toDate.getDate() + ")");
+				if (tdOfDay.length === 0)
+					workingDays++;
 				this.markDate(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), isTaken);
 			}
 			toDate.setTime(toDate.getTime() - $scope.DAY_IN_MS);	// set to previous day
@@ -135,19 +170,18 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 		return workingDays;
 	};
 
-	$scope.markDate = function (year, month, day, isTaken,type) {
+	$scope.markDate = function (year, month, day, isTaken, type, name) {
 		if (year !== this.year)
 			return;
 
 		var tblOfMonth = $("#" + $scope.months[month] + " tbody");
 		var tdOfMonth = tblOfMonth.find("td").not(".outOfMth,.red");
-//		console.log("mark " + day + "." + $scope.months[month] + " " + year + ", tdOfMonth len=" + tdOfMonth.length);
 		tdOfMonth.each(function () {
 			if (parseInt($(this)[0].innerHTML) === day) {
-				if (type === "meeting")
-					$(this).addClass("btn-info");
+				if (type === "triona")
+					$(this).addClass("btn-info triona").attr("title", name);
 				else if (type === "holiday")
-					$(this).addClass("btn-danger");
+					$(this).addClass("red publicholiday").attr("title", name);
 				else if (isTaken)
 					$(this).addClass("btn-success");
 				else if (!isTaken)
@@ -179,12 +213,22 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 				if (i > 34)
 					tdOfI.html("&nbsp;");
 			}
+
 			if (tdOfI.hasClass("today"))
 				tdOfI.removeClass("today");
 			if (tdOfI.hasClass("btn-danger"))
 				tdOfI.removeClass("btn-danger");
 			if (tdOfI.hasClass("btn-success"))
 				tdOfI.removeClass("btn-success");
+			if (tdOfI.hasClass("red"))
+				tdOfI.removeClass("red");
+			if (tdOfI.hasClass("btn-info"))
+				tdOfI.removeClass("btn-info");
+			if ( (d.getDay() === 0 || d.getDay() === 6) && !tdOfI.hasClass("red") )
+				tdOfI.addClass("red");
+
+			if (d.getDay() === 1)
+				tdOfI.parent().attr("title", "KW " + d.getWeek() % 52);
 
 			if (d.getFullYear() === $scope.today.getFullYear() &&
 					d.getMonth() === $scope.today.getMonth() &&
@@ -200,7 +244,7 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 		var t1 = window.performance.now();
 		for (var i = 0; i < 12; i++)
 			this.initMonth(i);
-		console.log("initYear took " + (window.performance.now() - t1) + " ms");
+		console.log("initYear took " + parseInt(window.performance.now() - t1) + " ms");
 	};
 
 	$scope.gotoToday = function () {
@@ -223,9 +267,5 @@ routeApp.controller('holidayCtrl', function ($scope, $http, $route) {
 		$scope.from = "", $scope.to = "";
 	};
 
-	$scope.init = function () {
-		$scope.initYear();
-		var options = {locale: "de", format: "DD.MM.YYYY", minDate: new Date()};
-		$("#datepickerFrom, #datepickerTo").datetimepicker(options);
-	};
+	$scope.init();
 });
