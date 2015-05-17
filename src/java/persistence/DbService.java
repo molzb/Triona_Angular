@@ -125,8 +125,9 @@ public class DbService {
 				+ "ORDER by p.project_name";
 		List<Map<String, Object>> mapList = new QueryRunner(ds).query(sql, new MapListHandler());
 		for (Map m : mapList) {
-			List empIdList = Arrays.asList(m.get("empIds"));
-			List empNamesList = Arrays.asList(m.get("empNames"));
+			String empIds = (String)m.get("empIds"), empNames = (String)m.get("empNames");
+			List empIdList = Arrays.asList(empIds.split(","));
+			List empNamesList = Arrays.asList(empNames.split(","));
 			m.put("empIds", empIdList);
 			m.put("empNames", empNamesList);
 		}
