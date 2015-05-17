@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,12 +28,15 @@ public class BaseServlet extends HttpServlet {
 			PROJECTS = "projects",
 			HOLIDAYS = "holidays",
 			SPECIALDAYS = "specialdays",
-			ME = "me";
-	protected static final String ID = "id";
+			TIMESHEETS = "timesheets",
+			ME = "me",
+			YEAR = "year",
+			ID = "id";
 
 	@Resource(mappedName = "jdbc/triona", name = "jdbc/triona")
 	private DataSource ds;
 	private final DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+	private final DateFormat sdfTime = new SimpleDateFormat("HH:mm");
 	protected DbService dbService;
 
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp)
@@ -67,10 +71,21 @@ public class BaseServlet extends HttpServlet {
 		return null;
 	}
 
+	protected Time getTimeParam(HttpServletRequest req, String timeStr) {
+		try {
+			String timePrm = req.getParameter(timeStr);
+			return new Time(sdfTime.parse(timePrm).getTime());
+		} catch (ParseException ex) {
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		return null;
+	}
+
 	protected boolean getBooleanParam(HttpServletRequest req, String boolStr) {
 		String boolPrm = req.getParameter(boolStr);
-		if (boolPrm == null)
+		if (boolPrm == null) {
 			return false;
+		}
 		switch (boolPrm) {
 			case "true":
 				return true;
@@ -83,7 +98,7 @@ public class BaseServlet extends HttpServlet {
 	}
 
 	protected int getIntParam(HttpServletRequest req, String intStr) {
-		return Integer.parseInt(req.getParameter(intStr));
+		return Integer.parseInt(req.getParameter(intStr) == null ? "0" : req.getParameter(intStr));
 	}
 
 	protected long getLongParam(HttpServletRequest req, String longStr) {
@@ -106,6 +121,22 @@ public class BaseServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		processRequest(request, response);
+	}
+
+//	http://stackoverflow.com/questions/1265282/recommended-method-for-escaping-html-in-java
+	protected String escapeHTML(String s) {
+		StringBuilder out = new StringBuilder(Math.max(16, s.length()));
+		for (int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+				out.append("&#");
+				out.append((int) c);
+				out.append(';');
+			} else {
+				out.append(c);
+			}
+		}
+		return out.toString();
 	}
 
 	@Override

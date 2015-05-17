@@ -2,6 +2,7 @@ package persistence;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -77,18 +78,35 @@ public class DbService {
 		}
 	}
 
-	public String getEmployeeAsJson(String id) throws SQLException {
-		return getEmployeesAsJson(id);
+	public boolean insertOrUpdateTimesheet(SQL_INSERT_UPDATE type, long id, long employeeId, long projectId,
+			Date day, Time from, Time to, Time pause, Time duration, Time diff, String comment) throws SQLException {
+		String sqlInsert = "INSERT INTO timesheet (id, employee_id, project_id, day, from_time, to_time, "
+				+ "pause_time, duration, diff, comment) VALUES (?,?,?,?, ?,?,?,?, ?,?)";
+		String sqlUpdate = "UPDATE timesheet SET day=?, from_time=?, to_time=?, pause_time=?, duration=?, "
+				+ "diff_time=?, comment=? WHERE id=?";
+
+		if (type == UPDATE) {
+			return new QueryRunner(ds).update(sqlUpdate, day, from, to, pause, duration, diff, comment, id) > 0;
+		} else //if (type == INSERT)
+		{
+			return new QueryRunner(ds).update(sqlInsert, id, employeeId, projectId, day, from, to, pause, 
+					duration, diff, comment) > 0;
+		}
 	}
 
-	public String getEmployeesAsJson() throws SQLException {
-		return getEmployeesAsJson(null);
+	public String getEmployee(String id) throws SQLException {
+		return getEmployees(id);
 	}
 
-	private String getEmployeesAsJson(String id) throws SQLException {
+	public String getEmployees() throws SQLException {
+		return getEmployees(null);
+	}
+
+	private String getEmployees(String id) throws SQLException {
 		String sql = "SELECT e.id, e.image, e.first_name as firstName, e.last_name as lastName, "
 				+ " CONCAT(e.first_name, ' ', e.last_name) as fullName, e.jobtitle as jobTitle, e.city, e.text, e.holidays,"
-				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.project_name AS projectName, p.city AS projectCity"
+				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.client AS projectClient,"
+				+ " p.project_name AS projectName, p.city AS projectCity"
 				+ "		FROM employee e, project p"
 				+ "		WHERE e.project_id = p.id";
 		if (id != null && !id.isEmpty()) {
@@ -98,8 +116,8 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getProjectsAsJson() throws SQLException {
-		String sql = "SELECT p.id, p.icon, p.client, p.project_name, p.city, "
+	public String getProjects() throws SQLException {
+		String sql = "SELECT p.id, p.icon, p.client, p.project_name as projectName, p.city, "
 				+ "group_concat(e.id) as empIds, group_concat(concat(e.first_name, ' ', e.last_name)) as empNames "
 				+ "FROM project p "
 				+ "INNER JOIN employee e on e.project_id = p.id "
@@ -116,7 +134,7 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getHolidaysAsJson(String employeeId) throws SQLException {
+	public String getHolidays(String employeeId) throws SQLException {
 		String sql = "SELECT e.first_name, e.last_name, p.project_name, CAST(h.from_date AS char) AS 'from', h.id, "
 				+ " CAST(to_date AS char) AS 'to', h.working_days AS workingDays "
 				+ "		FROM employee e "
@@ -129,8 +147,22 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getSpecialDaysAsJson() throws SQLException {
-		String sql = "SELECT CAST(day AS char) AS day, type FROM specialday";
+	public String getTimesheets(String employeeId, int year) throws SQLException {
+		String sql = "SELECT id, employee_id, CAST(day AS char) AS day, CAST(from_time AS char) AS 'from', "
+				+ "CAST(to_time AS char) AS 'to', CAST(pause_time AS char) AS pause, CAST(duration AS char) AS duration, comment "
+				+ "	FROM timesheet "
+				+ "		WHERE day >= '%s-01-01' AND day <= '%s-12-31'"
+				+ (employeeId != null && !employeeId.isEmpty() ? " AND employee_id = " + employeeId : "")
+				+ " ORDER BY day, employee_id";
+		sql = sql.replace("%s", String.valueOf(year));
+
+		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
+		return JSONValue.toJSONString(mapList);
+	}
+
+	public String getSpecialDays(int year) throws SQLException {
+		String sql = "SELECT CAST(day AS char) AS day, type, name FROM specialday "
+				+ "WHERE day>='%s-01-01' AND day<='%s-12-31'".replace("%s", String.valueOf(year));
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);
 	}
@@ -149,4 +181,10 @@ public class DbService {
 		String sql = "DELETE FROM holiday WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;
 	}
+
+	public boolean deleteTimesheet(long id) throws SQLException {
+		String sql = "DELETE FROM timesheet WHERE id = ?";
+		return new QueryRunner(ds).update(sql, id) > 0;
+	}
+
 }

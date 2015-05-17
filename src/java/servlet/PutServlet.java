@@ -20,6 +20,8 @@ import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=projects&client=BD&projectName=TEST&city=Darmstadt&id=9
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=03.03.2015&workingDays=3
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=04.03.2015&workingDays=4&id=3
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&diff=0:30&comment=Whatever
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&diff=0:30&comment=Whatever&id=3
  *
  * @author Bernhard
  */
@@ -94,10 +96,36 @@ public class PutServlet extends BaseServlet {
 								getIntParam(req, "workingDays")));
 					}
 					break;
+				case TIMESHEETS:
+					if (isInsert) {
+						out.println(dbService.insertOrUpdateTimesheet(INSERT, 0L,
+								getLongParam(req, "employeeId"),
+								getLongParam(req, "projectId"),
+								getDateParam(req, "day"),
+								getTimeParam(req, "fromTime"),
+								getTimeParam(req, "toTime"),
+								getTimeParam(req, "pauseTime"),
+								getTimeParam(req, "duration"),
+								getTimeParam(req, "diffTime"),
+								req.getParameter("comment")));
+					} else {
+						out.println(dbService.insertOrUpdateTimesheet(UPDATE,
+								getLongParam(req, ID),
+								getLongParam(req, "employeeId"),
+								getLongParam(req, "projectId"),
+								getDateParam(req, "day"),
+								getTimeParam(req, "fromTime"),
+								getTimeParam(req, "toTime"),
+								getTimeParam(req, "pauseTime"),
+								getTimeParam(req, "duration"),
+								getTimeParam(req, "diffTime"),
+								req.getParameter("comment")));
+					}
+					break;
 				default:
 					String msg = "type=" + typeParam + " is not supported";
 					LOG.log(Level.SEVERE, msg, typeParam);
-					out.println(msg);
+					out.println(escapeHTML(msg));
 			}
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, null, ex);

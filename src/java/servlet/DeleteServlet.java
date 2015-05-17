@@ -28,21 +28,25 @@ public class DeleteServlet extends BaseServlet {
 		resp.setContentType("text/plain;charset=UTF-8");
 		PrintWriter out = resp.getWriter();
 		String param = req.getParameter(TYPE);
+		long id = getLongParam(req, ID);
 		try {
 			switch (param) {
 				case EMPLOYEES:
-					out.println(dbService.deleteEmployee(getLongParam(req, ID)));
+					out.println(dbService.deleteEmployee(id));
 					break;
 				case PROJECTS:
-					out.println(dbService.deleteProject(getLongParam(req, ID)));
+					out.println(dbService.deleteProject(id));
 					break;
 				case HOLIDAYS:
-					out.println(dbService.deleteHoliday(getLongParam(req, ID)));
+					out.println(dbService.deleteHoliday(id));
+					break;
+				case TIMESHEETS:
+					out.println(dbService.deleteTimesheet(id));
 					break;
 				default:
 					String msg = "delete=" + param + " is not supported";
 					LOG.log(Level.SEVERE, msg, param);
-					out.println(msg);
+					out.println(escapeHTML(msg));
 			}
 		} catch (SQLException ex) {
 			Logger.getLogger(DeleteServlet.class.getName()).log(Level.SEVERE, null, ex);
