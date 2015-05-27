@@ -20,8 +20,8 @@ import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=projects&client=BD&projectName=TEST&city=Darmstadt&id=9
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=03.03.2015&workingDays=3
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=04.03.2015&workingDays=4&id=3
- * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&diff=0:30&comment=Whatever
- * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&diff=0:30&comment=Whatever&id=3
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&comment=Whatever
+ * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&comment=Whatever&id=3
  *
  * @author Bernhard
  */
@@ -36,11 +36,15 @@ public class PutServlet extends BaseServlet {
 		PrintWriter out = resp.getWriter();
 		String typeParam = req.getParameter(TYPE);
 		String sqlTypeParam = req.getParameter("sqlType");
-		boolean isInsert = sqlTypeParam.equals(INSERT.name());
+		boolean isInsert = INSERT.name().equals(sqlTypeParam);
 
 		try {
 			switch (typeParam) {
 				case EMPLOYEES:
+					String imageFile = req.getParameter("image_file");
+					// Chrome gibt mir C:\fakepath\Picture.jpg zurück. Kürzen auf Picture.jpg
+					String image = imageFile.contains("\\") ?
+							imageFile.substring(imageFile.lastIndexOf('\\') + 1) : imageFile;
 					if (isInsert) {
 						out.println(dbService.insertOrUpdateEmployee(INSERT, 0L,
 								req.getParameter("firstName"),
@@ -48,7 +52,7 @@ public class PutServlet extends BaseServlet {
 								getLongParam(req, "projectId"),
 								req.getParameter("jobtitle"),
 								req.getParameter("city"),
-								req.getParameter("image_file"),
+								image,
 								req.getParameter("text"),
 								req.getParameter("email"),
 								req.getParameter("password")));
@@ -60,7 +64,7 @@ public class PutServlet extends BaseServlet {
 								getLongParam(req, "projectId"),
 								req.getParameter("jobtitle"),
 								req.getParameter("city"),
-								req.getParameter("image_file"),
+								image,
 								req.getParameter("text"),
 								req.getParameter("email"),
 								null));
@@ -97,29 +101,21 @@ public class PutServlet extends BaseServlet {
 					}
 					break;
 				case TIMESHEETS:
-					if (isInsert) {
-						out.println(dbService.insertOrUpdateTimesheet(INSERT, 0L,
+					for (int i = 1; i <= 31; i++) {
+						if (req.getParameter("id" + i) == null)
+							continue;
+						String idTimesheet = req.getParameter("id" + i);
+
+						dbService.insertOrUpdateTimesheet(idTimesheet.isEmpty() ? INSERT : UPDATE,
+								idTimesheet.isEmpty() ? 0L : Long.valueOf(idTimesheet),
 								getLongParam(req, "employeeId"),
 								getLongParam(req, "projectId"),
-								getDateParam(req, "day"),
-								getTimeParam(req, "fromTime"),
-								getTimeParam(req, "toTime"),
-								getTimeParam(req, "pauseTime"),
-								getTimeParam(req, "duration"),
-								getTimeParam(req, "diffTime"),
-								req.getParameter("comment")));
-					} else {
-						out.println(dbService.insertOrUpdateTimesheet(UPDATE,
-								getLongParam(req, ID),
-								getLongParam(req, "employeeId"),
-								getLongParam(req, "projectId"),
-								getDateParam(req, "day"),
-								getTimeParam(req, "fromTime"),
-								getTimeParam(req, "toTime"),
-								getTimeParam(req, "pauseTime"),
-								getTimeParam(req, "duration"),
-								getTimeParam(req, "diffTime"),
-								req.getParameter("comment")));
+								getDateParam(req, "day" + i),
+								req.getParameter( "from" + i),
+								req.getParameter( "to" + i),
+								req.getParameter( "pause" + i),
+								req.getParameter(  "duration" + i),
+								req.getParameter("comment" + i));
 					}
 					break;
 				default:

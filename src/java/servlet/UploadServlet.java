@@ -20,17 +20,20 @@ public class UploadServlet extends HttpServlet {
 
 	// Name of the directory where uploaded files will be saved, relative to the web application directory.
 	private static final String SAVE_DIR = "images";
+	private static final String SAVE_DIR2 = "C:/Users/Bernhard/Documents/NetBeansProjects/Triona_Angular/web/images";
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// gets absolute path of the web application
 		String appPath = request.getServletContext().getRealPath("");
 		// constructs path of the directory to save uploaded file
-		String savePath = appPath + File.separator + SAVE_DIR;
+		String savePath  = appPath + File.separator + SAVE_DIR  + File.separator;
+		String savePath2 = SAVE_DIR2 + File.separator;
 
 		for (Part part : request.getParts()) {
 			String fileName = extractFileName(part);
-			part.write(savePath + File.separator + fileName);
+			part.write(savePath  + fileName);
+			part.write(savePath2 + fileName);
 		}
 
 		request.setAttribute("message", "Upload has been done successfully!");

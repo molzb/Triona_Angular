@@ -2,7 +2,6 @@ package persistence;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public class DbService {
 	}
 
 	public boolean insertOrUpdateEmployee(SQL_INSERT_UPDATE type,
-			long id, String firstName, String lastName, long projectId, String jobTitle,
+			long id, String firstName, String lastName, long projectId, String jobtitle,
 			String city, String image, String text, String email, String password) throws SQLException {
 		String sqlInsert = "INSERT INTO employee (first_name, last_name, project_id, jobtitle, city, image, text, email, password) "
 				+ "VALUES (?,?,?,?,?,  ?,?,?,sha(?))";
@@ -45,10 +44,10 @@ public class DbService {
 				+ "WHERE id = ?";
 
 		if (type == UPDATE) {
-			return new QueryRunner(ds).update(sqlUpdate, firstName, lastName, projectId, jobTitle, city, image, text, email, id) > 0;
+			return new QueryRunner(ds).update(sqlUpdate, firstName, lastName, projectId, jobtitle, city, image, text, email, id) > 0;
 		} else //if (type == INSERT)
 		{
-			return new QueryRunner(ds).update(sqlInsert, firstName, lastName, projectId, jobTitle, city, image, text, email, password) > 0;
+			return new QueryRunner(ds).update(sqlInsert, firstName, lastName, projectId, jobtitle, city, image, text, email, password) > 0;
 		}
 	}
 
@@ -79,18 +78,17 @@ public class DbService {
 	}
 
 	public boolean insertOrUpdateTimesheet(SQL_INSERT_UPDATE type, long id, long employeeId, long projectId,
-			Date day, Time from, Time to, Time pause, Time duration, Time diff, String comment) throws SQLException {
-		String sqlInsert = "INSERT INTO timesheet (id, employee_id, project_id, day, from_time, to_time, "
-				+ "pause_time, duration, diff, comment) VALUES (?,?,?,?, ?,?,?,?, ?,?)";
-		String sqlUpdate = "UPDATE timesheet SET day=?, from_time=?, to_time=?, pause_time=?, duration=?, "
-				+ "diff_time=?, comment=? WHERE id=?";
+			Date day, String from, String to, String pause, String duration, String comment) throws SQLException {
+		String sqlInsert = "INSERT INTO timesheet (id, employee_id, project_id, day, from_, to_, "
+				+ "pause, duration, comment) VALUES (?,?,?,?,?,   ?,?,?,?)";
+		String sqlUpdate = "UPDATE timesheet SET day=?, from_=?, to_=?, pause=?, duration=?, comment=? WHERE id=?";
 
 		if (type == UPDATE) {
-			return new QueryRunner(ds).update(sqlUpdate, day, from, to, pause, duration, diff, comment, id) > 0;
+			return new QueryRunner(ds).update(sqlUpdate, day, from, to, pause, duration, comment, id) > 0;
 		} else //if (type == INSERT)
 		{
 			return new QueryRunner(ds).update(sqlInsert, id, employeeId, projectId, day, from, to, pause, 
-					duration, diff, comment) > 0;
+					duration, comment) > 0;
 		}
 	}
 
@@ -104,7 +102,7 @@ public class DbService {
 
 	private String getEmployees(String id) throws SQLException {
 		String sql = "SELECT e.id, e.image, e.first_name as firstName, e.last_name as lastName, "
-				+ " CONCAT(e.first_name, ' ', e.last_name) as fullName, e.jobtitle as jobTitle, e.city, e.text, e.holidays,"
+				+ " CONCAT(e.first_name, ' ', e.last_name) as fullName, e.jobtitle, e.city, e.text, e.holidays,"
 				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.client AS projectClient,"
 				+ " p.project_name AS projectName, p.city AS projectCity"
 				+ "		FROM employee e, project p"
@@ -149,8 +147,8 @@ public class DbService {
 	}
 
 	public String getTimesheets(String employeeId, int year) throws SQLException {
-		String sql = "SELECT id, employee_id, CAST(day AS char) AS day, CAST(from_time AS char) AS 'from', "
-				+ "CAST(to_time AS char) AS 'to', CAST(pause_time AS char) AS pause, CAST(duration AS char) AS duration, comment "
+		String sql = "SELECT id, employee_id, CAST(day AS char) AS day, from_ AS 'from', to_ AS 'to', "
+				+ "pause, duration, comment "
 				+ "	FROM timesheet "
 				+ "		WHERE day >= '%s-01-01' AND day <= '%s-12-31'"
 				+ (employeeId != null && !employeeId.isEmpty() ? " AND employee_id = " + employeeId : "")
