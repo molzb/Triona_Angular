@@ -18,7 +18,7 @@
 		<div class="col-md-4">
 			<div class="panel panel-success">
 				<div class="panel-heading">
-					<span class="left">Working hours {{year}}</span>{{workingHoursYear}}
+					<span class="left">Working hours {{year}}</span>{{workingHoursYear|hhmm}}
 				</div>
 			</div>
 		</div>
@@ -31,14 +31,14 @@
 				<div class="panel-heading">
 					<h3 id="panel-title" class="panel-title">{{m}} {{year}}
 						<span class="bestMonth glyphicon glyphicon-thumbs-up" ng-if="isBestMonth($index)"
-							  title="Most working days">&nbsp;</span>
+							  title="Most working hours">&nbsp;</span>
 						<span class="worstMonth glyphicon glyphicon-glass" ng-if="isWorstMonth($index)"
-							  title="Least working days">&nbsp;</span>
+							  title="Least working hours">&nbsp;</span>
 					</h3>
 				</div>
 				<div class="panel-body">
 					<div class="content">
-						<a href="#editTimesheet" class="btn-primary btn btn-success" ng-if="!hasTimesheet($index)">
+						<a class="btn btn-primary btn-success" ng-click="editTimesheet($index)" ng-if="!hasTimesheet($index)">
 							<span class="glyphicon glyphicon-plus">&nbsp;</span>Add timesheet
 						</a>
 						<div ng-if="hasTimesheet($index)">
@@ -48,7 +48,7 @@
 										<span class="left">Working days</span>
 										<span>{{workingDaysMonth[$index]}}</span>
 										<span class="left">Working hours</span>
-										<span>{{workingHoursMonth[$index]}} hours</span>
+										<span>{{workingHoursMonth[$index]|hhmm}} hours</span>
 									</td>
 									<td>
 										<a id="editTimesheet" ng-click="editTimesheet($index)">

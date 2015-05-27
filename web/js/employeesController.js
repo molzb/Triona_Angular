@@ -6,7 +6,7 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 
 	ctrl.employees = [];
 	ctrl.projects = [];
-	ctrl.jobTitles = [
+	ctrl.jobtitles = [
 		{name: 'Junior-Consultant', id: 0},
 		{name: 'Consultant', id: 1},
 		{name: 'Lead Consultant', id: 2},
@@ -92,11 +92,10 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 
 	this.addEmployee = function (e) {
 		console.log("addEmployee");
-		var qParam = "?sqlType={0}&type={1}&firstName={2}&lastName={3}&email={4}&jobtitle={5}&city={6}&projectId={7}&text={8}".
-				format("INSERT", "employees", e.firstName, e.lastName, e.email, e.jobtitle, e.city, e.projectId, e.text);
-		$http.post('PutServlet' + qParam).success(function () {
-			console.log("location=" + $location);
-			console.log("ctrl.$location=" + ctrl.myLocation);
+		var qParam = "?sqlType={0}&type={1}&firstName={2}&lastName={3}&email={4}&jobtitle={5}&city={6}&projectId={7}&text={8}&image_file={9}".
+				format("INSERT", "employees", e.firstName, e.lastName, e.email, e.jobtitle, e.city, 
+					e.projectId, e.text, $("#image_file").val());
+		$http.get('PutServlet' + qParam).success(function () {
 			$location.path("/team");
 		}).error(function() {
 			console.log("error in addEmployee");

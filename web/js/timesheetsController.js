@@ -26,8 +26,8 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 	$scope.timesheetCurrentMonth = [];
 	$scope.timesheetCurrentMonthIndex = -1;
 	$scope.timesheetSumDays = -1;
-	$scope.timesheetSumHours = "";
-	$scope.timesheetSumDiff = "";
+	$scope.timesheetSumHours = 0;
+	$scope.timesheetSumDiff = 0;
 
 	$scope.me = {};
 	$scope.prmId;
@@ -76,7 +76,6 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 	};
 
 	$scope.filterMonth = function(mthIndex) {
-		var sumDiffMinutes = 0, sumMinutes = 0;
 		$scope.timesheetSumDays = 0;
 
 		// init daily entries with default data
@@ -87,10 +86,11 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 				jsDate:		d,
 				jsDateClass:specialDay !== null ? "weekend" : "",
 				isWorkingDay:specialDay === null,
-				jsFrom:		null,
-				jsTo:		null,
-				jsPause:	null,
-				jsDuration:	null,
+				from:		null,
+				to:			null,
+				pause:		null,
+				duration:	null,
+				diff:		0,
 				comment:	specialDay !== null ? specialDay.name : $scope.me.projectName};
 			$scope.timesheetCurrentMonth.push(entry);
 			
@@ -103,55 +103,44 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 			var jsDate = convertDateToJsDate(entry.day);
 			if (jsDate.getMonth() === mthIndex) {
 				entry.jsDate = jsDate;
-				entry.jsFrom = convertTimeToJsDate(entry.from);
-				entry.jsTo = convertTimeToJsDate(entry.to);
-				entry.jsPause = convertTimeToJsDate(entry.pause);
-				entry.jsDuration = convertTimeToJsDate(entry.duration);
-				var jsDiffMinutes = (entry.jsDuration.getTime() - new Date(0,0,0, 8,0,0,0).getTime()) / 60000;
-				entry.jsDiff = convertMinutesToHourStr(jsDiffMinutes);
 				entry.isWorkingDay = jsDate.getDay() >= 1 && jsDate.getDay() <= 5;
 				
 				$scope.timesheetCurrentMonth[jsDate.getDate() - 1] = entry;
-
-				// calculate months totals
-				$scope.timesheetSumDays++;
-				sumDiffMinutes += jsDiffMinutes;
-				sumMinutes += entry.jsDuration.getHours() * 60 + entry.jsDuration.getMinutes();
 			}
 		}
-		$scope.timesheetSumDiff = convertMinutesToHourStr(sumDiffMinutes);
-		$scope.timesheetSumHours = convertToHourString(sumMinutes, true);
+		this.calcMonthTotals();
 	};
 
+	$scope.calcMonthTotals = function() {
+		$scope.timesheetSumDays = 0, $scope.timesheetSumHours = 0, $scope.timesheetSumDiff = 0;
+
+		for (var i = 0; i < $scope.timesheetCurrentMonth.length; i++) {
+			var t = $scope.timesheetCurrentMonth[i];
+			if (t.from !== null && t.to !== null && t.duration !== null && t.duration !== "") {
+				$scope.timesheetSumDays++;
+				var durationInMins = convertHhmmToMinutes(t.duration);
+				$scope.timesheetSumHours += durationInMins;
+				$scope.timesheetSumDiff += durationInMins - 480;
+			}
+		}
+	};
+
+	/**
+	 * Check, if date is a special day and returns the appropriate JSON object
+	 * @param {Date} jsDate
+	 * @returns {JSON} json or null, when it's not a special day (weekend or public holiday, but not meeting)
+	 */
 	var getSpecialDay = function(jsDate) {
 		if (jsDate.getDay() === 6 || jsDate.getDay() === 0)
 			return {name: "Weekend"};
 		for (var i = 0; i < $scope.specialDays.length; i++) {
+			if ($scope.specialDays[i].type === "triona")
+				continue;
 			var spDay = convertDateToJsDate($scope.specialDays[i].day);
 			if (jsDate.getMonth() === spDay.getMonth() && jsDate.getDate() === spDay.getDate())
 				return $scope.specialDays[i];
 		}
 		return null;
-	};
-
-	/**
-	 * Ex. 90 minutes -> 1:30, -90 -> -1:30, -60 -> 1:00,
-	 * @param {Number} minutes signed or unsigned number of minutes
-	 * @return {String} 01:30 or -0:45 or "" (when minutes == 0)
-	 */
-	var convertMinutesToHourStr = function(minutes) {
-		if (minutes === 0)
-			return "";
-		var minutesStr = Math.abs(minutes) % 60 < 10 ? "0" + Math.abs(minutes) % 60 : Math.abs(minutes) % 60;
-		var str = parseInt(Math.abs(minutes) / 60) + ":" + minutesStr;
-		return minutes < 0 ? "-" + str : str;
-	};
-
-	var convertTimeToJsDate = function(time_hhmmss) {
-		if (time_hhmmss === undefined || time_hhmmss === "")
-			return null;
-		var timeTokens = time_hhmmss.split(":");
-		return new Date(0,0,0, timeTokens[0], timeTokens[1], timeTokens[2],0);
 	};
 
 	/**
@@ -168,7 +157,7 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 
 	$scope.calcStats = function(timesheet) {
 		$scope.workingDaysMonth  = [0,0,0,0,0,0, 0,0,0,0,0,0], $scope.workingDaysYear  = 0;
-		$scope.workingHoursMonth = ["0","0","0","0","0","0", "0","0","0","0","0","0"], $scope.workingHoursYear = "0";
+		$scope.workingHoursMonth = [0,0,0,0,0,0, 0,0,0,0,0,0], $scope.workingHoursYear = 0;
 		$scope.timesheetMonthExists = [false,false,false,false,false,false,  false,false,false,false,false,false];
 		var workingMinutesMonth  = [0,0,0,0,0,0, 0,0,0,0,0,0], workingMinutesYear = 0;
 		var month = 0;
@@ -177,40 +166,68 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 			var dayInT = timesheet[i];
 			var dayTokens = dayInT.day.split("-");
 			month = dayTokens[1] - 1;
-			var duration = parseInt(dayInT.duration.substr(0,2)) * 60 + parseInt(dayInT.duration.substr(3,5));
 			$scope.workingDaysMonth[month]++;
 			$scope.workingDaysYear++;
-			workingMinutesMonth[month] += duration;
-			workingMinutesYear += duration;
+			workingMinutesMonth[month] += convertHhmmToMinutes(dayInT.duration);
+			workingMinutesYear += convertHhmmToMinutes(dayInT.duration);
 			$scope.timesheetMonthExists[month] = true;
 		}
 
-		$scope.workingHoursYear = convertToHourString(workingMinutesYear, false);
+		$scope.workingHoursYear = workingMinutesYear;
 
-		for (var i = 0, worstIdx = 0, bestIdx = 0; i < month; i++) {
-			$scope.workingHoursMonth[i] = convertToHourString(workingMinutesMonth[i], false);
+		for (var i = 0, worstIdx = 0, bestIdx = 0; i <= month; i++) {
+			$scope.workingHoursMonth[i] = workingMinutesMonth[i];
 			
-			if ($scope.workingDaysMonth[i] > $scope.workingDaysMonth[bestIdx]) {
+			if ($scope.workingHoursMonth[i] > $scope.workingHoursMonth[bestIdx]) {
 				$scope.bestWorkingMonth = i;
 				bestIdx = i;
 			}
-			if ($scope.workingDaysMonth[i] < $scope.workingDaysMonth[worstIdx]) {
+			if ($scope.workingHoursMonth[i] < $scope.workingHoursMonth[worstIdx]) {
 				$scope.worstWorkingMonth = i;
 				worstIdx = i;
 			}
 		}
 	};
 
+	$scope.calcWorkingHours = function(from, to, pause) {
+		if (from === null || to === null || from === "" || to === "")
+			return 0;
+		var fromMins = convertHhmmToMinutes(from);
+		var toMins = convertHhmmToMinutes(to);
+		var pauseMins = convertHhmmToMinutes(pause);
+//		this.recalcTotals();
+		return fromMins - toMins - pauseMins;
+	};
+
+	$scope.calcDiff = function(from, to, pause) {
+		if (from === null || to === null || from === "" || to === "")
+			return 0;
+		var fromMins = convertHhmmToMinutes(from);
+		var toMins = convertHhmmToMinutes(to);
+		var pauseMins = convertHhmmToMinutes(pause);
+		return fromMins - toMins - pauseMins - 480;
+	};
+
 	$scope.hasTimesheet = function(idx) {
 		return $scope.timesheetMonthExists[idx];
 	};
 
-	var convertToHourString = function(min, alwaysShowMinutes) {
-		var hours = Math.floor(min / 60);
-		var minutes = min % 60;
-		if (minutes === 0 && !alwaysShowMinutes)
-			return hours;
-		return hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
+	/**
+	 * Converts a time (HH:mm) into a minute value
+	 * @param {String} '08:30' or '8:30'
+	 * @returns {Number} 510 (for 8 * 60 + 30)
+	 */
+	var convertHhmmToMinutes = function(hhmm) {
+		if (typeof hhmm !== "string")
+			return Math.NaN;
+		if (hhmm.length < 4 || hhmm.length > 5)
+			return Math.NaN;
+		var colonIdx = hhmm.indexOf(':');
+		if (colonIdx === -1)
+			return Math.NaN;
+		var hours = parseInt(hhmm.substring(0,colonIdx));
+		var minutes = parseInt(hhmm.substring(colonIdx+1));
+		return hours * 60 + minutes;
 	};
 
 	$scope.isBestMonth = function(idx) {
@@ -238,10 +255,8 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 	};
 
 	$scope.save = function() {
-		console.log($scope.from + "-" + $scope.to + ":" + $scope.workingDays);
-		var qParam = "?sqlType={0}&type={1}&employeeId={2}&fromDate={3}&toDate={4}&workingDays={5}".
-				format("INSERT", "timesheet", $scope.me.id, $scope.from, $scope.to, $scope.workingDays);
-		$http.get("PutServlet" + qParam).success(function () {
+		var qParam = $("form").serialize();
+		$http.post("PutServlet?" + qParam).success(function () {
 			$route.reload();
 		}).error(function() {
 			console.log("error in save()");

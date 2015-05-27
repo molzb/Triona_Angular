@@ -3,8 +3,6 @@
 <div ng-controller="EmployeesController as ec">
 	<form id="frmEmployee" name="frmEmployee" class="form-horizontal container" role="form" 
 		  action="PutServlet" novalidate>
-		<input type="hidden" name="sqlType" value="INSERT"/>
-		<input type="hidden" name="type" value="employees"/>
 		<h1 class="page-header" ng-show="ec.isEditMode === false">Create employee</h1>
 		<h1 class="page-header" ng-show="ec.isEditMode === true">Edit employee</h1>
 		<div class="row">
@@ -95,9 +93,9 @@
 				<h4>Job Title*</h4>
 			</div>
 			<div class="col-md-3">
-				<select id="jobtitle" name="jobtitle" ng-value="ec.newEmployee.jobTitle">
-					<option ng-repeat="title in ec.jobTitles" ng-value="title.jobTitle"
-							ng-selected="ec.newEmployee.jobTitle === title.name">
+				<select id="jobtitle" name="jobtitle" ng-model="ec.newEmployee.jobtitle">
+					<option ng-repeat="title in ec.jobtitles" ng-value="title.jobtitle"
+							ng-selected="ec.newEmployee.jobtitle === title.name">
 						{{title.name}}
 					</option>
 				</select>
@@ -160,7 +158,7 @@
 				</td>
 				<td>{{ec.newEmployee.firstName}} {{ec.newEmployee.lastName}}</td>
 				<td>{{ec.newEmployee.city}}</td>
-				<td>{{ec.newEmployee.projectName}}, {{ec.newEmployee.projectCity}}</td>
+				<td>{{ec.newEmployee.projectId}}, {{ec.newEmployee.projectCity}}</td><!-- TODO Project name -->
 				<td>{{ec.newEmployee.text}}</td>
 			</tr>
 		</tbody>

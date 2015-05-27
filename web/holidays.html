@@ -12,13 +12,13 @@
 	<div class="row">&nbsp;</div>
 	<div id="listHolidays" class="row">
 		<div class="col-md-4 alert alert-success">
-			<b>Urlaub in {{year}}: </b>{{me.holidays}} Tage
+			<b>Holidays in {{year}}: </b>{{me.holidays}} days
 		</div>
 		<div class="col-md-4 alert alert-success">
-			<b>Genommen in {{year}}: </b>{{takenDays}} Tage
+			<b>Taken in {{year}}: </b>{{takenDays}} days
 		</div>
 		<div class="col-md-4 alert" ng-class="remainingDays > 0 ? 'alert-success' : 'alert-danger'">
-			<b>Resturlaub:</b>			{{remainingDays}} Tage
+			<b>Remaining:</b>{{remainingDays}} days
 		</div>
 	</div>
 
@@ -46,7 +46,7 @@
 			</div>
 		</div>
 		<div class="col-md-2">
-			<span>Werktage:</span><span class="label label-default" ng-bind="workingDays"></span>
+			<span>Working days:</span><span class="label label-default" ng-bind="workingDays"></span>
 			<input type="hidden" name="workingDays" id="workingDays" ng-value="workingDays"/>
 		</div>
 		<div class="col-md-3">

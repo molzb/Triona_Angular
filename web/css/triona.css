@@ -49,6 +49,7 @@
 #tblTimesheetHead td { border: 0; }
 #tblTimesheet tbody td.date { width: 80px; }
 #tblTimesheet tbody td.date input { width: 80px; }
+#tblTimesheet tbody td.right { text-align: right; }
 #tblTimesheet tfoot { font-weight: bold; }
 #tblTimesheet tbody td.weekend { font-weight: bold; color: red; }
 #tblTimesheet tbody tr.weekend { background: #f5f5f5; }
