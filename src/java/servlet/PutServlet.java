@@ -105,6 +105,8 @@ public class PutServlet extends BaseServlet {
 						if (req.getParameter("id" + i) == null)
 							continue;
 						String idTimesheet = req.getParameter("id" + i);
+						if (req.getParameter("from" + i).isEmpty() || req.getParameter("to" + i).isEmpty())
+							continue;
 
 						dbService.insertOrUpdateTimesheet(idTimesheet.isEmpty() ? INSERT : UPDATE,
 								idTimesheet.isEmpty() ? 0L : Long.valueOf(idTimesheet),
