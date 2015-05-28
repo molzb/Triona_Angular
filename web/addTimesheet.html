@@ -31,8 +31,8 @@
 									<th>Start</th>
 									<th>End</th>
 									<th>Pause</th>
-									<th>Total</th>
-									<th>Diff</th>
+									<th class="total">Total</th>
+									<th class="diff">Diff</th>
 									<th>Subject</th>
 								</tr>
 							</thead>
@@ -46,15 +46,15 @@
 									</td>
 									<td class="date">
 										<input type="text" name="from{{$index+1}}" ng-model="t.from"
-											   placeholder="hh:mm" ng-if="t.isWorkingDay"/>
+											   placeholder="hh:mm" ng-keydown="keydownCheck($event)" ng-if="t.isWorkingDay"/>
 									</td>
 									<td class="date">
 										<input type="text" name="to{{$index+1}}" ng-model="t.to"
-											   placeholder="hh:mm" ng-if="t.isWorkingDay"/>
+											   placeholder="hh:mm" ng-keydown="keydownCheck($event)" ng-if="t.isWorkingDay"/>
 									</td>
 									<td class="date">
 										<input type="text" name="pause{{$index+1}}" ng-model="t.pause"
-											   placeholder="hh:mm" ng-if="t.isWorkingDay"/>
+											   placeholder="hh:mm" ng-keydown="keydownCheck($event)" ng-if="t.isWorkingDay"/>
 									</td>
 									<td>
 										<span ng-if="t.isWorkingDay" class="right">{{calcWorkingHours(t.to, t.from, t.pause)|hhmm}}</span>
@@ -62,7 +62,9 @@
 											   value="{{calcWorkingHours(t.to, t.from, t.pause) | hhmm}}" ng-if="t.isWorkingDay"/>
 									</td>
 									<td>
-										<span ng-if="t.isWorkingDay" class="right">{{calcDiff(t.to, t.from, t.pause)|hhmm}}</span>
+										<span ng-if="t.isWorkingDay" class="right text-bold" ng-class="calcDiffClass(t.to, t.from, t.pause)">
+											{{calcDiff(t.to, t.from, t.pause)|hhmm}}
+										</span>
 										<input type="hidden" name="diff{{$index+1}}"
 											   value="{{calcDiff(t.to, t.from, t.pause)|hhmm}}" ng-if="t.isWorkingDay"/>
 									</td>

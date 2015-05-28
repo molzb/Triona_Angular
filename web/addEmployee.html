@@ -158,7 +158,7 @@
 				</td>
 				<td>{{ec.newEmployee.firstName}} {{ec.newEmployee.lastName}}</td>
 				<td>{{ec.newEmployee.city}}</td>
-				<td>{{ec.newEmployee.projectId}}, {{ec.newEmployee.projectCity}}</td><!-- TODO Project name -->
+				<td>{{ec.findProject(ec.newEmployee.projectId)}}</td>
 				<td>{{ec.newEmployee.text}}</td>
 			</tr>
 		</tbody>

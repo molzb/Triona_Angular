@@ -102,10 +102,21 @@ routeApp.controller('EmployeesController', function ($http, $routeParams, $route
 		});
 	};
 
+	this.findProject = function (id) {
+		if (id === undefined || id === null)
+			return "";
+		console.log("find " + id + ", type=" + (typeof id));
+		for (var i = 0; i < ctrl.projects.length; i++) {
+			if (ctrl.projects[i].id === parseInt(id)) {
+				return ctrl.projects[i].projectName + ", " + ctrl.projects[i].city;
+			}
+		}
+		return "";
+	};
+
 	this.delete = function (id) {
 		if (window.confirm("Do you really want to delete?")) {
 			$http.post('DeleteServlet?type=employees&id=' + id).success(function (data) {
-				console.log("Return-Code" + data);
 				$route.reload();
 			}).error(function() {
 				console.log("error in delete");

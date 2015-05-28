@@ -78,8 +78,8 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="h in myHolidays">
-					<td>{{h.from}}</td>
-					<td>{{h.to}}</td>
+					<td>{{h.from | date:'dd.MM.yyyy'}}</td>
+					<td>{{h.to | date:'dd.MM.yyyy'}}</td>
 					<td>{{h.workingDays}}</td>
 					<td class="w20">
 						<a href="#" ng-click="delete(h.id)">

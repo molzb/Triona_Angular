@@ -195,7 +195,11 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 		var fromMins = convertHhmmToMinutes(from);
 		var toMins = convertHhmmToMinutes(to);
 		var pauseMins = convertHhmmToMinutes(pause);
-//		this.recalcTotals();
+		if (pauseMins === Math.NaN)
+			pauseMins = 0;
+		if (fromMins === Math.NaN || toMins === Math.NaN)
+			return 0;
+
 		return fromMins - toMins - pauseMins;
 	};
 
@@ -205,11 +209,31 @@ routeApp.controller('TimesheetCtrl', function ($scope, $http, $route, $routePara
 		var fromMins = convertHhmmToMinutes(from);
 		var toMins = convertHhmmToMinutes(to);
 		var pauseMins = convertHhmmToMinutes(pause);
+		if (pauseMins === Math.NaN)
+			pauseMins = 0;
+		if (fromMins === Math.NaN || toMins === Math.NaN)
+			return 0;
+
 		return fromMins - toMins - pauseMins - 480;
+	};
+
+	$scope.calcDiffClass = function(from, to, pause) {
+		var diff = $scope.calcDiff(from, to, pause);
+		if (diff === undefined || diff === Math.NaN || diff === 0)
+			return "";
+		return diff > 0 ? "text-success" : "text-danger";
 	};
 
 	$scope.hasTimesheet = function(idx) {
 		return $scope.timesheetMonthExists[idx];
+	};
+
+	$scope.keydownCheck = function(e) {
+		// allowed: 0-9, :, BS, left, right
+		var keyOk = (e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode === 8 || e.keyCode === 190 ||
+				e.keyCode === 37 || e.keyCode === 39;
+		if (!keyOk)
+			e.preventDefault();
 	};
 
 	/**
