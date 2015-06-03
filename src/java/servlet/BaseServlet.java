@@ -29,6 +29,8 @@ public class BaseServlet extends HttpServlet {
 			HOLIDAYS = "holidays",
 			SPECIALDAYS = "specialdays",
 			TIMESHEETS = "timesheets",
+			FIXEDDATES = "fixeddates",
+			FIXEDDATES_EMPLOYEES = "fixeddates_employees",
 			ME = "me",
 			YEAR = "year",
 			ID = "id";

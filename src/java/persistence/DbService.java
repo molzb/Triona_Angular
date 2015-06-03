@@ -166,6 +166,27 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
+	public String getFixedDate(Long id) throws SQLException {
+		String sql = "SELECT id, employee_id AS employeeId, title, "
+				+ "DATE_FORMAT(suggested_date1, '%b %Y, %a %d, %H:%i') AS suggestedDate1, "
+				+ "IF(suggested_date2 IS NULL, NULL, DATE_FORMAT(suggested_date2, '%b %Y, %a %d, %H:%i')) AS suggestedDate2, "
+				+ "IF(suggested_date3 IS NULL, NULL, DATE_FORMAT(suggested_date3, '%b %Y, %a %d, %H:%i')) AS suggestedDate3, "
+				+ "IF(suggested_date4 IS NULL, NULL, DATE_FORMAT(suggested_date4, '%b %Y, %a %d, %H:%i')) AS suggestedDate4, "
+				+ "IF(suggested_date5 IS NULL, NULL, DATE_FORMAT(suggested_date5, '%b %Y, %a %d, %H:%i')) AS suggestedDate5, "
+				+ "IF(suggested_date6 IS NULL, NULL, DATE_FORMAT(suggested_date6, '%b %Y, %a %d, %H:%i')) AS suggestedDate6, "
+				+ "CAST(duration AS char) AS duration"
+				+ "    FROM fixed_date";
+		sql += (id != null ? " WHERE id=" + id : "");
+		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
+		return JSONValue.toJSONString(mapList);
+	}
+
+	public String getFixedDateEmployees(String id) throws SQLException {
+		String sql = "SELECT * FROM fixed_date_employee WHERE fixed_date_id = " + id;
+		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
+		return JSONValue.toJSONString(mapList);
+	}
+
 	public boolean deleteEmployee(long id) throws SQLException {
 		String sql = "DELETE FROM employee WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;

@@ -11,19 +11,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Shows a table in the database as JSON
- * http://localhost:8080/Triona_Angular/GetServlet?type=employees
+ * Shows a table in the database as JSON http://localhost:8080/Triona_Angular/GetServlet?type=employees
  * http://localhost:8080/Triona_Angular/GetServlet?type=employees&me=true
  * http://localhost:8080/Triona_Angular/GetServlet?type=employees&id=5
  *
  * http://localhost:8080/Triona_Angular/GetServlet?type=holidays
  * http://localhost:8080/Triona_Angular/GetServlet?type=holidays&me=true
- * 
+ *
  * http://localhost:8080/Triona_Angular/GetServlet?type=projects
  *
  * http://localhost:8080/Triona_Angular/GetServlet?type=timesheets
  * http://localhost:8080/Triona_Angular/GetServlet?type=timesheets&me=true
  * http://localhost:8080/Triona_Angular/GetServlet?type=timesheets&id=5
+ *
+ * http://localhost:8080/Triona_Angular/GetServlet?type=fixeddates
+ * http://localhost:8080/Triona_Angular/GetServlet?type=fixeddates&me=true
+ * http://localhost:8080/Triona_Angular/GetServlet?type=fixeddates&id=5
  *
  * @author Bernhard
  */
@@ -34,13 +37,13 @@ public class GetServlet extends BaseServlet {
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-			response.setContentType("application/json;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			String param = request.getParameter(TYPE);
-			String myId = String.valueOf(getUserId(request));
-			boolean meAsId = getBooleanParam(request, ME);
-			String id = request.getParameter(ID);
-			int year = getIntParam(request, YEAR);
+		response.setContentType("application/json;charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		String param = request.getParameter(TYPE);
+		String myId = String.valueOf(getUserId(request));
+		boolean meAsId = getBooleanParam(request, ME);
+		String id = request.getParameter(ID);
+		int year = getIntParam(request, YEAR);
 		try {
 			switch (param) {
 				case EMPLOYEES:
@@ -57,6 +60,12 @@ public class GetServlet extends BaseServlet {
 					break;
 				case TIMESHEETS:
 					out.println(meAsId ? dbService.getTimesheets(myId, year) : dbService.getTimesheets(id, year));
+					break;
+				case FIXEDDATES:
+					out.println(id != null ? dbService.getFixedDate(Long.valueOf(id)) : dbService.getFixedDate(null));
+					break;
+				case FIXEDDATES_EMPLOYEES:
+					out.println(dbService.getFixedDateEmployees(id));
 					break;
 				default:
 					String msg = "select=" + param + " is not supported";
