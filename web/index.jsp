@@ -15,10 +15,13 @@
 		<script type="text/javascript" src="js/thirdParty.js"></script>
 
 		<script type="text/javascript" src="js/routeApp.js"></script>
+		<script type="text/javascript" src="js/MyService.js"></script>
 		<script type="text/javascript" src="js/employeesController.js"></script>
 		<script type="text/javascript" src="js/projectsController.js"></script>
 		<script type="text/javascript" src="js/holidaysController.js"></script>
 		<script type="text/javascript" src="js/timesheetsController.js"></script>
+		<script type="text/javascript" src="js/fixedDateController.js"></script>
+		<!--<script type="text/javascript" src="js/own.js"></script> TODO -->
 	</head>
 	<body id="trionaBody">
 		<nav id="triona" class="navbar navbar-inverse navbar-fixed-top">
@@ -49,6 +52,12 @@
 						<li ng-class="classActive('/projects')"><a href="#projects">Projects</a></li>
 						<li ng-class="classActive('/holidays')"><a href="#holidays">Holidays</a></li>
 						<li ng-class="classActive('/timesheets')"><a href="#timesheets">Timesheets</a></li>
+						<li ng-class="classActive('/fixedDates')">
+							<a href="#fixedDates">Fixed Dates</a>
+							<ul>
+								<li><a href="#editFixedDate/1">Add date</a></li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 				<div id="contentPane" class="col-sm-9 col-md-10 main" ng-view>

@@ -22,6 +22,8 @@ routeApp.config(['$routeProvider',
 				when('/editEmployee/:id',	{templateUrl: 'addEmployee.html'}).
 				when('/timesheets',			{templateUrl: 'timesheets.html'}).
 				when('/editTimesheet/:id',	{templateUrl: 'addTimesheet.html'}).
+				when('/fixedDates',			{templateUrl: 'fixedDates.html'}).
+				when('/editFixedDate/:id',	{templateUrl: 'addFixedDate.html'}).
 				when('/logout',				{templateUrl: 'logout.jsp'}).
 				otherwise({redirectTo: '/home'});
 	}

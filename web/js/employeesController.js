@@ -1,6 +1,6 @@
 "use strict";
 var myScope;
-routeApp.controller('EmployeesController', function ($http, $routeParams, $route, $location) {
+routeApp.controller('EmployeesCtrl', function ($http, $routeParams, $route, $location) {
 	var ctrl = myScope = this;
 	ctrl.myLocation = $location;
 

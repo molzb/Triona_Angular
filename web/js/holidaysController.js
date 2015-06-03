@@ -6,7 +6,7 @@ Date.prototype.getWeek = function() {
 	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
 }
 
-routeApp.controller('HolidayCtrl', function ($scope, $http, $route) {
+routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
 	myScope = $scope;
 	$scope.year = new Date().getFullYear();
 	$scope.today = new Date();
@@ -25,16 +25,13 @@ routeApp.controller('HolidayCtrl', function ($scope, $http, $route) {
 	$scope.calWeek = 0;
 
 	$scope.me = {};
-	$scope.userId = 0;
 
 	var meInited = false;
 
 	$scope.initMe = function(callback) {
-		$http.get('GetServlet?type=employees&me=true').success(function (data) {
-			$scope.me = data[0];
-			$scope.userId = data[0].id;
-			meInited = true;
-
+		MyService.loadEmployees().then(function (d) {
+			$scope.employees = MyService.getEmployees();
+			$scope.me = MyService.getMe();
 			callback();
 		});
 	};
@@ -116,7 +113,7 @@ routeApp.controller('HolidayCtrl', function ($scope, $http, $route) {
 			$http.get('DeleteServlet?type=holidays&id=' + id).success(function (data) {
 				$route.reload();
 			}).error(function (error) {
-				console.log("FAIL delete holiday " + id);
+				console.log("FAIL delete holiday " + id + ", error=" + error);
 			});
 		}
 	};
@@ -255,8 +252,8 @@ routeApp.controller('HolidayCtrl', function ($scope, $http, $route) {
 	$scope.save = function() {
 		console.log($scope.from + "-" + $scope.to + ":" + $scope.workingDays);
 		var qParam = "?sqlType={0}&type={1}&employeeId={2}&fromDate={3}&toDate={4}&workingDays={5}".
-				format("INSERT", "holidays", $scope.userId, $scope.from, $scope.to, $scope.workingDays);
-		$http.get("PutServlet" + qParam).success(function (data) {
+				format("INSERT", "holidays", $scope.me.id, $scope.from, $scope.to, $scope.workingDays);
+		$http.get("PutServlet" + qParam).success(function () {
 			$route.reload();
 		}).error(function() {
 			console.log("error in save()");

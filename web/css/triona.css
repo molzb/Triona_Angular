@@ -58,3 +58,12 @@
 #tblTimesheet tbody td b.specialDay { color: #ddd; }
 
 #frmHoliday #toggleHolidayList { padding-left: 5px; }
+
+#divFixedDates .firstName { display: inline-block; width: 80px; }
+#divFixedDates .firstName.bold { font-weight: bold; background: white; color: black; }
+#divFixedDates .firstName { background: #E9E9E9; color: #909090; height: 28px;}
+#divFixedDates table tbody td { padding: 1px 3px; }
+#divFixedDates table tbody td.img { background: #E9E9E9; }
+#divFixedDates table .imgEmployee { height: 30px; }
+#divFixedDates table th.date { width: 80px; font-weight: normal; }
+#divFixedDates table .centered { text-align: center; }

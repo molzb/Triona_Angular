@@ -13,3 +13,8 @@ Gedanken
 --------
 Hohe Lernkurve
 
+Routing
+-------
+when('/editFixedDate/:id',	{templateUrl: 'addFixedDate.html'}). ...
+<a href="#editFixedDate/1"> "/1" MUSS dastehen, sonst kein Routing, sondern Redirect auf / (Home-Seite)
+
