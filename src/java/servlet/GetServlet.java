@@ -65,7 +65,7 @@ public class GetServlet extends BaseServlet {
 					out.println(id != null ? dbService.getFixedDate(Long.valueOf(id)) : dbService.getFixedDate(null));
 					break;
 				case FIXEDDATES_EMPLOYEES:
-					out.println(dbService.getFixedDateEmployees(id));
+					out.println(dbService.getFixedDateEmployees(Integer.parseInt(id)));
 					break;
 				default:
 					String msg = "select=" + param + " is not supported";

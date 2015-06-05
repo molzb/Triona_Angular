@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -55,17 +56,17 @@ public class SmokeTest {
 
 	@Test
 	public void b_smokeManager() {
-		assertTrue(gotoUrl(BASE_URL + "#/team"));
-		assertTrue(gotoUrl(BASE_URL + "#/projects"));
-		assertTrue(gotoUrl(BASE_URL + "#/holidays"));
-		assertTrue(gotoUrl(BASE_URL + "#/detailEmployee/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/addEmployee"));
-		assertTrue(gotoUrl(BASE_URL + "#/editEmployee/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/timesheets"));
-		assertTrue(gotoUrl(BASE_URL + "#/editTimesheet/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/fixedDates"));
-		assertTrue(gotoUrl(BASE_URL + "#/editFixedDate/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/logout"));
+		assertTrue(gotoUrl(BASE_URL + "#/team", "The team"));
+		assertTrue(gotoUrl(BASE_URL + "#/projects", "Projects"));
+		assertTrue(gotoUrl(BASE_URL + "#/holidays", "Holidays"));
+		assertTrue(gotoUrl(BASE_URL + "#/detailEmployee/1", "Details about Holger Klatt"));
+		assertTrue(gotoUrl(BASE_URL + "#/addEmployee", "Create employee"));
+		assertTrue(gotoUrl(BASE_URL + "#/editEmployee/1", "Edit employee"));
+		assertTrue(gotoUrl(BASE_URL + "#/timesheets", "Timesheets"));
+		assertTrue(gotoUrl(BASE_URL + "#/editTimesheet/1", "Create timesheet"));
+		assertTrue(gotoUrl(BASE_URL + "#/fixedDates", "Fest zum 1.6."));
+		assertTrue(gotoUrl(BASE_URL + "#/editFixedDate/1", "Add date"));
+		assertTrue(gotoUrl(BASE_URL + "#/logout", null));
 	}
 
 	@Test
@@ -75,17 +76,17 @@ public class SmokeTest {
 
 	@Test
 	public void d_smokeManager() {
-		assertTrue(gotoUrl(BASE_URL + "#/team"));
-		assertTrue(gotoUrl(BASE_URL + "#/projects"));
-		assertTrue(gotoUrl(BASE_URL + "#/holidays"));
-		assertTrue(gotoUrl(BASE_URL + "#/detailEmployee/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/addEmployee"));
-		assertTrue(gotoUrl(BASE_URL + "#/editEmployee/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/timesheets"));
-		assertTrue(gotoUrl(BASE_URL + "#/editTimesheet/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/fixedDates"));
-		assertTrue(gotoUrl(BASE_URL + "#/editFixedDate/1"));
-		assertTrue(gotoUrl(BASE_URL + "#/logout"));
+		assertTrue(gotoUrl(BASE_URL + "#/team", "The team"));
+		assertTrue(gotoUrl(BASE_URL + "#/projects", "Projects"));
+		assertTrue(gotoUrl(BASE_URL + "#/holidays", "Holidays"));
+		assertTrue(gotoUrl(BASE_URL + "#/detailEmployee/1", "Details about Holger Klatt"));
+		assertTrue(gotoUrl(BASE_URL + "#/addEmployee", "Create employee"));
+		assertTrue(gotoUrl(BASE_URL + "#/editEmployee/1", "Edit employee"));
+		assertTrue(gotoUrl(BASE_URL + "#/timesheets", "Timesheets"));
+		assertTrue(gotoUrl(BASE_URL + "#/editTimesheet/1", "Create timesheet"));
+		assertTrue(gotoUrl(BASE_URL + "#/fixedDates", "Fest zum 1.6."));
+		assertTrue(gotoUrl(BASE_URL + "#/editFixedDate/1", "Add date"));
+		assertTrue(gotoUrl(BASE_URL + "#/logout", null));
 	}
 
 	public boolean login(String username, String password) {
@@ -101,10 +102,26 @@ public class SmokeTest {
 		return baseUrl.equals(BASE_URL);
 	}
 
-	private boolean gotoUrl(String url) {
+	private boolean gotoUrl(String url, String header) {
 		driver.get(url);
+		LOGGER.info("gotoUrl " + url);
+		sleep(100);
+		WebElement pageHeader = findByClass("page-header");
+		boolean isHeaderFine = pageHeader == null || header == null || pageHeader.getText().equals(header);
+		if (!isHeaderFine)
+			LOGGER.warning("header=" + header + ", .page-header=" + (pageHeader == null ? "null" : pageHeader.getText())
+				+ ", FAIL");
 		sleep(SLEEP);
-		return driver.getCurrentUrl().equals(url);
+		return driver.getCurrentUrl().equals(url) && isHeaderFine;
+	}
+
+	private WebElement findByClass(String clazz) {
+		try {
+			return driver.findElement(By.className(clazz));
+		} catch (NoSuchElementException nse) {
+			LOGGER.warning("Couldn't find element with ." + clazz);
+			return null;
+		}
 	}
 
 	private void sleep(int ms) {

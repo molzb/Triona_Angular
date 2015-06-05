@@ -181,7 +181,7 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getFixedDateEmployees(String id) throws SQLException {
+	public String getFixedDateEmployees(int id) throws SQLException {
 		String sql = "SELECT * FROM fixed_date_employee WHERE fixed_date_id = " + id;
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);

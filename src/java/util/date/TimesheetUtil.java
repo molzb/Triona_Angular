@@ -1,7 +1,6 @@
 package util.date;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,6 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.Random;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import persistence.MyDataSource;
 
 /**
  * Hilfsklasse, um Timesheets einzufügen>
@@ -29,8 +29,7 @@ public class TimesheetUtil {
 
 	public boolean writeHolidaysToDB(int employeeId, int year, int upToMonth) throws SQLException, ClassNotFoundException {
 		long t1 = System.currentTimeMillis();
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/triona", "root", "Pianoman65536");
+		Connection conn = new MyDataSource().getConnection();
 
 		String sqlInsert = "INSERT INTO timesheet (employee_id, project_id, day, from_, to_, "
 				+ "pause, duration, comment) VALUES (?,?,?,?,  ?,?,?,?)";
