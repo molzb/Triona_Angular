@@ -44,10 +44,12 @@
 							<input id="chkSuggestedDate6" type="checkbox" ng-disabled="emp.id != me.id"/>
 						</td>
 						<td>
-							<input class="btn btn-sm" id="rejectAll" type="submit" value="Cannot make it" disabled="disabled">
+							<input class="btn btn-sm" id="rejectAll" type="submit" value="Cannot make it" 
+								   disabled="disabled" ng-if="emp.id == me.id">
 						</td>
 						<td>
-							<input class="btn btn-primary btn-sm" id="save" type="submit" value="Save">
+							<input class="btn btn-primary btn-sm" id="save" type="submit" value="Save"
+								   ng-if="emp.id == me.id">
 						</td>
 					</tr>
 				</tbody>

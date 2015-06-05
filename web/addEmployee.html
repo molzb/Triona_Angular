@@ -3,8 +3,8 @@
 <div ng-controller="EmployeesCtrl as ec">
 	<form id="frmEmployee" name="frmEmployee" class="form-horizontal container" role="form" 
 		  action="PutServlet" novalidate>
-		<h1 class="page-header" ng-show="ec.isEditMode === false">Create employee</h1>
-		<h1 class="page-header" ng-show="ec.isEditMode === true">Edit employee</h1>
+		<h1 class="page-header" ng-if="ec.isEditMode === false">Create employee</h1>
+		<h1 class="page-header" ng-if="ec.isEditMode === true">Edit employee</h1>
 		<div class="row">
 			<div class="col-md-2">
 				<h4>Image</h4>
