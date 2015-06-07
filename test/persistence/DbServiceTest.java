@@ -1,23 +1,28 @@
 package persistence;
 
 import java.sql.Date;
-import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import static persistence.DbService.SQL_INSERT_UPDATE.INSERT;
+import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
 
 /**
  *
  * @author Bernhard
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DbServiceTest {
-	private static final Logger LOG = Logger.getLogger(DbServiceTest.class.getName());
+//	private static final Logger LOG = Logger.getLogger(DbServiceTest.class.getName());
 	private final int YEAR = 2015;
 	private final String EMPLOYEE_ID = "4";
 	private final int FIX_DATE_ID = 1;
+	private final int PROJECT_ID = 1;
+	private final int YEAR_DATE = 199;
 	DbService instance;
 
 	public DbServiceTest() {
@@ -25,106 +30,31 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void testGetUserId() throws Exception {
+	public void t01_testGetUserId() throws Exception {
 		System.out.println("getUserId");
 		String email = "bernhard.molz@triona.de";
 		int result = instance.getUserId(email);
 		assertEquals(Integer.parseInt(EMPLOYEE_ID), result);
 	}
 
-	//@Test
-	public void testInsertOrUpdateEmployee() throws Exception {
-		System.out.println("insertOrUpdateEmployee");
-		DbService.SQL_INSERT_UPDATE type = null;
-		long id = 0L;
-		String firstName = "";
-		String lastName = "";
-		long projectId = 0L;
-		String jobtitle = "";
-		String city = "";
-		String image = "";
-		String text = "";
-		String email = "";
-		String password = "";
-		boolean expResult = false;
-		boolean result = instance.insertOrUpdateEmployee(type, id, firstName, lastName, projectId, jobtitle, city, image, text, email, password);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
-	}
-
-	//@Test
-	public void testInsertOrUpdateHoliday() throws Exception {
-		System.out.println("insertOrUpdateHoliday");
-		DbService.SQL_INSERT_UPDATE type = null;
-		long id = 0L;
-		long employeeId = 0L;
-		Date from = null;
-		Date to = null;
-		int days = 0;
-		
-		boolean expResult = false;
-		boolean result = instance.insertOrUpdateHoliday(type, id, employeeId, from, to, days);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
-	}
-
-	//@Test
-	public void testInsertOrUpdateProject() throws Exception {
-		System.out.println("insertOrUpdateProject");
-		DbService.SQL_INSERT_UPDATE type = null;
-		long id = 0L;
-		String client = "";
-		String projectName = "";
-		String city = "";
-		
-		boolean expResult = false;
-		boolean result = instance.insertOrUpdateProject(type, id, client, projectName, city);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
-	}
-
-	//@Test
-	public void testInsertOrUpdateTimesheet() throws Exception {
-		System.out.println("insertOrUpdateTimesheet");
-		DbService.SQL_INSERT_UPDATE type = null;
-		long id = 0L;
-		long employeeId = 0L;
-		long projectId = 0L;
-		Date day = null;
-		String from = "";
-		String to = "";
-		String pause = "";
-		String duration = "";
-		String comment = "";
-		
-		boolean expResult = false;
-		boolean result = instance.insertOrUpdateTimesheet(type, id, employeeId, projectId, day, from, to, pause, duration, comment);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
-	}
-
 	@Test
-	public void testGetEmployee() throws Exception {
+	public void t02_testGetEmployee() throws Exception {
 		System.out.println("getEmployee(1)");
-		String result = instance.getEmployee(EMPLOYEE_ID);
+		String result = instance.getEmployee(Integer.parseInt(EMPLOYEE_ID));
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 1);
 	}
 
 	@Test
-	public void testGetEmployees() throws Exception {
+	public void t03_testGetEmployees() throws Exception {
 		System.out.println("getEmployees");
 		String result = instance.getEmployees();
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
-		assertTrue(result != null && jsonArray.size() == 13);
+		assertTrue(jsonArray.size() == 13);
 	}
 
 	@Test
-	public void testGetProjects() throws Exception {
+	public void t04_testGetProjects() throws Exception {
 		System.out.println("getProjects");
 		String result = instance.getProjects();
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -132,24 +62,24 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void testGetHolidays() throws Exception {
+	public void t05_testGetHolidays() throws Exception {
 		System.out.println("getHolidays");
-		String result = instance.getHolidays(EMPLOYEE_ID);
+		String result = instance.getHolidays(new Integer(EMPLOYEE_ID));
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		System.out.println("jsonArray holidays=" + jsonArray.size());
-		assertTrue(result != null && jsonArray.size() > 1);
+		assertTrue(result != null && jsonArray.size() == 3);
 	}
 
 	@Test
-	public void testGetTimesheets() throws Exception {
+	public void t06_testGetTimesheets() throws Exception {
 		System.out.println("getTimesheets");
-		String result = instance.getTimesheets(EMPLOYEE_ID, YEAR);
+		String result = instance.getTimesheets(new Integer(EMPLOYEE_ID), YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 132);
 	}
 
 	@Test
-	public void testGetSpecialDays() throws Exception {
+	public void t07_testGetSpecialDays() throws Exception {
 		System.out.println("getSpecialDays");
 		String result = instance.getSpecialDays(YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -157,16 +87,16 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void testGetFixedDate() throws Exception {
+	public void t08_testGetFixedDate() throws Exception {
 		System.out.println("getFixedDate");
-		String result = instance.getFixedDate(1L);
+		String result = instance.getFixedDate(1);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		System.out.println("jsonArray fixed=" + jsonArray.size());
 		assertTrue(result != null && jsonArray.size() == 1);
 	}
 
 	@Test
-	public void testGetFixedDateEmployees() throws Exception {
+	public void t09_testGetFixedDateEmployees() throws Exception {
 		System.out.println("getFixedDateEmployees");
 		String result = instance.getFixedDateEmployees(FIX_DATE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -174,52 +104,167 @@ public class DbServiceTest {
 		assertTrue(result != null && jsonArray.size() == 14);
 	}
 
-	//@Test
-	public void testDeleteEmployee() throws Exception {
+	@Test
+	public void t20_testInsertOrUpdateEmployee() throws Exception {
+		System.out.println("insertOrUpdateEmployee INSERT");
+		DbService.SQL_INSERT_UPDATE type = INSERT;
+		int id = Integer.parseInt(EMPLOYEE_ID);
+		String firstName = "TestMister";
+		String lastName = "Bean";
+		long projectId = PROJECT_ID;
+		String jobtitle = "Consultant";
+		String city = "London";
+		String image = "test.jpg";
+		String text = "text bla bla";
+		String email = "misterbean@triona.de";
+		String password = "secret";
+		boolean result = instance.insertOrUpdateEmployee(type, id, firstName, lastName, projectId,
+				jobtitle, city, image, text, email, password);
+		assertTrue(result);
+	}
+
+	@Test
+	@SuppressWarnings("deprecation")
+	public void t21_testInsertOrUpdateHoliday() throws Exception {
+		System.out.println("insertOrUpdateHoliday INSERT");
+		DbService.SQL_INSERT_UPDATE type = INSERT;
+		Integer id = 0;
+		int employeeId = Integer.parseInt(EMPLOYEE_ID);
+		Date from = new Date(YEAR_DATE, 11, 1);
+		Date to = new Date(YEAR_DATE, 11, 4);
+		int days = 4;
+		boolean result = instance.insertOrUpdateHoliday(type, id, employeeId, from, to, days);
+		assertTrue(result);
+	}
+
+	@Test
+	public void t22_testInsertOrUpdateProject() throws Exception {
+		System.out.println("insertOrUpdateProject INSERT");
+		DbService.SQL_INSERT_UPDATE type = null;
+		Integer id = 0;
+		String client = "Test Deutsche Bahn";
+		String projectName = "Neues Bahn-Projekt";
+		String city = "Frankfurt";
+		
+		boolean result = instance.insertOrUpdateProject(type, id, client, projectName, city);
+		assertTrue(result);
+	}
+
+	@Test
+	public void t23_testInsertOrUpdateTimesheet() throws Exception {
+		System.out.println("insertOrUpdateTimesheet INSERT");
+		DbService.SQL_INSERT_UPDATE type = INSERT;
+		Integer id = 0;
+		Integer employeeId = Integer.parseInt(EMPLOYEE_ID);
+		Integer projectId = PROJECT_ID;
+		@SuppressWarnings("deprecation")
+		Date day = new Date(YEAR_DATE, 11, 1);
+		String from = "08:00";
+		String to = "17:00";
+		String pause = "1:00";
+		String duration = "8:00";
+		String comment = "testComment";
+		
+		boolean result = instance.insertOrUpdateTimesheet(type, id, employeeId, projectId,
+				day, from, to, pause, duration, comment);
+		assertTrue(result);
+	}
+
+	@Test
+	public void t30_testInsertOrUpdateEmployee() throws Exception {
+		System.out.println("insertOrUpdateEmployee UPDATE");
+		DbService.SQL_INSERT_UPDATE type = UPDATE;
+		int id = instance.getLastInsertedId("employee");
+		String firstName = "UpdateTestMister";
+		String lastName = "UpdateBean";
+		long projectId = PROJECT_ID;
+		String jobtitle = "UpdateConsultant";
+		String city = "UpdateLondon";
+		String image = "update test.jpg";
+		String text = "Update text bla bla";
+		String email = "updatemisterbean@triona.de";
+		String password = "secret";
+		boolean result = instance.insertOrUpdateEmployee(type, id, firstName, lastName, projectId,
+				jobtitle, city, image, text, email, password);
+		assertTrue(result);
+	}
+
+	@Test
+	@SuppressWarnings("deprecation")
+	public void t31_testInsertOrUpdateHoliday() throws Exception {
+		System.out.println("insertOrUpdateHoliday UPDATE");
+		DbService.SQL_INSERT_UPDATE type = UPDATE;
+		Integer id = instance.getLastInsertedId("holiday");
+		int employeeId = Integer.parseInt(EMPLOYEE_ID);
+		Date from = new Date(YEAR_DATE, 11, 30);
+		Date to = new Date(YEAR_DATE, 11, 31);
+		int days = 2;
+		boolean result = instance.insertOrUpdateHoliday(type, id, employeeId, from, to, days);
+		assertTrue(result);
+	}
+
+	@Test
+	public void t32_testInsertOrUpdateProject() throws Exception {
+		System.out.println("insertOrUpdateProject UPDATE");
+		DbService.SQL_INSERT_UPDATE type = UPDATE;
+		Integer id = instance.getLastInsertedId("project");
+		String client = "Update Test Deutsche Bahn";
+		String projectName = "Update Neues Bahn-Projekt";
+		String city = "Frankfurt";
+
+		boolean result = instance.insertOrUpdateProject(type, id, client, projectName, city);
+		assertTrue(result);
+	}
+
+	@Test
+	public void t33_testInsertOrUpdateTimesheet() throws Exception {
+		System.out.println("insertOrUpdateTimesheet UPDATE");
+		DbService.SQL_INSERT_UPDATE type = UPDATE;
+		int id = instance.getLastInsertedId("timesheet");
+		int employeeId = Integer.parseInt(EMPLOYEE_ID);
+		int projectId = PROJECT_ID;
+		@SuppressWarnings("deprecation")
+		Date day = new Date(YEAR_DATE, 11, 1);
+		String from = "08:00";
+		String to = "23:59";
+		String pause = "1:00";
+		String duration = "14:59";
+		String comment = "update testComment";
+
+		boolean result = instance.insertOrUpdateTimesheet(type, id, employeeId, projectId,
+				day, from, to, pause, duration, comment);
+		assertTrue(result);
+	}
+
+	@Test
+	public void t40_testDeleteEmployee() throws Exception {
 		System.out.println("deleteEmployee");
-		long id = 0L;
-		
-		boolean expResult = false;
+		int id = instance.getLastInsertedId("employee");
 		boolean result = instance.deleteEmployee(id);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		assertTrue(result);
 	}
 
-	//@Test
-	public void testDeleteProject() throws Exception {
+	@Test
+	public void t41_testDeleteProject() throws Exception {
 		System.out.println("deleteProject");
-		long id = 0L;
-		
-		boolean expResult = false;
+		int id = instance.getLastInsertedId("project");
 		boolean result = instance.deleteProject(id);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		assertTrue(result);
 	}
 
-	//@Test
-	public void testDeleteHoliday() throws Exception {
+	@Test
+	public void t42_testDeleteHoliday() throws Exception {
 		System.out.println("deleteHoliday");
-		long id = 0L;
-		
-		boolean expResult = false;
+		int id = instance.getLastInsertedId("holiday");
 		boolean result = instance.deleteHoliday(id);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		assertTrue(result);
 	}
 
-	//@Test
-	public void testDeleteTimesheet() throws Exception {
+	@Test
+	public void t43_testDeleteTimesheet() throws Exception {
 		System.out.println("deleteTimesheet");
-		long id = 0L;
-		
-		boolean expResult = false;
+		int id = instance.getLastInsertedId("timesheet");
 		boolean result = instance.deleteTimesheet(id);
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		assertTrue(result);
 	}
-
 }
