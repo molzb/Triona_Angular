@@ -28,7 +28,7 @@ public class DeleteServlet extends BaseServlet {
 		resp.setContentType("text/plain;charset=UTF-8");
 		PrintWriter out = resp.getWriter();
 		String param = req.getParameter(TYPE);
-		long id = getLongParam(req, ID);
+		Integer id = getIntParam(req, ID);
 		try {
 			switch (param) {
 				case EMPLOYEES:

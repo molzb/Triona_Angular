@@ -46,10 +46,10 @@ public class PutServlet extends BaseServlet {
 					String image = imageFile.contains("\\") ?
 							imageFile.substring(imageFile.lastIndexOf('\\') + 1) : imageFile;
 					if (isInsert) {
-						out.println(dbService.insertOrUpdateEmployee(INSERT, 0L,
+						out.println(dbService.insertOrUpdateEmployee(INSERT, 0,
 								req.getParameter("firstName"),
 								req.getParameter("lastName"),
-								getLongParam(req, "projectId"),
+								getIntParam(req, "projectId"),
 								req.getParameter("jobtitle"),
 								req.getParameter("city"),
 								image,
@@ -61,7 +61,7 @@ public class PutServlet extends BaseServlet {
 								getUserId(req),
 								req.getParameter("firstName"),
 								req.getParameter("lastName"),
-								getLongParam(req, "projectId"),
+								getIntParam(req, "projectId"),
 								req.getParameter("jobtitle"),
 								req.getParameter("city"),
 								image,
@@ -78,7 +78,7 @@ public class PutServlet extends BaseServlet {
 								req.getParameter("city")));
 					} else {	// UPDATE
 						out.println(dbService.insertOrUpdateProject(UPDATE,
-								getLongParam(req, ID),
+								getIntParam(req, ID),
 								req.getParameter("client"),
 								req.getParameter("projectName"),
 								req.getParameter("city")));
@@ -87,14 +87,14 @@ public class PutServlet extends BaseServlet {
 				case HOLIDAYS:
 					if (isInsert) {
 						out.println(dbService.insertOrUpdateHoliday(INSERT, 0,
-								getLongParam(req, "employeeId"),
+								getIntParam(req, "employeeId"),
 								getDateParam(req, "fromDate"),
 								getDateParam(req, "toDate"),
 								getIntParam(req, "workingDays")));
 					} else {
 						out.println(dbService.insertOrUpdateHoliday(UPDATE,
-								getLongParam(req, ID),
-								getLongParam(req, "employeeId"),
+								getIntParam(req, ID),
+								getIntParam(req, "employeeId"),
 								getDateParam(req, "fromDate"),
 								getDateParam(req, "toDate"),
 								getIntParam(req, "workingDays")));
@@ -109,9 +109,9 @@ public class PutServlet extends BaseServlet {
 							continue;
 
 						dbService.insertOrUpdateTimesheet(idTimesheet.isEmpty() ? INSERT : UPDATE,
-								idTimesheet.isEmpty() ? 0L : Long.valueOf(idTimesheet),
-								getLongParam(req, "employeeId"),
-								getLongParam(req, "projectId"),
+								idTimesheet.isEmpty() ? 0 : new Integer(idTimesheet),
+								getIntParam(req, "employeeId"),
+								getIntParam(req, "projectId"),
 								getDateParam(req, "day" + i),
 								req.getParameter( "from" + i),
 								req.getParameter( "to" + i),

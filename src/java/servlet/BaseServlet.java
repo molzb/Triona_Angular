@@ -99,8 +99,12 @@ public class BaseServlet extends HttpServlet {
 		}
 	}
 
-	protected int getIntParam(HttpServletRequest req, String intStr) {
-		return Integer.parseInt(req.getParameter(intStr) == null ? "0" : req.getParameter(intStr));
+	protected Integer getIntParam(HttpServletRequest req, String intStr) {
+		String prm = req.getParameter(intStr);
+		if (prm == null)
+			return null;
+		else
+			return Integer.parseInt(prm.isEmpty() ? "0" : req.getParameter(intStr));
 	}
 
 	protected long getLongParam(HttpServletRequest req, String longStr) {
@@ -111,6 +115,10 @@ public class BaseServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		dbService = new persistence.DbService(ds);
+	}
+
+	protected void setDbService(DbService dbService) {	// just for testing
+		this.dbService = dbService;
 	}
 
 	@Override

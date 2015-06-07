@@ -26,6 +26,10 @@ public class DbService {
 		INSERT, UPDATE
 	};
 
+	public static void main(String[] args) throws SQLException {
+		System.out.println(new DbService(new MyDataSource()).getLastInsertedId("employee"));
+	}
+
 	public DbService(DataSource ds) {
 		this.ds = ds;
 	}
@@ -36,7 +40,7 @@ public class DbService {
 	}
 
 	public boolean insertOrUpdateEmployee(SQL_INSERT_UPDATE type,
-			long id, String firstName, String lastName, long projectId, String jobtitle,
+			int id, String firstName, String lastName, long projectId, String jobtitle,
 			String city, String image, String text, String email, String password) throws SQLException {
 		String sqlInsert = "INSERT INTO employee (first_name, last_name, project_id, jobtitle, city, image, text, email, password) "
 				+ "VALUES (?,?,?,?,?,  ?,?,?,sha(?))";
@@ -51,8 +55,8 @@ public class DbService {
 		}
 	}
 
-	public boolean insertOrUpdateHoliday(SQL_INSERT_UPDATE type, long id,
-			long employeeId, Date from, Date to, int days) throws SQLException {
+	public boolean insertOrUpdateHoliday(SQL_INSERT_UPDATE type, int id,
+			int employeeId, Date from, Date to, int days) throws SQLException {
 		String sqlInsert = "INSERT INTO holiday (employee_id, from_date, to_date, working_days) VALUES (?,?,?,?)";
 		String sqlUpdate = "UPDATE holiday SET employee_id=?, from_date=?, to_date=?, working_days=? WHERE id=?";
 
@@ -64,7 +68,7 @@ public class DbService {
 		}
 	}
 
-	public boolean insertOrUpdateProject(SQL_INSERT_UPDATE type, long id,
+	public boolean insertOrUpdateProject(SQL_INSERT_UPDATE type, int id,
 			String client, String projectName, String city) throws SQLException {
 		String sqlInsert = "INSERT INTO project (client, project_name, city) VALUES (?,?,?)";
 		String sqlUpdate = "UPDATE project SET client=?, project_name=?, city=? WHERE id=?";
@@ -77,7 +81,7 @@ public class DbService {
 		}
 	}
 
-	public boolean insertOrUpdateTimesheet(SQL_INSERT_UPDATE type, long id, long employeeId, long projectId,
+	public boolean insertOrUpdateTimesheet(SQL_INSERT_UPDATE type, int id, int employeeId, long projectId,
 			Date day, String from, String to, String pause, String duration, String comment) throws SQLException {
 		String sqlInsert = "INSERT INTO timesheet (id, employee_id, project_id, day, from_, to_, "
 				+ "pause, duration, comment) VALUES (?,?,?,?,?,   ?,?,?,?)";
@@ -92,7 +96,7 @@ public class DbService {
 		}
 	}
 
-	public String getEmployee(String id) throws SQLException {
+	public String getEmployee(Integer id) throws SQLException {
 		return getEmployees(id);
 	}
 
@@ -100,14 +104,14 @@ public class DbService {
 		return getEmployees(null);
 	}
 
-	private String getEmployees(String id) throws SQLException {
+	private String getEmployees(Integer id) throws SQLException {
 		String sql = "SELECT e.id, e.image, e.first_name as firstName, e.last_name as lastName, "
 				+ " CONCAT(e.first_name, ' ', e.last_name) as fullName, e.jobtitle, e.city, e.text, e.holidays,"
 				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.client AS projectClient,"
 				+ " p.project_name AS projectName, p.city AS projectCity"
 				+ "		FROM employee e, project p"
 				+ "		WHERE e.project_id = p.id";
-		if (id != null && !id.isEmpty()) {
+		if (id != null) {
 			sql += " AND e.id = " + id;
 		}
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
@@ -133,25 +137,25 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getHolidays(String employeeId) throws SQLException {
+	public String getHolidays(Integer employeeId) throws SQLException {
 		String sql = "SELECT e.first_name, e.last_name, p.project_name, CAST(h.from_date AS char) AS 'from', h.id, "
 				+ " CAST(to_date AS char) AS 'to', h.working_days AS workingDays "
 				+ "		FROM employee e "
 				+ "		INNER JOIN project p on e.project_id = p.id "
 				+ "		LEFT JOIN holiday h on e.id = h.employee_id "
-				+ (employeeId != null && !employeeId.isEmpty() ? " WHERE e.id = " + employeeId : "")
+				+ (employeeId != null ? " WHERE e.id = " + employeeId : "")
 				+ "	ORDER BY e.last_name ";
 
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getTimesheets(String employeeId, int year) throws SQLException {
+	public String getTimesheets(Integer employeeId, int year) throws SQLException {
 		String sql = "SELECT id, employee_id, CAST(day AS char) AS day, from_ AS 'from', to_ AS 'to', "
 				+ "pause, duration, comment "
 				+ "	FROM timesheet "
 				+ "		WHERE day >= '%s-01-01' AND day <= '%s-12-31'"
-				+ (employeeId != null && !employeeId.isEmpty() ? " AND employee_id = " + employeeId : "")
+				+ (employeeId != null ? " AND employee_id = " + employeeId : "")
 				+ " ORDER BY day, employee_id";
 		sql = sql.replace("%s", String.valueOf(year));
 
@@ -166,7 +170,7 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getFixedDate(Long id) throws SQLException {
+	public String getFixedDate(Integer id) throws SQLException {
 		String sql = "SELECT id, employee_id AS employeeId, title, "
 				+ "DATE_FORMAT(suggested_date1, '%b %Y, %a %d, %H:%i') AS suggestedDate1, "
 				+ "IF(suggested_date2 IS NULL, NULL, DATE_FORMAT(suggested_date2, '%b %Y, %a %d, %H:%i')) AS suggestedDate2, "
@@ -181,30 +185,38 @@ public class DbService {
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public String getFixedDateEmployees(int id) throws SQLException {
+	public String getFixedDateEmployees(Integer id) throws SQLException {
 		String sql = "SELECT * FROM fixed_date_employee WHERE fixed_date_id = " + id;
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);
 	}
 
-	public boolean deleteEmployee(long id) throws SQLException {
+	public boolean deleteEmployee(int id) throws SQLException {
 		String sql = "DELETE FROM employee WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 
-	public boolean deleteProject(long id) throws SQLException {
+	public boolean deleteProject(int id) throws SQLException {
 		String sql = "DELETE FROM project WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 
-	public boolean deleteHoliday(long id) throws SQLException {
+	public boolean deleteHoliday(int id) throws SQLException {
 		String sql = "DELETE FROM holiday WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 
-	public boolean deleteTimesheet(long id) throws SQLException {
+	public boolean deleteTimesheet(int id) throws SQLException {
 		String sql = "DELETE FROM timesheet WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;
+	}
+
+	// just for testing
+	public int getLastInsertedId(String table) throws SQLException {
+		String sql = "SELECT MAX(id) FROM " + table;
+		List id = new QueryRunner(ds).query(sql, new MapListHandler());
+		Object entry = ((Map)id.get(0)).get("MAX(id)");
+		return (int)entry;
 	}
 
 }

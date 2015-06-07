@@ -17,7 +17,6 @@ import persistence.MyDataSource;
 public class TimesheetUtil {
 
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	private static final long HOUR_IN_MS = 3600000, MIN_IN_MS = 60000;
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		TimesheetUtil timesheetUtil = new TimesheetUtil();
