@@ -1,8 +1,8 @@
 <div id="divFixedDates" ng-controller="FixedDateCtrl as fc" class="trionaList">
 	<h1 class="page-header">{{fixedDate.title}}</h1>
 	<div id="fixedDates" class="row">
-		<div class="col-md-12">
-			<table>
+		<form id="frmFixedDates" class="col-md-12">
+			<table id="tblFixedDates">
 				<thead>
 					<tr>
 						<th></th>
@@ -25,23 +25,35 @@
 						<td class="centered">
 							<span class="firstName {{emp.id == me.id ? 'bold':''}}">{{emp.firstName}}</span>
 						</td>
-						<td class="centered">
-							<input id="chkSuggestedDate1" type="checkbox" ng-disabled="emp.id != me.id"/>
+						<td class="centered {{isCheckedCssTr(emp.id, 1)}}">
+							<span class="centered {{isCheckedCssIcon(emp.id, 1)}}" ng-if="emp.id != me.id"> </span>
+							<input id="chkSuggestedDate1" name="chkSuggestedDate1" type="checkbox"
+								   ng-if="emp.id == me.id" ng-checked="isChecked(emp.id, 1)"/>
 						</td>
-						<td class="centered" ng-if="fixedDate.suggestedDate2 != null">
-							<input id="chkSuggestedDate2" type="checkbox" ng-disabled="emp.id != me.id"/>
+						<td class="centered {{isCheckedCssTr(emp.id, 2)}}" ng-if="fixedDate.suggestedDate2 != null">
+							<span class="centered {{isCheckedCssIcon(emp.id, 2)}}" ng-if="emp.id != me.id"> </span>
+							<input id="chkSuggestedDate2" name="chkSuggestedDate2" type="checkbox"
+								   ng-if="emp.id == me.id" ng-checked="isChecked(emp.id, 2)"/>
 						</td>
-						<td class="centered" ng-if="fixedDate.suggestedDate3 != null">
-							<input id="chkSuggestedDate3" type="checkbox" ng-disabled="emp.id != me.id"/>
+						<td class="centered {{isCheckedCssTr(emp.id, 3)}}" ng-if="fixedDate.suggestedDate3 != null">
+							<span class="centered {{isCheckedCssIcon(emp.id, 3)}}" ng-if="emp.id != me.id"> </span>
+							<input id="chkSuggestedDate3" name="chkSuggestedDate3" type="checkbox"
+								   ng-if="emp.id == me.id" ng-checked="isChecked(emp.id, 3)"/>
 						</td>
-						<td class="centered" ng-if="fixedDate.suggestedDate4 != null">
-							<input id="chkSuggestedDate4" type="checkbox" ng-disabled="emp.id != me.id"/>
+						<td class="centered {{isCheckedCssTr(emp.id, 4)}}" ng-if="fixedDate.suggestedDate4 != null">
+							<span class="centered {{isCheckedCssIcon(emp.id, 4)}}" ng-if="emp.id != me.id"> </span>
+							<input id="chkSuggestedDate4" name="chkSuggestedDate4" type="checkbox"
+								   ng-if="emp.id == me.id" ng-checked="isChecked(emp.id, 4)"/>
 						</td>
-						<td class="centered" ng-if="fixedDate.suggestedDate5 != null">
-							<input id="chkSuggestedDate5" type="checkbox" ng-disabled="emp.id != me.id"/>
+						<td class="centered {{isCheckedCssTr(emp.id, 5)}}" ng-if="fixedDate.suggestedDate5 != null">
+							<span class="centered {{isCheckedCssIcon(emp.id, 5)}}" ng-if="emp.id != me.id"> </span>
+							<input id="chkSuggestedDate5" name="chkSuggestedDate5" type="checkbox"
+								   ng-if="emp.id == me.id" ng-checked="isChecked(emp.id, 5)"/>
 						</td>
-						<td class="centered" ng-if="fixedDate.suggestedDate6 != null">
-							<input id="chkSuggestedDate6" type="checkbox" ng-disabled="emp.id != me.id"/>
+						<td class="centered {{isCheckedCssTr(emp.id, 6)}}" ng-if="fixedDate.suggestedDate6 != null">
+							<span class="centered {{isCheckedCssIcon(emp.id, 6)}}" ng-if="emp.id != me.id"> </span>
+							<input id="chkSuggestedDate6" name="chkSuggestedDate6" type="checkbox"
+								   ng-if="emp.id == me.id" ng-checked="isChecked(emp.id, 6)"/>
 						</td>
 						<td>
 							<input class="btn btn-sm" id="rejectAll" type="submit" value="Cannot make it" 
@@ -54,6 +66,6 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
+		</form>
 	</div>
 </div>

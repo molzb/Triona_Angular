@@ -19,7 +19,7 @@ import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
 public class DbServiceTest {
 //	private static final Logger LOG = Logger.getLogger(DbServiceTest.class.getName());
 	private final int YEAR = 2015;
-	private final String EMPLOYEE_ID = "4";
+	private final Integer EMPLOYEE_ID = 4;
 	private final int FIX_DATE_ID = 1;
 	private final int PROJECT_ID = 1;
 	private final int YEAR_DATE = 199;
@@ -33,14 +33,14 @@ public class DbServiceTest {
 	public void t01_testGetUserId() throws Exception {
 		System.out.println("getUserId");
 		String email = "bernhard.molz@triona.de";
-		int result = instance.getUserId(email);
-		assertEquals(Integer.parseInt(EMPLOYEE_ID), result);
+		Integer result = instance.getUserId(email);
+		assertEquals(EMPLOYEE_ID, result);
 	}
 
 	@Test
 	public void t02_testGetEmployee() throws Exception {
 		System.out.println("getEmployee(1)");
-		String result = instance.getEmployee(Integer.parseInt(EMPLOYEE_ID));
+		String result = instance.getEmployee(EMPLOYEE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 1);
 	}
@@ -64,7 +64,7 @@ public class DbServiceTest {
 	@Test
 	public void t05_testGetHolidays() throws Exception {
 		System.out.println("getHolidays");
-		String result = instance.getHolidays(new Integer(EMPLOYEE_ID));
+		String result = instance.getHolidays(EMPLOYEE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		System.out.println("jsonArray holidays=" + jsonArray.size());
 		assertTrue(result != null && jsonArray.size() == 3);
@@ -73,7 +73,7 @@ public class DbServiceTest {
 	@Test
 	public void t06_testGetTimesheets() throws Exception {
 		System.out.println("getTimesheets");
-		String result = instance.getTimesheets(new Integer(EMPLOYEE_ID), YEAR);
+		String result = instance.getTimesheets(EMPLOYEE_ID, YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 132);
 	}
@@ -108,7 +108,7 @@ public class DbServiceTest {
 	public void t20_testInsertOrUpdateEmployee() throws Exception {
 		System.out.println("insertOrUpdateEmployee INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
-		int id = Integer.parseInt(EMPLOYEE_ID);
+		int id = EMPLOYEE_ID;
 		String firstName = "TestMister";
 		String lastName = "Bean";
 		long projectId = PROJECT_ID;
@@ -129,7 +129,7 @@ public class DbServiceTest {
 		System.out.println("insertOrUpdateHoliday INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
-		int employeeId = Integer.parseInt(EMPLOYEE_ID);
+		int employeeId = EMPLOYEE_ID;
 		Date from = new Date(YEAR_DATE, 11, 1);
 		Date to = new Date(YEAR_DATE, 11, 4);
 		int days = 4;
@@ -155,7 +155,7 @@ public class DbServiceTest {
 		System.out.println("insertOrUpdateTimesheet INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
-		Integer employeeId = Integer.parseInt(EMPLOYEE_ID);
+		Integer employeeId = EMPLOYEE_ID;
 		Integer projectId = PROJECT_ID;
 		@SuppressWarnings("deprecation")
 		Date day = new Date(YEAR_DATE, 11, 1);
@@ -195,7 +195,7 @@ public class DbServiceTest {
 		System.out.println("insertOrUpdateHoliday UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("holiday");
-		int employeeId = Integer.parseInt(EMPLOYEE_ID);
+		int employeeId = EMPLOYEE_ID;
 		Date from = new Date(YEAR_DATE, 11, 30);
 		Date to = new Date(YEAR_DATE, 11, 31);
 		int days = 2;
@@ -221,7 +221,7 @@ public class DbServiceTest {
 		System.out.println("insertOrUpdateTimesheet UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("timesheet");
-		int employeeId = Integer.parseInt(EMPLOYEE_ID);
+		int employeeId = EMPLOYEE_ID;
 		int projectId = PROJECT_ID;
 		@SuppressWarnings("deprecation")
 		Date day = new Date(YEAR_DATE, 11, 1);

@@ -186,7 +186,11 @@ public class DbService {
 	}
 
 	public String getFixedDateEmployees(Integer id) throws SQLException {
-		String sql = "SELECT * FROM fixed_date_employee WHERE fixed_date_id = " + id;
+		String sql = "SELECT fixed_date_id as fixedId, employee_id AS employeeId, CONCAT(IF(agreed1, 'true', 'false'), ',', "
+				+ " IF(agreed2, 'true', 'false'), ',', IF(agreed3, 'true', 'false'), ',',"
+				+ "	IF(agreed4, 'true', 'false'), ',', IF(agreed5, 'true', 'false'), ',',"
+				+ " IF(agreed6, 'true', 'false')) AS agreed"
+				+ "	  FROM fixed_date_employee WHERE fixed_date_id = " + id;
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);
 	}

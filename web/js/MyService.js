@@ -1,5 +1,5 @@
 routeApp.factory('MyService', function ($http) {
-	var promiseEmployees, promiseFixedDates, promiseProjects;
+	var promiseEmployees, promiseProjects, promiseFixedDates, promiseFixedDatesEmployees;
 	var employees = [];
 	var fixedDates = [];
 	var me = {};
@@ -18,8 +18,9 @@ routeApp.factory('MyService', function ($http) {
 							me = employees[i];
 					}
 				});
+			} else {
+				console.log("getting cached promiseEmployees");
 			}
-			console.log("getting cached promiseEmployees");
 			return promiseEmployees;
 		},
 		loadFixedDates: function () {
@@ -31,14 +32,24 @@ routeApp.factory('MyService', function ($http) {
 			}
 			return promiseFixedDates;
 		},
+		loadFixedDatesEmployees: function (id) {
+			if (!promiseFixedDatesEmployees) {
+				promiseFixedDatesEmployees = $http.get('GetServlet?type=fixeddates_employees&id=' + id).then(function(response) {
+					console.log("fixedDatesEmployees loaded over http");
+					fixedDatesEmployees = response.data;
+				});
+			}
+			return promiseFixedDatesEmployees;
+		},
 		loadProjects: function () {
 			if (!promiseProjects) {
 				promiseProjects = $http.get('GetServlet?type=projects').then(function (response) {
 					console.log("projects loaded over http");
 					projects = response.data;
 				});
+			} else {
+				console.log("getting cached promiseProjects");
 			}
-			console.log("getting cached promiseProjects");
 			return promiseProjects;
 		},
 		getEmployees: function () {
@@ -52,6 +63,13 @@ routeApp.factory('MyService', function ($http) {
 		},
 		getFixedDates: function () {
 			return fixedDates;
+		},
+		getFixedDatesEmployees: function () {
+			for (var i = 0; i < fixedDatesEmployees.length; i++) {
+				var emp = fixedDatesEmployees[i];
+				emp.agreed = emp.agreed.split(",");
+			}
+			return fixedDatesEmployees;
 		}
 	};
 	return myService;

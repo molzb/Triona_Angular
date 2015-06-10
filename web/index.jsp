@@ -1,5 +1,8 @@
 <%@page import="servlet.BaseServlet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="userIsManager"><%=request.isUserInRole("admin")%></c:set>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -48,14 +51,21 @@
 				<div class="col-sm-3 col-md-2 sidebar">
 					<ul class="nav nav-sidebar">
 						<li ng-class="classActive('/home')"><a href="#home">Home</a></li>
-						<li ng-class="classActive('/team')"><a href="#team">The team</a></li>
+						<li ng-class="classActive('/team')">
+							<a href="#team">The team</a>
+							<c:if test="${userIsManager == 'true'}">
+								<ul class="nav nav-sidebar l2">
+									<li ng-class="classActive('/addEmployee')"><a href="#addEmployee">Add employee</a></li>
+								</ul>
+							</c:if>
+						</li>
 						<li ng-class="classActive('/projects')"><a href="#projects">Projects</a></li>
 						<li ng-class="classActive('/holidays')"><a href="#holidays">Holidays</a></li>
 						<li ng-class="classActive('/timesheets')"><a href="#timesheets">Timesheets</a></li>
 						<li ng-class="classActive('/fixedDates')">
 							<a href="#fixedDates">Fixed Dates</a>
-							<ul>
-								<li><a href="#editFixedDate/1">Add date</a></li>
+							<ul class="nav nav-sidebar l2">
+								<li ng-class="classActive('/editFixedDate/1')"><a href="#editFixedDate/1">Add date</a></li>
 							</ul>
 						</li>
 					</ul>
