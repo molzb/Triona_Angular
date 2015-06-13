@@ -66,8 +66,16 @@ routeApp.factory('MyService', function ($http) {
 		},
 		getFixedDatesEmployees: function () {
 			for (var i = 0; i < fixedDatesEmployees.length; i++) {
-				var emp = fixedDatesEmployees[i];
-				emp.agreed = emp.agreed.split(",");
+				var fde = fixedDatesEmployees[i];
+				fde.agreed = fde.agreed.split(",");
+				for (var j = 0; j < fde.agreed.length; j++) {
+					if (fde.agreed[j] === "true")
+						fde.agreed[j] = true;
+					if (fde.agreed[j] === "false")
+						fde.agreed[j] = false;
+					if (fde.agreed[j] === "null")
+						fde.agreed[j] = null;
+				}
 			}
 			return fixedDatesEmployees;
 		}

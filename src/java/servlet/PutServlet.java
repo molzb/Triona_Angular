@@ -112,14 +112,38 @@ public class PutServlet extends BaseServlet {
 								idTimesheet.isEmpty() ? 0 : new Integer(idTimesheet),
 								getIntParam(req, "employeeId"),
 								getIntParam(req, "projectId"),
-								getDateParam(req, "day" + i),
-								req.getParameter( "from" + i),
-								req.getParameter( "to" + i),
-								req.getParameter( "pause" + i),
-								req.getParameter(  "duration" + i),
+								getDateParam(req,"day" + i),
+								req.getParameter("from" + i),
+								req.getParameter("to" + i),
+								req.getParameter("pause" + i),
+								req.getParameter("duration" + i),
 								req.getParameter("comment" + i));
 					}
 					break;
+				case FIXEDDATES_EMPLOYEES:
+					if (isInsert) {
+						out.println(dbService.insertOrUpdateFixedDateEmp(INSERT, 0,
+								getIntParam(req, "employeeId"),
+								getBooleanParam(req, "agreed1"),
+								getBooleanParam(req, "agreed2"),
+								getBooleanParam(req, "agreed3"),
+								getBooleanParam(req, "agreed4"),
+								getBooleanParam(req, "agreed5"),
+								getBooleanParam(req, "agreed6")));
+					} else {
+						System.out.println("eid=" + getIntParam(req, "employeeId"));
+						out.println(dbService.insertOrUpdateFixedDateEmp(UPDATE,
+								getIntParam(req, ID),
+								getIntParam(req, "employeeId"),
+								getBooleanParam(req, "agreed1"),
+								getBooleanParam(req, "agreed2"),
+								getBooleanParam(req, "agreed3"),
+								getBooleanParam(req, "agreed4"),
+								getBooleanParam(req, "agreed5"),
+								getBooleanParam(req, "agreed6")));
+					}
+					break;
+
 				default:
 					String msg = "type=" + typeParam + " is not supported";
 					LOG.log(Level.SEVERE, msg, typeParam);

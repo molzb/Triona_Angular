@@ -96,6 +96,23 @@ public class DbService {
 		}
 	}
 
+	public boolean insertOrUpdateFixedDateEmp(SQL_INSERT_UPDATE type, int id, int employeeId, boolean agreed1,
+			boolean agreed2, boolean agreed3, boolean agreed4, boolean agreed5, boolean agreed6) throws SQLException {
+		String sqlInsert = "INSERT INTO fixed_date_employee(fixed_date_id, employee_id, "
+				+ "agreed1, agreed2, agreed3, agreed4, agreed5, agreed6) VALUES (?,?,	?,?,?,?,?,?,?)";
+		String sqlUpdate = "UPDATE fixed_date_employee SET agreed1=?, agreed2=?, agreed3=?, agreed4=?, agreed5=?, "
+				+ "agreed6=? WHERE fixed_date_id=? and employee_id=?";
+
+		if (type == UPDATE) {
+			return new QueryRunner(ds).update(sqlUpdate, id, employeeId,
+					agreed1, agreed2, agreed3, agreed4, agreed5, agreed6) > 0;
+		} else //if (type == INSERT)
+		{
+			return new QueryRunner(ds).update(sqlInsert,
+					agreed1, agreed2, agreed3, agreed4, agreed5, agreed6, sqlInsert, id, employeeId) > 0;
+		}
+	}
+
 	public String getEmployee(Integer id) throws SQLException {
 		return getEmployees(id);
 	}
@@ -186,10 +203,13 @@ public class DbService {
 	}
 
 	public String getFixedDateEmployees(Integer id) throws SQLException {
-		String sql = "SELECT fixed_date_id as fixedId, employee_id AS employeeId, CONCAT(IF(agreed1, 'true', 'false'), ',', "
-				+ " IF(agreed2, 'true', 'false'), ',', IF(agreed3, 'true', 'false'), ',',"
-				+ "	IF(agreed4, 'true', 'false'), ',', IF(agreed5, 'true', 'false'), ',',"
-				+ " IF(agreed6, 'true', 'false')) AS agreed"
+		String sql = "SELECT fixed_date_id as fixedId, employee_id AS employeeId, CONCAT("
+				+ " IF(ISNULL(agreed1), 'null', IF(agreed1, 'true', 'false')), ',', "
+				+ " IF(ISNULL(agreed2), 'null', IF(agreed2, 'true', 'false')), ',', "
+				+ " IF(ISNULL(agreed3), 'null', IF(agreed3, 'true', 'false')), ',',"
+				+ "	IF(ISNULL(agreed4), 'null', IF(agreed4, 'true', 'false')), ',',"
+				+ "	IF(ISNULL(agreed5), 'null', IF(agreed5, 'true', 'false')), ',',"
+				+ "	IF(ISNULL(agreed6), 'null', IF(agreed6, 'true', 'false'))) AS agreed"
 				+ "	  FROM fixed_date_employee WHERE fixed_date_id = " + id;
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);

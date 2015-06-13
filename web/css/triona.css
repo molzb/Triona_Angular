@@ -62,6 +62,7 @@
 #divFixedDates .firstName { display: inline-block; width: 80px; }
 #divFixedDates .firstName.bold { font-weight: bold; background: white; color: black; }
 #divFixedDates .firstName { background: #E9E9E9; color: #909090; height: 28px;}
+#divFixedDates td.grey { background: #E9E9E9; }
 #divFixedDates table tbody td { padding: 1px 3px; }
 #divFixedDates table tbody td.img { background: #E9E9E9; }
 #divFixedDates table .imgEmployee { height: 30px; }
