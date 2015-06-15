@@ -1,0 +1,76 @@
+* {
+	box-sizing: border-box;
+}
+html, body { height: 100%; font-family: sans-serif; }
+body { padding-top: 15%; font-size: 14px;
+	   line-height: 1.42857;
+	   margin: 0;
+}
+.col-md-offset-5 {
+	margin-left: 41.6667%;
+}
+.col-md-3 {
+	width: 25%;
+	float: left;
+}
+.form-login {
+	background-color: #ededed;
+	border-radius: 15px;
+	border: 1px solid #888888;
+	padding: 10px 20px 20px;
+	text-align: center;
+}
+h2 {
+	font-size: 30px;
+	margin-bottom: 10px;
+	margin-top: 20px;
+	font-weight: 500;
+	line-height: 1.1;
+}
+.form-control {
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555;
+	display: block;
+	font-size: 14px;
+	height: 34px;
+	line-height: 1.42857;
+	padding: 6px 12px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+	width: 100%;
+}
+
+.btn {
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+.btn:hover {
+	color: white;
+	text-decoration: none;
+}
+.btn-primary {
+	color: #fff;
+	background-color: #428bca;
+	border-color: #357ebd;
+}
+.btn-primary:hover {
+	background-color: #3071a9;
+	border-color: #285e8e;
+	color: #fff;
+}
