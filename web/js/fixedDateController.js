@@ -1,6 +1,6 @@
 "use strict";
 var myFixedDateScope;
-routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, MyService) {
+routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routeParams, MyService) {
 	myFixedDateScope = $scope;
 	$scope.employees  = [];
 	$scope.fixedDates = [];
@@ -16,22 +16,46 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, MyService)
 
 		MyService.loadFixedDates().then(function() {
 			$scope.fixedDates = MyService.getFixedDates();
-			$scope.fixedDate = $scope.fixedDates[0];	//TODO
+			var idxParam = $routeParams.idx;
+			if (idxParam === undefined) {
+				idxParam = '-1';
+			}
+			if (idxParam !== '-1' && !idxParam.match(/[0-9]{1,6}/)) {
+				alert('This is not a valid ID: ' + idxParam);
+				$scope.fixedDate.title = 'This is not a valid ID: ' + idxParam;
+				return false;
+			}
+			$scope.fixedDate = $scope.findFixedDate($scope.fixedDates, parseInt(idxParam));
 
 			MyService.loadFixedDatesEmployees($scope.fixedDate.id).then(function() {
 				$scope.fixedDatesEmployees = MyService.getFixedDatesEmployees();
-				for (var i = 0; i < $scope.fixedDatesEmployees.length; i++) {
-					var fde = $scope.fixedDatesEmployees[i];
-					for (var j = 0; j < $scope.employees.length; j++) {
-						var emp = $scope.employees[j];
-						if (fde.employeeId === emp.id) {
-							emp.agreed = fde.agreed;
-						}
-					}
-				}
+				insertAgreedIntoEmployeesArray();
+				addMouseOverEventInOverview();
 			});
 		});
 	});
+
+	function insertAgreedIntoEmployeesArray() {
+		for (var i = 0; i < $scope.fixedDatesEmployees.length; i++) {
+			var fde = $scope.fixedDatesEmployees[i];
+			for (var j = 0; j < $scope.employees.length; j++) {
+				var emp = $scope.employees[j];
+				if (fde.employeeId === emp.id) {
+					emp.agreed = fde.agreed;
+				}
+			}
+		}
+	}
+
+	$scope.findFixedDate = function(fixedDates, id) {
+		if (id === -1)
+			return fixedDates[0];
+		for (var j = 0; j < fixedDates.length; j++) {
+			if (fixedDates[j].id === id)
+				return fixedDates[j];
+		}
+		return null;
+	};
 
 	$scope.isChecked = function(employeeId, dateIdx) {
 		for (var i = 0; i < $scope.fixedDatesEmployees.length; i++) {
@@ -42,6 +66,12 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, MyService)
 		}
 		return false;
 	};
+
+	function addMouseOverEventInOverview() {
+		var pnls = $("#fixedDatesOverview .panel");
+		pnls.mouseenter(function() { $(this).addClass('panel-primary').removeClass('panel-default'); })
+		pnls.mouseleave(function() { $(this).removeClass('panel-primary').addClass('panel-default'); })
+	}
 
 	$scope.isCheckedCssTr = function(emp, idx) {
 		if (emp.id === $scope.me.id)
@@ -63,11 +93,17 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, MyService)
 		return this.isChecked(employeeId, dateIdx) ? "Yes, I can" : "No, I can't";
 	};
 
+	$scope.cannotMakeIt = function() {
+		for (var i = 0; i < this.me.agreed.length; i++) {
+			this.me.agreed[i] = false;
+		}
+		$scope.save();
+	};
+
 	$scope.save = function() {
-		var q = $('form').serialize().split('&');
 		var myData = 'type=fixeddates_employees&sqltype=UPDATE&id={0}&employeeId={1}&agreed1={2}&agreed2={3}&agreed3={4}&agreed4={5}&agreed5={6}&agreed6={7}'.format(
-				$scope.fixedDate.id, $scope.me.id, this.getVal(q[0]), this.getVal(q[1]), this.getVal(q[2]),
-				this.getVal(q[3]), this.getVal(q[4]), this.getVal(q[5]));
+				this.fixedDate.id, this.me.id, this.me.agreed[0], this.me.agreed[1],
+				this.me.agreed[2], this.me.agreed[3], this.me.agreed[4], this.me.agreed[5]);
 		console.log(myData);
 		$http.post('PutServlet?' + myData).success(function() {
 			$route.reload();
@@ -76,14 +112,19 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, MyService)
 		});
 	};
 
-	/**
-	 * Return value of a key-value pair
-	 * @param {String} keyValue, e.g. hello=world
-	 * @returns {String} value of that key-value pair
-	 */
-	$scope.getVal = function(keyValue) {
-		if (!keyValue || keyValue.indexOf("=") === -1)
-			return null;
-		return keyValue.split("=")[1] === "on";
+	$scope.showGeneralTab = function () {
+		$('#liProposals').removeClass('active');
+		$('#liGeneral').addClass('active');
+		$('#divGeneralWrapper').show();
+		$('#divProposalWrapper').hide();
+		return false;
+	};
+
+	$scope.showProposalTab = function () {
+		$('#liProposals').addClass('active');
+		$('#liGeneral').removeClass('active');
+		$('#divGeneralWrapper').hide();
+		$('#divProposalWrapper').show();
+		return false;
 	};
 });

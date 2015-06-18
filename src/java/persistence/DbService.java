@@ -96,20 +96,23 @@ public class DbService {
 		}
 	}
 
-	public boolean insertOrUpdateFixedDateEmp(SQL_INSERT_UPDATE type, int id, int employeeId, boolean agreed1,
+	public boolean insertOrUpdateFixedDateEmp(int id, int employeeId, boolean agreed1,
 			boolean agreed2, boolean agreed3, boolean agreed4, boolean agreed5, boolean agreed6) throws SQLException {
-		String sqlInsert = "INSERT INTO fixed_date_employee(fixed_date_id, employee_id, "
-				+ "agreed1, agreed2, agreed3, agreed4, agreed5, agreed6) VALUES (?,?,	?,?,?,?,?,?,?)";
+		String sqlSelect = "SELECT COUNT(*) FROM fixed_date_employee "
+				+ "WHERE fixed_date_id=" + id + " AND employee_id=" + employeeId;
 		String sqlUpdate = "UPDATE fixed_date_employee SET agreed1=?, agreed2=?, agreed3=?, agreed4=?, agreed5=?, "
 				+ "agreed6=? WHERE fixed_date_id=? and employee_id=?";
+		String sqlInsert = "INSERT INTO fixed_date_employee(fixed_date_id, employee_id, "
+				+ "agreed1, agreed2, agreed3, agreed4, agreed5, agreed6) VALUES (?,?,	?,?,?,?,?,?)";
 
-		if (type == UPDATE) {
-			return new QueryRunner(ds).update(sqlUpdate, id, employeeId,
-					agreed1, agreed2, agreed3, agreed4, agreed5, agreed6) > 0;
-		} else //if (type == INSERT)
+		boolean rowExists = new QueryRunner(ds).query(sqlSelect, new ScalarHandler<Long>()) > 0L;
+		if (rowExists) {	// UPDATE statment
+			return new QueryRunner(ds).update(sqlUpdate, agreed1, agreed2, agreed3, agreed4, agreed5, agreed6,
+					id, employeeId) > 0;
+		} else //if (!rowExists) -> INSERT statement
 		{
 			return new QueryRunner(ds).update(sqlInsert,
-					agreed1, agreed2, agreed3, agreed4, agreed5, agreed6, sqlInsert, id, employeeId) > 0;
+					id, employeeId, agreed1, agreed2, agreed3, agreed4, agreed5, agreed6) > 0;
 		}
 	}
 
@@ -188,7 +191,7 @@ public class DbService {
 	}
 
 	public String getFixedDate(Integer id) throws SQLException {
-		String sql = "SELECT id, employee_id AS employeeId, title, "
+		String sql = "SELECT fixed_date.id, employee_id AS employeeId, image, title, "
 				+ "DATE_FORMAT(suggested_date1, '%b %Y, %a %d, %H:%i') AS suggestedDate1, "
 				+ "IF(suggested_date2 IS NULL, NULL, DATE_FORMAT(suggested_date2, '%b %Y, %a %d, %H:%i')) AS suggestedDate2, "
 				+ "IF(suggested_date3 IS NULL, NULL, DATE_FORMAT(suggested_date3, '%b %Y, %a %d, %H:%i')) AS suggestedDate3, "
@@ -196,7 +199,8 @@ public class DbService {
 				+ "IF(suggested_date5 IS NULL, NULL, DATE_FORMAT(suggested_date5, '%b %Y, %a %d, %H:%i')) AS suggestedDate5, "
 				+ "IF(suggested_date6 IS NULL, NULL, DATE_FORMAT(suggested_date6, '%b %Y, %a %d, %H:%i')) AS suggestedDate6, "
 				+ "CAST(duration AS char) AS duration"
-				+ "    FROM fixed_date";
+				+ "    FROM fixed_date "
+				+ "INNER JOIN employee ON employee.id = employee_id";
 		sql += (id != null ? " WHERE id=" + id : "");
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);

@@ -2,6 +2,7 @@ routeApp.factory('MyService', function ($http) {
 	var promiseEmployees, promiseProjects, promiseFixedDates, promiseFixedDatesEmployees;
 	var employees = [];
 	var fixedDates = [];
+	var fixedDatesEmployees = [];
 	var me = {};
 	var projects = [];
 	var myService = {
@@ -29,16 +30,20 @@ routeApp.factory('MyService', function ($http) {
 					console.log("fixedDates loaded over http");
 					fixedDates = response.data;
 				});
+			} else {
+				console.log("getting cached fixeddates");
 			}
 			return promiseFixedDates;
 		},
 		loadFixedDatesEmployees: function (id) {
-			if (!promiseFixedDatesEmployees) {
+//			if (!promiseFixedDatesEmployees) {	//TODO fix. FAIL, wenn Reload ('Fixed Dates' -> 'Timesheets' -> 'Fixed Dates' -> Fehler)
 				promiseFixedDatesEmployees = $http.get('GetServlet?type=fixeddates_employees&id=' + id).then(function(response) {
 					console.log("fixedDatesEmployees loaded over http");
 					fixedDatesEmployees = response.data;
 				});
-			}
+//			} else {
+//				console.log("getting cached fixeddates_employees, len=" + fixedDatesEmployees.length);
+//			}
 			return promiseFixedDatesEmployees;
 		},
 		loadProjects: function () {

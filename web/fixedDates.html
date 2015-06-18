@@ -1,5 +1,6 @@
 <div id="divFixedDates" ng-controller="FixedDateCtrl as fc" class="trionaList">
 	<h1 class="page-header">{{fixedDate.title}}</h1>
+	
 	<div id="fixedDates" class="row">
 		<form id="frmFixedDates" class="col-md-12">
 			<table id="tblFixedDates">
@@ -56,7 +57,7 @@
 						</td>
 						<td>
 							<input class="btn btn-sm" id="rejectAll" type="button" value="Cannot make it"
-								   ng-if="emp.id == me.id">
+								   ng-if="emp.id == me.id" ng-click="cannotMakeIt()">
 						</td>
 						<td>
 							<input class="btn btn-primary btn-sm" id="save" type="button" value="Save"
@@ -67,4 +68,27 @@
 			</table>
 		</form>
 	</div>
+
+	<div id="fixedDatesOverview" class="row">
+		<br/>
+		<h2 class="page-header">Select another fixed date</h2>
+		<div class="col-md-3" ng-repeat="f in fixedDates">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">{{f.title}}
+						<img ng-src="images/{{f.image}}" alt="Bernhard" class="imgEmployee"/>
+					</h3>
+				</div>
+				<div class="panel-body">
+					{{f.suggestedDate1}}<br>...
+					<a href="#/fixedDates?idx={{f.id}}">
+						<button type="button" class="btn btn-success pull-right" title="Choose this event">
+							<span class="glyphicon glyphicon-ok"></span>
+						</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>

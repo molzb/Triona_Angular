@@ -22,6 +22,7 @@ import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=holidays&employeeId=1&fromDate=01.03.2015&toDate=04.03.2015&workingDays=4&id=3
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=INSERT&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&comment=Whatever
  * http://localhost:8080/Triona_Angular/PutServlet?sqlType=UPDATE&type=timesheets&employeeId=1&projectId=1&day=01.03.2015&fromTime=09:00&toTime=18:00&pauseTime=0:30&duration=08:30&comment=Whatever&id=3
+ * http://localhost:8080/Triona_Angular/PutServlet?type=fixeddates_employees&id=3&employeeId=4&agreed1=true&agreed2=true&agreed3=false&agreed4=false&agreed5=false&agreed6=false
  *
  * @author Bernhard
  */
@@ -121,27 +122,15 @@ public class PutServlet extends BaseServlet {
 					}
 					break;
 				case FIXEDDATES_EMPLOYEES:
-					if (isInsert) {
-						out.println(dbService.insertOrUpdateFixedDateEmp(INSERT, 0,
-								getIntParam(req, "employeeId"),
-								getBooleanParam(req, "agreed1"),
-								getBooleanParam(req, "agreed2"),
-								getBooleanParam(req, "agreed3"),
-								getBooleanParam(req, "agreed4"),
-								getBooleanParam(req, "agreed5"),
-								getBooleanParam(req, "agreed6")));
-					} else {
-						System.out.println("eid=" + getIntParam(req, "employeeId"));
-						out.println(dbService.insertOrUpdateFixedDateEmp(UPDATE,
-								getIntParam(req, ID),
-								getIntParam(req, "employeeId"),
-								getBooleanParam(req, "agreed1"),
-								getBooleanParam(req, "agreed2"),
-								getBooleanParam(req, "agreed3"),
-								getBooleanParam(req, "agreed4"),
-								getBooleanParam(req, "agreed5"),
-								getBooleanParam(req, "agreed6")));
-					}
+					out.println(dbService.insertOrUpdateFixedDateEmp(
+							getIntParam(req, ID),
+							getIntParam(req, "employeeId"),
+							getBooleanParam(req, "agreed1"),
+							getBooleanParam(req, "agreed2"),
+							getBooleanParam(req, "agreed3"),
+							getBooleanParam(req, "agreed4"),
+							getBooleanParam(req, "agreed5"),
+							getBooleanParam(req, "agreed6")));
 					break;
 
 				default:
