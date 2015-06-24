@@ -114,7 +114,7 @@ public class BaseServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		dbService = new persistence.DbService(ds);
+		dbService = new DbService(ds);
 	}
 
 	protected void setDbService(DbService dbService) {	// just for testing

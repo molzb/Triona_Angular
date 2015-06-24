@@ -26,10 +26,6 @@ public class DbService {
 		INSERT, UPDATE
 	};
 
-	public static void main(String[] args) throws SQLException {
-		System.out.println(new DbService(new MyDataSource()).getLastInsertedId("employee"));
-	}
-
 	public DbService(DataSource ds) {
 		this.ds = ds;
 	}
