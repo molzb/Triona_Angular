@@ -1,11 +1,11 @@
 <div id="divTeam" ng-controller="EmployeesCtrl as ec" class="trionaList">
 	<h1 class="page-header">The team</h1>
 	<div id="actions">
-		<div class="search">
+		<div class="search pull-left">
 			<input type="text" class="in" ng-model="ec.searchTerm" placeholder="Name of the employee"/>
 			<span class="glyphicon glyphicon-search" ng-click="ec.search(ec.searchTerm)"></span>
 		</div>
-		<div class="addEmp">
+		<div class="addEmp pull-right">
 			<a href="#addEmployee" class="btn-primary btn btn-success" ng-show="ec.emp.roleName == 'admin'">
 				<span class="glyphicon glyphicon-plus">&nbsp;</span>Add employee
 			</a>

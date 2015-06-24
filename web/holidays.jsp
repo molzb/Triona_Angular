@@ -92,42 +92,10 @@
 	</div>
 
 	<!-- Calendar for the year -->
-	<div id="calendar" class="row">
-		<div class="col-md-4" ng-repeat="m in months">
-			<h3 ng-click="initMonth($index)">{{m + ' ' + year}}</h3>
-			<table id="{{m}}" class="table-bordered">
-				<thead>
-					<tr>
-						<th>Mo</th>
-						<th>Di</th>
-						<th>Mi</th>
-						<th>Do</th>
-						<th>Fr</th>
-						<th class="red">Sa</th>
-						<th class="red">So</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td> </td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
-					</tr>
-					<tr>
-						<td></td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
-					</tr>
-					<tr>
-						<td></td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
-					</tr>
-					<tr>
-						<td></td> <td></td> <td></td> <td></td> <td></td> <td class="red"></td> <td class="red"></td>
-					</tr>
-					<tr>
-						<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
-					</tr>
-					<tr>
-						<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
-					</tr>
-				</tbody>
-			</table>
+	<div class="row">
+		<div class="calendar col-md-4" ng-repeat="m in months">
+			<h3 class="alert-info">{{m + ' ' + year}}</h3>
+			<%@include file="_calendarTable.html"%>
 		</div>
 	</div>
 </div>

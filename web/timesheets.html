@@ -30,9 +30,9 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 id="panel-title" class="panel-title">{{m}} {{year}}
-						<span class="bestMonth glyphicon glyphicon-thumbs-up" ng-if="isBestMonth($index)"
+						<span class="bestMonth glyphicon glyphicon-thumbs-up pull-right" ng-if="isBestMonth($index)"
 							  title="Most working hours">&nbsp;</span>
-						<span class="worstMonth glyphicon glyphicon-glass" ng-if="isWorstMonth($index)"
+						<span class="worstMonth glyphicon glyphicon-glass pull-right" ng-if="isWorstMonth($index)"
 							  title="Least working hours">&nbsp;</span>
 					</h3>
 				</div>
@@ -51,7 +51,7 @@
 										<span>{{workingHoursMonth[$index]|hhmm}} hours</span>
 									</td>
 									<td>
-										<a id="editTimesheet" ng-click="editTimesheet($index)">
+										<a id="editTimesheet" class="pull-right" ng-click="editTimesheet($index)">
 											<span class="btn btn-warning glyphicon glyphicon-pencil" title="Edit"></span>
 										</a>
 									</td>

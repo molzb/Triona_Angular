@@ -7,7 +7,7 @@ routeApp.factory('MyService', function ($http) {
 	var projects = [];
 	var myService = {
 		loadEmployees: function () {
-			if (!promiseEmployees) {
+//			if (!promiseEmployees) {
 				promiseEmployees = $http.get('GetServlet?type=employees').then(function (response) {
 					console.log("employees loaded over http");
 					employees = response.data;
@@ -19,9 +19,9 @@ routeApp.factory('MyService', function ($http) {
 							me = employees[i];
 					}
 				});
-			} else {
-				console.log("getting cached promiseEmployees");
-			}
+//			} else {
+//				console.log("getting cached promiseEmployees");
+//			}
 			return promiseEmployees;
 		},
 		loadFixedDates: function () {

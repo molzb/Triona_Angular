@@ -21,29 +21,25 @@
 .trionaList table { clear: both; }
 .trionaList { margin: 10px; }
 .trionaList .search, .trionaList .addEmp { display: inline; }
-.trionaList .search { float: left; }
-.trionaList .addEmp { float: right; }
 .trionaList .addEmp a { margin-bottom: 10px; }
 
 #frmEmployee input[type=text],
 #frmEmployee input[type=email] { width: 100%; }
 #frmEmployee textarea#text { width: 100%; height: 150px; }
 
-#calendar table { width: 99%; }
-#calendar table td, #calendar table th { padding: 5px;  }
-#calendar table td, #calendar table th { text-align: right; }
-#calendar table td.today { background: #fcf8e3; }
-#calendar table .red { color: red; font-weight: bold; }
-#calendar table .outOfMth { color: #dddddd; }
-#calendar h3 { text-align: center; }
+.calendar table { width: 99%; }
+.calendar table td, .calendar table th { padding: 5px;  }
+.calendar table td, .calendar table th { text-align: right; }
+.calendar table td.today { background: #fcf8e3; }
+.calendar table .red { color: red; font-weight: bold; }
+.calendar table .outOfMth { color: #dddddd; }
+.calendar h3 { text-align: center; padding: 5px 0; }
 #tblExistingHolidays .w20 { width: 20px; }
 
 #listHolidays, #divExistingHolidays { margin-left: 0; }
 
 #timesheet .panel-body .content { height: 40px; }
 #timesheet .panel .left { font-weight: bold; display: inline-block; width: 150px; }
-#timesheet .bestMonth, #timesheet .worstMonth { float: right; }
-#timesheet #editTimesheet { float: right; }
 
 #tblTimesheetHead { margin-bottom: 0; }
 #tblTimesheetHead td { border: 0; }
@@ -70,7 +66,14 @@
 #divFixedDates table th.date { width: 80px; font-weight: normal; }
 #divFixedDates table .centered { text-align: center; }
 
-#frmFixedDate input[type=text], #frmFixedDate textarea { width: 99%; }
-#frmFixedDate .btn-success { float: right; }
-#frmFixedDate ul.nav-tabs { margin-bottom: 20px; }
-#frmFixedDate #divProposalWrapper { display: none; }
+#divAddDate form input[type=text], #divAddDate form textarea { width: 99%; }
+#divAddDate form ul.nav-tabs { margin-bottom: 20px; }
+#divAddDate form #divProposalWrapper { display: none; }
+#divProposalWrapper .calendar tbody td.present { cursor: pointer; }
+#divProposalWrapper h3.alert-info .btn { margin: 0 10px; padding-bottom: 2px; padding-top: 2px; }
+#divProposalWrapper .selectedDates { font-size: large; }
+#divProposalWrapper .selectedDates > div { margin-bottom: 4px; }
+#divProposalWrapper .selectedDates .weekend { font-weight: bold; color: red; }
+#divProposalWrapper .selectedDates > div { display: none; }
+#divProposalWrapper .selectedDates .inputTextWrapper { margin-left: 25px; }
+#divProposalWrapper .selectedDates input[type=text] { width: 60px; font-size: 14px; }

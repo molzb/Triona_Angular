@@ -15,7 +15,7 @@ routeApp.config(['$routeProvider',
 				when('/home',		{templateUrl: 'home.html'}).
 				when('/team',		{templateUrl: 'team.html'}).
 				when('/projects',	{templateUrl: 'projects.html'}).
-				when('/holidays',	{templateUrl: 'holidays.html'}).
+				when('/holidays',	{templateUrl: 'holidays.jsp'}).
 				when('/employee',	{templateUrl: 'detailEmployee.html'}).
 				when('/addEmployee',{templateUrl: 'addEmployee.html'}).
 				when('/detailEmployee/:id', {templateUrl: 'detailEmployee.html'}).
@@ -23,7 +23,7 @@ routeApp.config(['$routeProvider',
 				when('/timesheets',			{templateUrl: 'timesheets.html'}).
 				when('/editTimesheet/:id',	{templateUrl: 'addTimesheet.html'}).
 				when('/fixedDates',			{templateUrl: 'fixedDates.html'}).
-				when('/editFixedDate/:id',	{templateUrl: 'addFixedDate.html'}).
+				when('/editFixedDate/:id',	{templateUrl: 'addFixedDate.jsp'}).
 				when('/logout',				{templateUrl: 'logout.jsp'}).
 				otherwise({redirectTo: '/home'});
 	}

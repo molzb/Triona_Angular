@@ -1,5 +1,5 @@
 "use strict";
-var myScope;
+var myHolidayScope;
 
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(),0,1);
@@ -7,7 +7,7 @@ Date.prototype.getWeek = function() {
 }
 
 routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
-	myScope = $scope;
+	myHolidayScope = $scope;
 	$scope.year = new Date().getFullYear();
 	$scope.today = new Date();
 	$scope.months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
