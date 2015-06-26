@@ -197,8 +197,15 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 		initCalendarCellClicked();
 	};
 
+	$scope.isFutureDate = function() {
+		var currentYear = $scope.today.getYear() + 1900;
+		var currentMonth = $scope.today.getMonth();
+		return $scope.year > currentYear || ($scope.year === currentYear && $scope.month > currentMonth);
+	};
+
 	$scope.chgMonth = function (chg) {
 		var tblId = $("#" + $scope.months[$scope.month]);
+		$(".calendar td.alert-success").removeClass("alert-success");
 		if ($scope.month === 11 && chg === 1) {
 			$scope.month = 0;
 			$scope.year++;
@@ -211,6 +218,22 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 		tblId.attr("id", $scope.months[$scope.month]);
 		$scope.m = $scope.months[$scope.month];
 		$scope.initMonth($scope.month);
+
+		$(".glyphicon-trash").each(function() {
+			var yyyy_mm_dd = $(this).data("yyyy_mm_dd");
+			if (yyyy_mm_dd !== "") {
+				var dateTokens = yyyy_mm_dd.split("-");
+				if (parseInt(dateTokens[0]) === $scope.year && parseInt(dateTokens[1]) === $scope.month) {
+					$(".calendar td.present").filter(function() {
+						return $(this).text() === dateTokens[2];
+					}).addClass("alert-success");
+				}
+			}
+		});
+	};
+
+	$scope.isDateSelected = function() {
+		return $(".selectedDates .selection:visible").length > 0;
 	};
 
 	/**
@@ -247,23 +270,41 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 				if (date.getDay() === 6 || date.getDay() === 0)
 					$(this).addClass("weekend");
 				$(this).text($scope.selection[i]).parent().show();
-				$(this).parent().find(".glyphicon-trash").data("day", dayInMth);
+				var yyyy_mm_dd = $scope.year + "-" + $scope.month + "-" + dayInMth;
+				$(this).parent().find(".glyphicon-trash").data("yyyy_mm_dd", yyyy_mm_dd);
+				$(this).parent().find("input[name=sel" + i + "Date]").val(yyyy_mm_dd);
 				return false;
 			}
 			i++;
 		});
+		$(".selectedDates h4").hide();
 	};
 
-	$scope.removeSelection = function(jqElem, idx, dayOfMth) {
+	$scope.removeSelection = function(jqElem, idx, yyyy_mm_dd) {
 		console.log(idx + ":" + $scope.selection[idx]);
 		$scope.selection[idx] = "";
 		jqElem.parent().find(".date").text("");
-		$(".calendar td.present:contains(" + dayOfMth+ ")").removeClass("alert-success");
+		var dateTokens = yyyy_mm_dd.split("-");
+		if (parseInt(dateTokens[0]) === $scope.year && parseInt(dateTokens[1]) === $scope.month)
+			$(".calendar td.present:contains(" + dateTokens[2] + ")").removeClass("alert-success");
 		jqElem.parent().hide();
+
+		$(".selectedDates h4").css("display", $scope.isDateSelected() ? "none" : "block");
 	};
 
 	$scope.saveFixedDate = function() {
-		alert("TODO");
+		$("form[name=frmFixedDate]").attr("action", "PutServlet").submit();
+	};
+
+	$scope.deleteFixedDate = function(id) {
+		if (window.confirm("Do you really want to delete this entry?")) {
+			$http.post('DeleteServlet?type=fixeddates&id=' + id).success(function() {
+				MyService.clearPromiseFixedDates();
+				$route.reload();
+			}).error(function() {
+				alert("ERROR: Couldn't delete this fixed date");
+			});
+		}
 	};
 
 	function initCalendarCellClicked() {
@@ -272,7 +313,7 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 			$scope.selectDay(this);
 		});
 		$(".selectedDates .glyphicon-trash").click(function() {
-			$scope.removeSelection($(this), parseInt($(this).data("idx")), $(this).data("day"));
+			$scope.removeSelection($(this), parseInt($(this).data("idx")), $(this).data("yyyy_mm_dd"));
 		});
 	}
 

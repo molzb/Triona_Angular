@@ -35,6 +35,9 @@ routeApp.factory('MyService', function ($http) {
 			}
 			return promiseFixedDates;
 		},
+		clearPromiseFixedDates: function() {	// don't cache, but reload the fixed dates
+			promiseFixedDates = null;
+		},
 		loadFixedDatesEmployees: function (id) {
 //			if (!promiseFixedDatesEmployees) {	//TODO fix. FAIL, wenn Reload ('Fixed Dates' -> 'Timesheets' -> 'Fixed Dates' -> Fehler)
 				promiseFixedDatesEmployees = $http.get('GetServlet?type=fixeddates_employees&id=' + id).then(function(response) {
@@ -72,7 +75,7 @@ routeApp.factory('MyService', function ($http) {
 		getFixedDatesEmployees: function () {
 			for (var i = 0; i < fixedDatesEmployees.length; i++) {
 				var fde = fixedDatesEmployees[i];
-				fde.agreed = fde.agreed.split(",");
+				fde.agreed = (fde === undefined) ? [] : fde.agreed.split(",");
 				for (var j = 0; j < fde.agreed.length; j++) {
 					if (fde.agreed[j] === "true")
 						fde.agreed[j] = true;

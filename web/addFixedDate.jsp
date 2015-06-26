@@ -2,6 +2,8 @@
 	<h1 class="page-header">Add date</h1>
 
 	<form name="frmFixedDate" novalidate>
+		<input type="hidden" name="id" value="12345"/><!-- TODO -->
+		<input type="hidden" name="type" value="fixeddates"/>
 		<ul class="nav nav-tabs">
 			<li id="liGeneral"   role="presentation" class="active">
 				<a ng-click="showGeneralTab()">General</a>
@@ -54,26 +56,41 @@
 		</div><!-- divGeneralWrapper -->
 
 		<div id="divProposalWrapper">
-			<h3>Suggest dates for '{{newFixedDate.title}}' in {{newFixedDate.location}}</h3>
 
 			<div class="row">
 				<div class="calendar col-md-4">
-					<h3 class="alert-info">
-						<button class="btn btn-primary pull-left" ng-click="chgMonth(-1)">&lt;</button>
-						{{months[month] + ' ' + year}}
-						<button class="btn btn-primary pull-right" ng-click="chgMonth(1)">&gt;</button>
-					</h3>
-					<%@include file="_calendarTable.html"%>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							Suggest dates for '{{newFixedDate.title}}' in {{newFixedDate.location}}
+						</div>
+						<h3 class="alert-info">
+							<button class="btn btn-primary pull-left" ng-click="chgMonth(-1)" ng-show="isFutureDate()">&lt;</button>
+							{{months[month] + ' ' + year}}
+							<button class="btn btn-primary pull-right" ng-click="chgMonth(1)">&gt;</button>
+						</h3>
+						<%@include file="_calendarTable.html"%>
+					</div>
 				</div><!-- calendar -->
 
-				<div class="selectedDates col-md-4 h3" ng-repeat="i in dummyArrayWith6Entries">
-					<div id="selection{{i}}">
-						<span class="glyphicon glyphicon-trash" data-idx="0" data-day=""></span>
-						<span class="date">{{selection[i]}}</span><br/>
-						<div class="inputTextWrapper">
-							<input type="text" name="sel{{i}}Time1" ng-model="selTime1" placeholder="08:00"/>
-							<input type="text" name="sel{{i}}Time2" ng-model="selTime2" placeholder="09:00"/>
-							<input type="text" name="sel{{i}}Time3" ng-model="selTime3" placeholder="10:00"/>
+				<div class="selectedDates col-md-4">
+					<div class="panel panel-default">
+						<div class="panel-heading">Selected dates</div>
+						<div class="panel-body">
+							<h4 ng-show="!isDateSelected()" class="alert alert-success">
+								<span class="glyphicon glyphicon-arrow-left"></span><br>
+								Please select one or more dates in the calendar on the left<br>
+								<span class="glyphicon glyphicon-arrow-left"></span>
+							</h4>
+							<div id="selection{{i}}" class="selection" ng-repeat="i in dummyArrayWith6Entries">
+								<span class="glyphicon glyphicon-trash" data-idx="0" data-yyyy_mm_dd=""></span>
+								<span class="date">{{selection[$index]}}</span><br/>
+								<div class="inputTextWrapper">
+									<input type="hidden" name="sel{{$index}}Date"/>
+									<input type="text"   name="sel{{$index}}Time1" placeholder="08:00"/>
+									<input type="text"   name="sel{{$index}}Time2" placeholder="09:00"/>
+									<input type="text"	 name="sel{{$index}}Time3" placeholder="10:00"/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

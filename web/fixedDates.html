@@ -76,16 +76,21 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title">{{f.title}}
-						<img ng-src="images/{{f.image}}" alt="Bernhard" class="imgEmployee"/>
+						&nbsp;<span class="glyphicon glyphicon-question-sign" title="{{f.description}}"></span>
+						<img ng-src="images/{{f.image}}" alt="{{f.fullName}}" title="{{f.fullName}}" class="imgEmployee"/>
 					</h3>
 				</div>
 				<div class="panel-body">
 					{{f.suggestedDate1}}<br>...
 					<a href="#/fixedDates?idx={{f.id}}">
 						<button type="button" class="btn btn-success pull-right" title="Choose this event">
-							<span class="glyphicon glyphicon-ok"></span>
+							<span class="glyphicon glyphicon-eye-open"></span>
 						</button>
 					</a>
+					<button type="button" ng-click="deleteFixedDate(f.id)" class="btn btn-danger pull-right"
+							title="Delete this event">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
 				</div>
 			</div>
 		</div>
