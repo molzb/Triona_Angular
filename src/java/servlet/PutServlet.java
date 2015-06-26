@@ -127,10 +127,50 @@ public class PutServlet extends BaseServlet {
 							getIntParam(req, "employeeId"),
 							getBooleanParam(req, "agreed1"),
 							getBooleanParam(req, "agreed2"),
-							getBooleanParam(req, "agreed3"),
+							getBooleanParam(req, "agreed3"),	
 							getBooleanParam(req, "agreed4"),
 							getBooleanParam(req, "agreed5"),
 							getBooleanParam(req, "agreed6")));
+					break;
+				case FIXEDDATES:
+//					txtTitle=Testevent", "txtLocation=Mainz", "txtDescription=Meine+Beschreibung",
+//					"sel0Time1=10%3A00", "sel0Time2=12%3A00", "sel0Time3=", ..., "sel5Time1=", ..., "sel5Time3="
+					out.println(dbService.insertOrUpdateFixedDate(
+							getIntParam(req, ID),
+							getUserId(req),
+							req.getParameter("txtTitle"),
+							req.getParameter("txtLocation"),
+							req.getParameter("txtDescription"),
+
+							req.getParameter("sel0Date"),
+							req.getParameter("sel0Time1"),
+							req.getParameter("sel0Time2"),
+							req.getParameter("sel0Time3"),
+
+							req.getParameter("sel1Date"),
+							req.getParameter("sel1Time1"),
+							req.getParameter("sel1Time2"),
+							req.getParameter("sel1Time3"),
+							
+							req.getParameter("sel2Date"),
+							req.getParameter("sel2Time1"),
+							req.getParameter("sel2Time2"),
+							req.getParameter("sel2Time3"),
+
+							req.getParameter("sel3Date"),
+							req.getParameter("sel3Time1"),
+							req.getParameter("sel3Time2"),
+							req.getParameter("sel3Time3"),
+
+							req.getParameter("sel4Date"),
+							req.getParameter("sel4Time1"),
+							req.getParameter("sel4Time2"),
+							req.getParameter("sel4Time3"),
+
+							req.getParameter("sel5Date"),
+							req.getParameter("sel5Time1"),
+							req.getParameter("sel5Time2"),
+							req.getParameter("sel5Time3")));
 					break;
 
 				default:

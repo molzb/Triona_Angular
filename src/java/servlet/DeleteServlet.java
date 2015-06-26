@@ -43,6 +43,9 @@ public class DeleteServlet extends BaseServlet {
 				case TIMESHEETS:
 					out.println(dbService.deleteTimesheet(id));
 					break;
+				case FIXEDDATES:
+					out.println(dbService.deleteFixedDate(id));
+					break;
 				default:
 					String msg = "delete=" + param + " is not supported";
 					LOG.log(Level.SEVERE, msg, param);

@@ -2,6 +2,7 @@ package persistence;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,42 @@ public class DbService {
 		}
 	}
 
+	public boolean insertOrUpdateFixedDate(int id, int userId, String title, String location, String description,
+			String... selTimes) throws SQLException {
+		String sqlInsert = "INSERT INTO fixed_date (employee_id, title, location, description," +
+			"suggested_date1, suggested_date2, suggested_date3, suggested_date4, suggested_date5, suggested_date6) " +
+			"VALUES (?,?,?,?,   ?,?,?,?,?,?)";
+		String[] sqlTimestamps = new String[] {null, null, null,	null, null, null};
+		for (int i = 0, j = 0; i < selTimes.length; i += 4) { 
+			List<String> selectedTimestamps =
+					getSelectedTimestamps(selTimes[i], selTimes[i+1], selTimes[i+2], selTimes[i+3]);
+			if (selectedTimestamps.isEmpty())
+				continue;
+			for (String sel: selectedTimestamps) {
+				if (j < 6)
+					sqlTimestamps[j++] = sel;
+			}
+		}
+
+		return new QueryRunner(ds).update(sqlInsert, userId, title, location, description,
+					sqlTimestamps[0], sqlTimestamps[1], sqlTimestamps[2],
+					sqlTimestamps[3], sqlTimestamps[4], sqlTimestamps[5]) > 0;
+	}
+
+	private List<String> getSelectedTimestamps(String date, String time1, String time2, String time3) {
+		List<String> sqlTimestamps = new ArrayList<>();
+		if (date == null || date.isEmpty())
+			return sqlTimestamps;
+
+		if (time1 != null && time1.length() >= 4)
+			sqlTimestamps.add(date + " " + time1);
+		if (time2 != null && time2.length() >= 4)
+			sqlTimestamps.add(date + " " + time2);
+		if (time3 != null && time3.length() >= 4)
+			sqlTimestamps.add(date + " " + time3);
+		return sqlTimestamps;
+	}
+
 	public String getEmployee(Integer id) throws SQLException {
 		return getEmployees(id);
 	}
@@ -126,7 +163,7 @@ public class DbService {
 				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.client AS projectClient,"
 				+ " p.project_name AS projectName, p.city AS projectCity"
 				+ "		FROM employee e, project p"
-				+ "		WHERE e.project_id = p.id";
+				+ "		WHERE e.project_id = p.id AND e.is_active = 1";
 		if (id != null) {
 			sql += " AND e.id = " + id;
 		}
@@ -187,14 +224,13 @@ public class DbService {
 	}
 
 	public String getFixedDate(Integer id) throws SQLException {
-		String sql = "SELECT fixed_date.id, employee_id AS employeeId, image, title, "
-				+ "DATE_FORMAT(suggested_date1, '%b %Y, %a %d, %H:%i') AS suggestedDate1, "
+		String sql = "SELECT fixed_date.id, employee_id AS employeeId, CONCAT(first_name, ' ', last_name) AS fullName, "
+				+ "description, image, title, DATE_FORMAT(suggested_date1, '%b %Y, %a %d, %H:%i') AS suggestedDate1, "
 				+ "IF(suggested_date2 IS NULL, NULL, DATE_FORMAT(suggested_date2, '%b %Y, %a %d, %H:%i')) AS suggestedDate2, "
 				+ "IF(suggested_date3 IS NULL, NULL, DATE_FORMAT(suggested_date3, '%b %Y, %a %d, %H:%i')) AS suggestedDate3, "
 				+ "IF(suggested_date4 IS NULL, NULL, DATE_FORMAT(suggested_date4, '%b %Y, %a %d, %H:%i')) AS suggestedDate4, "
 				+ "IF(suggested_date5 IS NULL, NULL, DATE_FORMAT(suggested_date5, '%b %Y, %a %d, %H:%i')) AS suggestedDate5, "
-				+ "IF(suggested_date6 IS NULL, NULL, DATE_FORMAT(suggested_date6, '%b %Y, %a %d, %H:%i')) AS suggestedDate6, "
-				+ "CAST(duration AS char) AS duration"
+				+ "IF(suggested_date6 IS NULL, NULL, DATE_FORMAT(suggested_date6, '%b %Y, %a %d, %H:%i')) AS suggestedDate6 "
 				+ "    FROM fixed_date "
 				+ "INNER JOIN employee ON employee.id = employee_id";
 		sql += (id != null ? " WHERE id=" + id : "");
@@ -232,6 +268,11 @@ public class DbService {
 
 	public boolean deleteTimesheet(int id) throws SQLException {
 		String sql = "DELETE FROM timesheet WHERE id = ?";
+		return new QueryRunner(ds).update(sql, id) > 0;
+	}
+
+	public boolean deleteFixedDate(Integer id) throws SQLException {
+		String sql = "DELETE FROM fixed_date WHERE id = ?";
 		return new QueryRunner(ds).update(sql, id) > 0;
 	}
 
