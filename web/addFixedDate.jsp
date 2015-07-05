@@ -86,9 +86,12 @@
 								<span class="date">{{selection[$index]}}</span><br/>
 								<div class="inputTextWrapper">
 									<input type="hidden" name="sel{{$index}}Date"/>
-									<input type="text"   name="sel{{$index}}Time1" placeholder="08:00"/>
-									<input type="text"   name="sel{{$index}}Time2" placeholder="09:00"/>
-									<input type="text"	 name="sel{{$index}}Time3" placeholder="10:00"/>
+									<input type="text"   name="sel{{$index}}Time1" placeholder="08:00" 
+										   ng-keyup="validateSave($event)" ng-keydown="enableOnlyNumbers($event)"/>
+									<input type="text"   name="sel{{$index}}Time2" placeholder="09:00" 
+										   ng-keyup="validateSave($event)" ng-keydown="enableOnlyNumbers($event)"/>
+									<input type="text"	 name="sel{{$index}}Time3" placeholder="10:00" 
+										   ng-keyup="validateSave($event)" ng-keydown="enableOnlyNumbers($event)"/>
 								</div>
 							</div>
 						</div>
@@ -99,7 +102,8 @@
 				<div class="col-md-4">
 					<br/>
 					<button class="btn btn-default" ng-click="showGeneralTab()">Back</button>
-					<button class="btn btn-success pull-right" ng-click="saveFixedDate()">Save</button>
+					<button class="btn btn-success pull-right" ng-click="saveFixedDate()"
+							ng-disabled="!isTimeSelectedAndValid()">Save</button>
 				</div>
 			</div><!-- row -->
 

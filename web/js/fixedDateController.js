@@ -236,6 +236,37 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 		return $(".selectedDates .selection:visible").length > 0;
 	};
 
+	$scope.enableOnlyNumbers = function(e) {
+		var allowedKeycodes = [48,49,50,51,52,53,54,55,56,57,	37,39,	8,9,16,190];	// 0-9, <-,->,  :,Tab,BS
+		if ($.inArray(e.keyCode, allowedKeycodes) === -1)
+			e.preventDefault();
+	};
+
+	/** time is valid, when it has the format hh:mm and hour and minutes must be valid numbers (0-23, 0-59) */
+	$scope.isTimeSelectedAndValid = function() {
+		var isValid = false;
+		var regexTime = new RegExp(/[0-9]{1,2}:[0-9]{2}/);
+		$(".selectedDates .panel-body input[type=text]:visible").each(function() {
+			if ($(this).val().match(regexTime)) {
+				var hourMin = $(this).val().split(":");
+				if (parseInt(hourMin[0]) >= 0 && parseInt(hourMin[0]) <= 23 &&
+					parseInt(hourMin[1]) >= 0 && parseInt(hourMin[1]) <= 59)
+					isValid = true;
+			}
+		});
+		return isValid;
+	};
+
+	$scope.validateSave = function(e) {
+		if ($scope.isTimeSelectedAndValid()) {
+			$(".selectedDates .btn-success").removeAttr("disabled");
+			$(e.target).removeClass("alert-danger");
+		} else {
+			$(".selectedDates .btn-success").attr("disabled", "disabled");
+			$(e.target).addClass("alert-danger");
+		}
+	};
+
 	/**
 	 * Formats a given date like that: Thu, 31.12.
 	 * @param {Date} d
