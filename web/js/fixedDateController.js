@@ -37,6 +37,7 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 				$scope.fixedDatesEmployees = MyService.getFixedDatesEmployees();
 				insertAgreedIntoEmployeesArray();
 				addMouseOverEventInOverview();
+				$("#divFixedDates").show();
 			});
 		});
 	});
@@ -71,6 +72,13 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 			}
 		}
 		return false;
+	};
+
+	$scope.preventSubmit = function(e) {
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			return false;
+		}
 	};
 
 	function addMouseOverEventInOverview() {

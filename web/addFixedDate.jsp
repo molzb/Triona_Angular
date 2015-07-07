@@ -19,7 +19,7 @@
 					<h4>Title*</h4>
 				</div>
 				<div class="col-md-4">
-					<input type="text" name="txtTitle" ng-model="newFixedDate.title" required
+					<input type="text" name="txtTitle" ng-keydown="preventSubmit($event)" ng-model="newFixedDate.title" required
 						   placeholder="Ex. Our next event"/>
 				</div>
 			</div>
@@ -29,7 +29,7 @@
 					<h4>Location</h4>
 				</div>
 				<div class="col-md-4">
-					<input type="text" name="txtLocation" ng-model="newFixedDate.location"
+					<input type="text" name="txtLocation" ng-keydown="preventSubmit($event)" ng-model="newFixedDate.location"
 						   placeholder="Ex. Hauptstr. 12, 12345 Mainz"/>
 				</div>
 			</div>
