@@ -1,6 +1,6 @@
 "use strict";
 var myFixedDateScope;
-routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routeParams, MyService) {
+routeApp.controller('FixedDateCtrl', function ($scope, $location, $route, $http, $routeParams, MyService) {
 	myFixedDateScope = $scope;
 	$scope.employees = [];
 	$scope.fixedDates = [];
@@ -332,7 +332,13 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 	};
 
 	$scope.saveFixedDate = function() {
-		$("form[name=frmFixedDate]").attr("action", "PutServlet").submit();
+		var qParams = $("form[name=frmFixedDate]").serialize();
+		$http.post('PutServlet?' + qParams).success(function() {
+			$location.path('/fixedDates');
+		}).error(function(e) {
+			alert("error " + e);
+			$location.path('/fixedDates');
+		});
 	};
 
 	$scope.deleteFixedDate = function(id) {

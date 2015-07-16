@@ -24,7 +24,7 @@
 							<img ng-src="images/{{emp.image}}" alt="{{emp.firstName}}" title="{{emp.fullName}}" class="imgEmployee"/>
 						</td>
 						<td class="centered">
-							<span class="firstName {{emp.id == me.id ? 'bold':''}}">{{emp.firstName}}</span>
+							<span ng-class="emp.id == me.id ? 'bold':'firstName'">{{emp.firstName}}</span>
 						</td>
 						<td class="centered {{isCheckedCssTr(emp, 1)}}" title="{{title(emp.id, 1)}}">
 							<span class="centered {{isCheckedCssIcon(emp, 1)}}" ng-if="emp.id != me.id"> </span>

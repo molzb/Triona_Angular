@@ -4,7 +4,7 @@ var myHolidayScope;
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(),0,1);
 	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
-}
+};
 
 routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
 	myHolidayScope = $scope;
@@ -233,7 +233,7 @@ routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
 					!tdOfI.hasClass("outOfMth")) {
 				tdOfI.addClass("today");
 			}
-			d.setTime(d.getTime() + $scope.DAY_IN_MS);
+			d.setDate(d.getDate() + 1);
 		});
 	};
 
