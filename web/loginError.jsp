@@ -4,25 +4,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Login error</title>
-		<style type="text/css">
-			<jsp:include page="css/bootstrap.min.css"></jsp:include>
-			html, body { height: 100%; }
-			body { padding-top: 15%; }
-			.form-login {
-				background-color: #ededed;
-				border-radius: 15px;
-				border: 1px solid #888888;
-				padding: 10px 20px 20px;
-				text-align: center;
-			}
-		</style>
+		<style type="text/css"><%@ include file="css/login.css"%></style>
     </head>
     <body>
 		<div class="col-md-offset-5 col-md-3 form-login">
 			<h2>Triona Project</h2><br>
 			<span class="text-danger">Login oder Passwort falsch!</span>
 			<br><br>
-			<a href="login.jsp" class="btn btn-primary">Zurück</a>
+			<a href="index.jsp" class="btn btn-primary">Zurück</a>
 		</div>
 	</body>
 </html>

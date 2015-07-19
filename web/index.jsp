@@ -16,15 +16,14 @@
 		<link href="images/favicon.gif"		rel="shortcut icon" type="image/x-icon" />
 
 		<script type="text/javascript" src="js/thirdParty.js"></script>
-
-		<script type="text/javascript" src="js/routeApp.js"></script>
+		<script type="text/javascript" src="js/own.js"></script>
+<%--		<script type="text/javascript" src="js/routeApp.js"></script>
 		<script type="text/javascript" src="js/MyService.js"></script>
 		<script type="text/javascript" src="js/employeesController.js"></script>
 		<script type="text/javascript" src="js/projectsController.js"></script>
 		<script type="text/javascript" src="js/holidaysController.js"></script>
 		<script type="text/javascript" src="js/timesheetsController.js"></script>
-		<script type="text/javascript" src="js/fixedDateController.js"></script>
-		<!--<script type="text/javascript" src="js/own.js"></script> TODO -->
+		<script type="text/javascript" src="js/fixedDateController.js"></script>--%>
 	</head>
 	<body id="trionaBody">
 		<nav id="triona" class="navbar navbar-inverse navbar-fixed-top">

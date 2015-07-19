@@ -68,6 +68,7 @@ h2 {
 	color: #fff;
 	background-color: #428bca;
 	border-color: #357ebd;
+	text-decoration: none;
 }
 .btn-primary:hover {
 	background-color: #3071a9;

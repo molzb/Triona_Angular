@@ -194,7 +194,7 @@ var myHolidayScope;
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(),0,1);
 	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
-}
+};
 
 routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
 	myHolidayScope = $scope;
@@ -423,7 +423,7 @@ routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
 					!tdOfI.hasClass("outOfMth")) {
 				tdOfI.addClass("today");
 			}
-			d.setTime(d.getTime() + $scope.DAY_IN_MS);
+			d.setDate(d.getDate() + 1);
 		});
 	};
 
@@ -458,7 +458,7 @@ routeApp.controller('HolidayCtrl', function ($scope, $http, $route, MyService) {
 });
 "use strict";
 var myFixedDateScope;
-routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routeParams, MyService) {
+routeApp.controller('FixedDateCtrl', function ($scope, $location, $route, $http, $routeParams, MyService) {
 	myFixedDateScope = $scope;
 	$scope.employees = [];
 	$scope.fixedDates = [];
@@ -495,6 +495,7 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 				$scope.fixedDatesEmployees = MyService.getFixedDatesEmployees();
 				insertAgreedIntoEmployeesArray();
 				addMouseOverEventInOverview();
+				$("#divFixedDates").show();
 			});
 		});
 	});
@@ -529,6 +530,13 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 			}
 		}
 		return false;
+	};
+
+	$scope.preventSubmit = function(e) {
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			return false;
+		}
 	};
 
 	function addMouseOverEventInOverview() {
@@ -782,7 +790,13 @@ routeApp.controller('FixedDateCtrl', function ($scope, $route, $http, $routePara
 	};
 
 	$scope.saveFixedDate = function() {
-		$("form[name=frmFixedDate]").attr("action", "PutServlet").submit();
+		var qParams = $("form[name=frmFixedDate]").serialize();
+		$http.post('PutServlet?' + qParams).success(function() {
+			$location.path('/fixedDates');
+		}).error(function(e) {
+			alert("error " + e);
+			$location.path('/fixedDates');
+		});
 	};
 
 	$scope.deleteFixedDate = function(id) {
