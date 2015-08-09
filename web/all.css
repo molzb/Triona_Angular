@@ -7084,6 +7084,7 @@ h2 {
 	color: #fff;
 	background-color: #428bca;
 	border-color: #357ebd;
+	text-decoration: none;
 }
 .btn-primary:hover {
 	background-color: #3071a9;
@@ -7134,7 +7135,7 @@ body {
 .sidebar {
 	display: none;
 }
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {*/
 	.sidebar {
 		position: fixed;
 		top: 51px;
@@ -7148,7 +7149,7 @@ body {
 		background-color: #f5f5f5;
 		border-right: 1px solid #eee;
 	}
-}
+/*}*/
 
 /* Sidebar navigation */
 .nav-sidebar {
@@ -7157,10 +7158,11 @@ body {
 	margin-left: -20px;
 }
 .nav-sidebar.l2 {
-	margin-left: 20px;
+	margin-left: 10px;
 }
 .nav-sidebar.l2 li {
-	list-style-type: circle;
+	display: list-item;
+	list-style-type: disc;
 	list-style-position: inside;
 }
 
@@ -7713,8 +7715,13 @@ body {
 	margin-bottom: 20px;
 	margin-left: -20px;
 }
-ul.nav-sidebar.l2 {
-	margin-left: 20px;
+.nav-sidebar.l2 {
+	margin-left: 10px;
+}
+.nav-sidebar.l2 li {
+	display: list-item;
+	list-style-type: disc;
+	list-style-position: inside;
 }
 
 .nav-sidebar > li > a {
@@ -7826,14 +7833,16 @@ ul.nav-sidebar.l2 {
 
 #frmHoliday #toggleHolidayList { padding-left: 5px; }
 
-#divFixedDates .firstName { display: inline-block; width: 80px; }
-#divFixedDates .firstName.bold { font-weight: bold; background: white; color: black; }
-#divFixedDates .firstName { background: #E9E9E9; color: #909090; height: 28px;}
+#divFixedDates { display: none; }	/* displaying it, when it's ready to remove stuttering of the page */
+#tblFixedDates td .bold { font-weight: bold; color: black; }
+#divFixedDates td .firstName { display: inline-block; width: 80px; background: #E9E9E9; color: #909090; height: 28px; }
 #divFixedDates td.grey { background: #E9E9E9; }
 #divFixedDates table tbody td { padding: 1px 3px; }
 #divFixedDates table tbody td.img { background: #E9E9E9; }
 #divFixedDates table .imgEmployee { height: 30px; }
 #fixedDatesOverview .imgEmployee { height: 25px; float: right; padding-right: 10px; }
+#fixedDatesOverview .panel-body .btn-danger { margin-right: 5px; }
+#fixedDatesOverview .glyphicon-question-sign { cursor: pointer; }
 #divFixedDates table th.date { width: 80px; font-weight: normal; }
 #divFixedDates table .centered { text-align: center; }
 
