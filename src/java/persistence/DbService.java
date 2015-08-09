@@ -159,6 +159,7 @@ public class DbService {
 
 	private String getEmployees(Integer id) throws SQLException {
 		String sql = "SELECT e.id, e.image, e.first_name as firstName, e.last_name as lastName, "
+				+ " CONCAT('http://triona.de/files/profiles/profil_', LOWER(e.first_name), '_', LOWER(e.last_name), '.pdf') as pdf,"
 				+ " CONCAT(e.first_name, ' ', e.last_name) as fullName, e.jobtitle, e.city, e.text, e.holidays,"
 				+ "	e.role_name AS roleName, e.email, e.project_id AS projectId, p.client AS projectClient,"
 				+ " p.project_name AS projectName, p.city AS projectCity"
