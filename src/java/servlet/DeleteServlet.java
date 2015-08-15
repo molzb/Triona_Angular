@@ -52,7 +52,7 @@ public class DeleteServlet extends BaseServlet {
 					out.println(escapeHTML(msg));
 			}
 		} catch (SQLException ex) {
-			Logger.getLogger(DeleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 }
