@@ -1,0 +1,100 @@
+<div ng-controller="TimesheetCtrl">
+	<form id="frmTimesheet" name="frmTimesheet" class="form-horizontal container" role="form"
+		  action="PutServlet" novalidate ng-init="init()">
+		<input type="hidden" name="type" value="timesheets"/>
+		<input type="hidden" name="employeeId" value="{{me.id}}"/>
+		<input type="hidden" name="projectId" value="{{me.projectId}}"/>
+		<h1 class="page-header" ng-show="isEditMode === false">Create timesheet</h1>
+		<h1 class="page-header" ng-show="isEditMode === true">Edit timesheet</h1>
+
+		<div class="row">
+			<div class="col-md-8">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<table id="tblTimesheetHead" class="table">
+							<tr>
+								<td><b>Name</b></td><td>{{me.fullName}}</td>
+							</tr>
+							<tr>
+								<td><b>Client</b></td><td>{{me.projectClient}}</td>
+							</tr>
+							<tr>
+								<td><b>Month</b></td><td>{{timesheetCurrentMonthName}} {{year}}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="panel-body">
+						<table id="tblTimesheet" class="table">
+							<thead>
+								<tr>
+									<th>Day</th>
+									<th>Start</th>
+									<th>End</th>
+									<th>Pause</th>
+									<th class="total">Total</th>
+									<th class="diff">Diff</th>
+									<th>Subject</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="t in timesheetCurrentMonth" ng-class="t.jsDateClass">
+									<td ng-class="t.jsDateClass">
+										<input type="hidden" name="id{{$index+1}}" value="{{t.id}}" ng-if="t.isWorkingDay"/>
+										<input type="hidden" name="day{{$index+1}}" value="{{t.jsDate| date:'dd.MM.yyyy'}}"
+											   ng-if="t.isWorkingDay"/>
+										{{t.jsDate| date:'EEE, d'}}
+									</td>
+									<td class="date">
+										<input type="text" name="from{{$index+1}}" ng-model="t.from"
+											   placeholder="hh:mm" ng-keydown="keydownCheck($event)" ng-if="t.isWorkingDay"/>
+									</td>
+									<td class="date">
+										<input type="text" name="to{{$index+1}}" ng-model="t.to"
+											   placeholder="hh:mm" ng-keydown="keydownCheck($event)" ng-if="t.isWorkingDay"/>
+									</td>
+									<td class="date">
+										<input type="text" name="pause{{$index+1}}" ng-model="t.pause"
+											   placeholder="hh:mm" ng-keydown="keydownCheck($event)" ng-if="t.isWorkingDay"/>
+									</td>
+									<td>
+										<span ng-if="t.isWorkingDay" class="right">{{calcWorkingHours(t.to, t.from, t.pause)|hhmm}}</span>
+										<input type="hidden" name="duration{{$index+1}}"
+											   value="{{calcWorkingHours(t.to, t.from, t.pause) | hhmm}}" ng-if="t.isWorkingDay"/>
+									</td>
+									<td>
+										<span ng-if="t.isWorkingDay" class="right text-bold" ng-class="calcDiffClass(t.to, t.from, t.pause)">
+											{{calcDiff(t.to, t.from, t.pause)|hhmm}}
+										</span>
+										<input type="hidden" name="diff{{$index+1}}"
+											   value="{{calcDiff(t.to, t.from, t.pause)|hhmm}}" ng-if="t.isWorkingDay"/>
+									</td>
+									<td>
+										<input type="text" name="comment{{$index+1}}" ng-model="t.comment"
+											   ng-if="t.isWorkingDay"/>
+										<b class="specialDay" ng-if="!t.isWorkingDay" ng-bind="t.comment"/>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td>{{timesheetSumDays}} days</td> <td></td> <td></td> <td></td>
+									<td>{{timesheetSumHours|hhmm}}</td> <td>{{timesheetSumDiff|hhmm}}</td> <td></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div><!-- panelBody -->
+					<div class="panel-heading">
+						<div class="control-group text-right">
+							<label>&nbsp;</label>
+							<a class="btn btn-danger" ng-href="#timesheets">Cancel</a>
+							<button type="button" class="btn btn-success" ng-click="save()"
+									ng-disabled="frmTimesheet.$invalid">Save</button>
+							<button type="button" class="btn btn-danger" ng-show="ec.isEditMode">Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</form>
+</div>

@@ -1,0 +1,164 @@
+<div ng-controller="EmployeesCtrl as ec">
+	<form id="frmEmployee" name="frmEmployee" class="form-horizontal container" role="form" 
+		  action="PutServlet" novalidate>
+		<h1 class="page-header" ng-if="ec.isEditMode === false">Create employee</h1>
+		<h1 class="page-header" ng-if="ec.isEditMode === true">Edit employee</h1>
+		<div class="row">
+			<div class="col-md-2">
+				<h4>Image</h4>
+			</div>
+			<div class="col-md-3">
+				<div id="upload_area">
+					<!-- http://www.quirksmode.org/dom/inputfile.html -->
+					<div class="fileinputs">
+						<input id="image_file" name="image_file" type="file" class="btn btn-default h100"
+							   ng-model="ec.newEmployee.image" onchange="fileSelected();" />
+						<div class="fakefile">
+							<input type="button" class="btn btn-default h100" value="Drop your image here"/>
+						</div>
+					</div>
+
+					<img id="preview" src="" alt=""/>
+					<input id="btnUpload" type="button" class="btn btn-primary" value="Upload" 
+						   onclick="startUploading();" />
+
+					<div id="fileinfo">
+						<div id="filename"></div>
+					</div>
+					<div id="error">You should select valid image files only!</div>
+					<div id="error2">An error occurred while uploading the file</div>
+					<div id="abort">The upload has been canceled by the user or the browser dropped the connection</div>
+					<div id="warnsize">Your file is very big. We can't accept it. Please select more small file</div>
+				</div>
+			</div>
+
+			<div class="col-md-2">
+				<h4>Text*</h4>
+			</div>
+			<div class="col-md-4">
+				<textarea id="text" name="text" type="textarea" ng-model="ec.newEmployee.text" required></textarea>
+			</div>
+			<div class="col-md-2">
+				<h4>*</h4>
+			</div>
+			<div class="col-md-4">
+				<div>Required fields</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				<h4>First name*</h4>
+			</div>
+			<div class="col-md-3">
+				<input id="firstName" name="firstName" type="text" ng-model="ec.newEmployee.firstName"
+					   required minlength="2"/>
+				<div class="alert alert-danger marginTop10" ng-show="frmEmployee.firstName.$dirty && frmEmployee.firstName.$error.required">
+					Required!
+				</div>
+				<div class="alert alert-danger marginTop10" ng-show="frmEmployee.firstName.$dirty && frmEmployee.firstName.$error.minlength">
+					Too short!
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				<h4>Last name*</h4>
+			</div>
+			<div class="col-md-3">
+				<input id="lastName" name="lastName" type="text" ng-model="ec.newEmployee.lastName" required minlength="2"/>
+			</div>
+			<div class="alert alert-danger marginTop10" ng-show="frmEmployee.lastName.$dirty && frmEmployee.lastName.$error.required">
+				Required!
+			</div>
+			<div class="alert alert-danger marginTop10" ng-show="frmEmployee.lastName.$dirty && frmEmployee.lastName.$error.minlength">
+				Too short!
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				<h4>Email*</h4>
+			</div>
+			<div class="col-md-3">
+				<input id="email" name="email" type="email" ng-model="ec.newEmployee.email" required/>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				<h4>Job Title*</h4>
+			</div>
+			<div class="col-md-3">
+				<select id="jobtitle" name="jobtitle" ng-model="ec.newEmployee.jobtitle">
+					<option ng-repeat="title in ec.jobtitles" ng-value="title.jobtitle"
+							ng-selected="ec.newEmployee.jobtitle === title.name">
+						{{title.name}}
+					</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				<h4>City</h4>
+			</div>
+			<div class="col-md-3">
+				<input id="city" name="city" type="text" ng-model="ec.newEmployee.city" required/>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				<h4>Project*</h4>
+			</div>
+			<div class="col-md-3">
+				<select id="projectId" name="projectId" ng-init="ec.loadProjects()" ng-model="ec.newEmployee.projectId">
+					<option ng-repeat="proj in ec.projects| orderBy: pc.orderBy" ng-value="proj.id"
+							ng-selected="proj.id === ec.newEmployee.projectId">{{proj.projectName}}</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">&nbsp;</div>
+			<div class="col-md-3">
+				<div class="control-group">
+					<label>&nbsp;</label>
+					<a class="btn btn-danger" ng-href="#team">Cancel</a>
+					<button type="button" class="btn btn-success" ng-click="ec.addEmployee(ec.newEmployee)"
+							ng-disabled="frmEmployee.$invalid">Save</button>
+					<button type="button" class="btn btn-danger" ng-show="ec.isEditMode">Delete</button>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<h2>Preview</h2>
+	<table id="tblPreview" class="table table-striped table-hover table-bordered">
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				<th>Name</th>
+				<th>City</th>
+				<th>Project</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class='w90'>
+					<img ng-src="images/{{ec.newEmployee.image}}" alt="{{ec.newEmployee.firstName}}" width="90"/>
+				</td>
+				<td>{{ec.newEmployee.firstName}} {{ec.newEmployee.lastName}}</td>
+				<td>{{ec.newEmployee.city}}</td>
+				<td>{{ec.findProject(ec.newEmployee.projectId)}}</td>
+				<td>{{ec.newEmployee.text}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

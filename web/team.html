@@ -1,0 +1,51 @@
+<div id="divTeam" ng-controller="EmployeesCtrl as ec" class="trionaList">
+	<h1 class="page-header">The team</h1>
+	<div id="actions">
+		<div class="search pull-left">
+			<input type="text" class="in" ng-model="ec.searchTerm" placeholder="Name of the employee"/>
+			<span class="glyphicon glyphicon-search" ng-click="ec.search(ec.searchTerm)"></span>
+		</div>
+		<div class="addEmp pull-right">
+			<a href="#addEmployee" class="btn-primary btn btn-success" ng-show="ec.emp.roleName == 'admin'">
+				<span class="glyphicon glyphicon-plus">&nbsp;</span>Add employee
+			</a>
+		</div>
+	</div>
+	<table id="tblTeam" class="table table-striped table-hover table-bordered">
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				<th>Name	<a ng-class="ec.sortNameClass()"	ng-click="ec.sortCol('lastName');"> </a></th>
+				<th>City	<a ng-class="ec.sortCityClass()"	ng-click="ec.sortCol('city');">		</a></th>
+				<th>Project	<a ng-class="ec.sortProjectClass()" ng-click="ec.sortCol('projectName');"></a></th>
+				<th>&nbsp;</th>
+				<th ng-if="ec.emp.roleName == 'admin'">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="emp in ec.employees| filter: ec.searchTerm | orderBy: ec.predicate: ec.reverse">
+				<td>
+					<img ng-src="images/{{emp.image}}" alt="{{emp.firstName}}" class="imgEmployee"/>
+					<a href="#detailEmployee/{{emp.id}}" class="detail">
+						<span class="glyphicon glyphicon-chevron-right">&nbsp;</span>More
+					</a>
+					<a ng-href="{{emp.pdf}}" class="detail" title="PDF">
+						<span class="glyphicon glyphicon-download">&nbsp;</span>Profile
+					</a>
+				</td>
+				<td>{{emp.firstName}} {{emp.lastName}}</td>
+				<td>{{emp.city}}</td>
+				<td>{{emp.projectName}}, {{emp.projectCity}}</td>
+				<td>{{emp.text}}</td>
+				<td ng-if="ec.emp.roleName == 'admin'">
+					<a ng-click="ec.edit(emp.id)">	<!-- Achtung, kein href/ng-href angeben!!! -->
+						<span class="glyphicon glyphicon-pencil" title="Edit this team member"></span>
+					</a>
+					<a ng-click="ec.delete(emp.id)">
+						<span class="glyphicon glyphicon-remove" title="Delete this team member"></span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
