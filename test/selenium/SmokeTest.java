@@ -1,4 +1,4 @@
-package test.selenium;
+package selenium;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
