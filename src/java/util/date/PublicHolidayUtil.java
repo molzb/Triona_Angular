@@ -32,7 +32,7 @@ public class PublicHolidayUtil {
 	/**
 	 * Die Namen der gesetzlichen Feiertage in Deutschland ohne Berücksichtigung der Bundesländer
 	 */
-	static final String[] fullNames = {
+	private static final String[] fullNames = {
 		"Neujahrstag", // [0] 1. Januar
 		"Heilige Drei Könige", // [1] 6. Januar
 		"Gründonnerstag", // [2] Ostersonntag - 3 Tage
@@ -166,12 +166,14 @@ public class PublicHolidayUtil {
 				holidays.remove(fullNames[H_ALLERHEILIGEN]);
 				holidays.remove(fullNames[H_BUSSUNDBET]);
 				break;
+			default:
+				System.err.println(stateCode + " not supported");
 		}
 		return holidays;
 	}
 
 	public static Map<String, GregorianCalendar> getAllLegalHolidaysFor(int year) {
-		Map<String, GregorianCalendar> holidayMap = new HashMap<String, GregorianCalendar>();
+		Map<String, GregorianCalendar> holidayMap = new HashMap<>();
 		GregorianCalendar easter = getEaster(year);
 		GregorianCalendar gruenDonnerstag = (GregorianCalendar) easter.clone();
 		gruenDonnerstag.add(Calendar.DAY_OF_YEAR, -3);
@@ -231,7 +233,7 @@ public class PublicHolidayUtil {
 		int N = (4 + k - q) % 7;
 		int d = (19 * a + M) % 30;
 		int e = (2 * b + 4 * c + 6 * d + N) % 7;
-		int nthMarch = (22 + d + e);
+		int nthMarch = 22 + d + e;
 		return new GregorianCalendar(year, 2, nthMarch);
 	}
 
@@ -248,7 +250,7 @@ public class PublicHolidayUtil {
 			}
 			System.out.println(yearTo + "holidays.size nachher: " + holidays.size());
 		}
-		Map<String, GregorianCalendar> holidaysFromTo = new HashMap<String, GregorianCalendar>();
+		Map<String, GregorianCalendar> holidaysFromTo = new HashMap<>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
 			Iterator<String> keySetIt = holidays.keySet().iterator();
 			System.out.println("from=" + sdf.format(new Date(from.getTimeInMillis())));
