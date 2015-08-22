@@ -36,6 +36,7 @@ public class GetServlet extends BaseServlet {
 
 	private static final Logger LOG = Logger.getLogger(GetServlet.class.getName());
 
+	@Override
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("application/json;charset=UTF-8");
