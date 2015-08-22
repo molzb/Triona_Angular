@@ -275,8 +275,6 @@ public class PublicHolidayUtil {
 	}
 
 	private static boolean isDateEqual(GregorianCalendar g1, GregorianCalendar g2) {
-		Date d1 = new Date(g1.getTimeInMillis());
-		Date d2 = new Date(g2.getTimeInMillis());
 		if (g1.get(Calendar.DAY_OF_YEAR) != g2.get(Calendar.DAY_OF_YEAR)) {
 			return false;
 		}
