@@ -1,6 +1,7 @@
 package persistence;
 
 import java.sql.Date;
+import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +18,7 @@ import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DbServiceTest {
-//	private static final Logger LOG = Logger.getLogger(DbServiceTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(DbServiceTest.class.getName());
 	private final int YEAR = 2015;
 	private final Integer EMPLOYEE_ID = 4;
 	private final int FIX_DATE_ID = 1;
@@ -31,7 +32,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t01_testGetUserId() throws Exception {
-		System.out.println("getUserId");
+		LOG.info("getUserId");
 		String email = "bernhard.molz@triona.de";
 		Integer result = instance.getUserId(email);
 		assertEquals(EMPLOYEE_ID, result);
@@ -39,7 +40,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t02_testGetEmployee() throws Exception {
-		System.out.println("getEmployee(1)");
+		LOG.info("getEmployee(1)");
 		String result = instance.getEmployee(EMPLOYEE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 1);
@@ -47,7 +48,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t03_testGetEmployees() throws Exception {
-		System.out.println("getEmployees");
+		LOG.info("getEmployees");
 		String result = instance.getEmployees();
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(jsonArray.size() == 13);
@@ -55,7 +56,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t04_testGetProjects() throws Exception {
-		System.out.println("getProjects");
+		LOG.info("getProjects");
 		String result = instance.getProjects();
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 8);
@@ -63,16 +64,16 @@ public class DbServiceTest {
 
 	@Test
 	public void t05_testGetHolidays() throws Exception {
-		System.out.println("getHolidays");
+		LOG.info("getHolidays");
 		String result = instance.getHolidays(EMPLOYEE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
-		System.out.println("jsonArray holidays=" + jsonArray.size());
+		LOG.info("jsonArray holidays=" + jsonArray.size());
 		assertTrue(result != null && jsonArray.size() == 3);
 	}
 
 	@Test
 	public void t06_testGetTimesheets() throws Exception {
-		System.out.println("getTimesheets");
+		LOG.info("getTimesheets");
 		String result = instance.getTimesheets(EMPLOYEE_ID, YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 132);
@@ -80,7 +81,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t07_testGetSpecialDays() throws Exception {
-		System.out.println("getSpecialDays");
+		LOG.info("getSpecialDays");
 		String result = instance.getSpecialDays(YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
 		assertTrue(result != null && jsonArray.size() == 17);
@@ -88,25 +89,25 @@ public class DbServiceTest {
 
 	@Test
 	public void t08_testGetFixedDate() throws Exception {
-		System.out.println("getFixedDate");
+		LOG.info("getFixedDate");
 		String result = instance.getFixedDate(1);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
-		System.out.println("jsonArray fixed=" + jsonArray.size());
+		LOG.info("jsonArray fixed=" + jsonArray.size());
 		assertTrue(result != null && jsonArray.size() == 1);
 	}
 
 	@Test
 	public void t09_testGetFixedDateEmployees() throws Exception {
-		System.out.println("getFixedDateEmployees");
+		LOG.info("getFixedDateEmployees");
 		String result = instance.getFixedDateEmployees(FIX_DATE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
-		System.out.println("jsonArray fixedDateEmp=" + jsonArray.size());
+		LOG.info("jsonArray fixedDateEmp=" + jsonArray.size());
 		assertTrue(result != null && jsonArray.size() == 14);
 	}
 
 	@Test
 	public void t20_testInsertOrUpdateEmployee() throws Exception {
-		System.out.println("insertOrUpdateEmployee INSERT");
+		LOG.info("insertOrUpdateEmployee INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		int id = EMPLOYEE_ID;
 		String firstName = "TestMister";
@@ -126,7 +127,7 @@ public class DbServiceTest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void t21_testInsertOrUpdateHoliday() throws Exception {
-		System.out.println("insertOrUpdateHoliday INSERT");
+		LOG.info("insertOrUpdateHoliday INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
 		int employeeId = EMPLOYEE_ID;
@@ -139,7 +140,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t22_testInsertOrUpdateProject() throws Exception {
-		System.out.println("insertOrUpdateProject INSERT");
+		LOG.info("insertOrUpdateProject INSERT");
 		DbService.SQL_INSERT_UPDATE type = null;
 		Integer id = 0;
 		String client = "Test Deutsche Bahn";
@@ -152,7 +153,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t23_testInsertOrUpdateTimesheet() throws Exception {
-		System.out.println("insertOrUpdateTimesheet INSERT");
+		LOG.info("insertOrUpdateTimesheet INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
 		Integer employeeId = EMPLOYEE_ID;
@@ -172,7 +173,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t30_testInsertOrUpdateEmployee() throws Exception {
-		System.out.println("insertOrUpdateEmployee UPDATE");
+		LOG.info("insertOrUpdateEmployee UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("employee");
 		String firstName = "UpdateTestMister";
@@ -192,7 +193,7 @@ public class DbServiceTest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void t31_testInsertOrUpdateHoliday() throws Exception {
-		System.out.println("insertOrUpdateHoliday UPDATE");
+		LOG.info("insertOrUpdateHoliday UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("holiday");
 		int employeeId = EMPLOYEE_ID;
@@ -205,7 +206,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t32_testInsertOrUpdateProject() throws Exception {
-		System.out.println("insertOrUpdateProject UPDATE");
+		LOG.info("insertOrUpdateProject UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("project");
 		String client = "Update Test Deutsche Bahn";
@@ -218,7 +219,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t33_testInsertOrUpdateTimesheet() throws Exception {
-		System.out.println("insertOrUpdateTimesheet UPDATE");
+		LOG.info("insertOrUpdateTimesheet UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("timesheet");
 		int employeeId = EMPLOYEE_ID;
@@ -238,7 +239,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t40_testDeleteEmployee() throws Exception {
-		System.out.println("deleteEmployee");
+		LOG.info("deleteEmployee");
 		int id = instance.getLastInsertedId("employee");
 		boolean result = instance.deleteEmployee(id);
 		assertTrue(result);
@@ -246,7 +247,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t41_testDeleteProject() throws Exception {
-		System.out.println("deleteProject");
+		LOG.info("deleteProject");
 		int id = instance.getLastInsertedId("project");
 		boolean result = instance.deleteProject(id);
 		assertTrue(result);
@@ -254,7 +255,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t42_testDeleteHoliday() throws Exception {
-		System.out.println("deleteHoliday");
+		LOG.info("deleteHoliday");
 		int id = instance.getLastInsertedId("holiday");
 		boolean result = instance.deleteHoliday(id);
 		assertTrue(result);
@@ -262,7 +263,7 @@ public class DbServiceTest {
 
 	@Test
 	public void t43_testDeleteTimesheet() throws Exception {
-		System.out.println("deleteTimesheet");
+		LOG.info("deleteTimesheet");
 		int id = instance.getLastInsertedId("timesheet");
 		boolean result = instance.deleteTimesheet(id);
 		assertTrue(result);
