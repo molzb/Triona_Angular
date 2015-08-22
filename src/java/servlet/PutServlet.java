@@ -31,6 +31,7 @@ public class PutServlet extends BaseServlet {
 
 	private static final Logger LOG = Logger.getLogger(PutServlet.class.getName());
 
+	@Override
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("text/plain;charset=UTF-8");
@@ -136,7 +137,6 @@ public class PutServlet extends BaseServlet {
 //					"sel0Time1=10%3A00", "sel0Time2=12%3A00", "sel0Time3=", ..., "sel5Time1=", ..., "sel5Time3="
 					out.println(dbService.insertOrUpdateFixedDate(
 							getIntParam(req, ID),
-							getUserId(req),
 							req.getParameter("txtTitle"),
 							req.getParameter("txtLocation"),
 							req.getParameter("txtDescription"),

@@ -23,9 +23,8 @@ public class DbService {
 	private final DataSource ds;
 
 	public enum SQL_INSERT_UPDATE {
-
 		INSERT, UPDATE
-	};
+	}
 
 	public DbService(DataSource ds) {
 		this.ds = ds;
@@ -113,7 +112,7 @@ public class DbService {
 		}
 	}
 
-	public boolean insertOrUpdateFixedDate(int id, int userId, String title, String location, String description,
+	public boolean insertOrUpdateFixedDate(int userId, String title, String location, String description,
 			String... selTimes) throws SQLException {
 		String sqlInsert = "INSERT INTO fixed_date (employee_id, title, location, description," +
 			"suggested_date1, suggested_date2, suggested_date3, suggested_date4, suggested_date5, suggested_date6) " +
