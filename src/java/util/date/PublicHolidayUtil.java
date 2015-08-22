@@ -1,7 +1,6 @@
 package util.date;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import persistence.MyDataSource;
 
 /**
  * Hilfsklasse, um die gesetzlichen Feiertage abhängig vom Bundesland zu bestimmen. Quellen: <br>
@@ -63,15 +63,14 @@ public class PublicHolidayUtil {
 		return getPublicHolidays(EnumState.RP, year);
 	}
 
-	public static void main(String[] args) throws SQLException, ClassNotFoundException {
+	public static void main(String[] args) throws SQLException {
 		for (int i = 2000; i < 2040; i++)
 			writeHolidaysToDB(EnumState.RP, i);
 	}
 
-	public static boolean writeHolidaysToDB(EnumState stateCode, int year) throws SQLException, ClassNotFoundException {
+	public static boolean writeHolidaysToDB(EnumState stateCode, int year) throws SQLException {
 		Map<String, GregorianCalendar> publicHolidays = PublicHolidayUtil.getPublicHolidays(stateCode, year);
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/triona", "root", "Pianoman65536");
+		Connection conn = new MyDataSource().getConnection();
 
 		String sqlInsert = "INSERT INTO specialday (day, type, name) VALUES (?, 'holiday', ?)";
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
