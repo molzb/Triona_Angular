@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import persistence.MyDataSource;
  */
 public class GetServletTest {
 
+	private static final Logger LOGGER = Logger.getLogger(GetServletTest.class.getName());
 	private final HttpServletRequest req = mock(HttpServletRequest.class);
 	private final HttpServletResponse resp = mock(HttpServletResponse.class);
 	private final HttpSession sess = mock(HttpSession.class);
@@ -43,7 +45,7 @@ public class GetServletTest {
 	@Test
 	public void test_processRequestEmployee()
 			throws ServletException, IOException {
-		System.out.println("processRequest employee");
+		LOGGER.info("processRequest employee");
 		when(req.getParameter(BaseServlet.TYPE)).thenReturn(BaseServlet.EMPLOYEES);
 		when(req.getParameter(BaseServlet.ME)).thenReturn("true");
 		instance = getGetServlet();
@@ -55,7 +57,7 @@ public class GetServletTest {
 	@Test
 	public void test_processRequestEmployees()
 			throws ServletException, IOException {
-		System.out.println("processRequest " + BaseServlet.EMPLOYEES);
+		LOGGER.info("processRequest " + BaseServlet.EMPLOYEES);
 		when(req.getParameter(BaseServlet.TYPE)).thenReturn(BaseServlet.EMPLOYEES);
 		instance = getGetServlet();
 		String result = sw.getBuffer().toString();
@@ -66,7 +68,7 @@ public class GetServletTest {
 	@Test
 	public void test_processRequestProjects()
 			throws ServletException, IOException {
-		System.out.println("processRequest " + BaseServlet.PROJECTS);
+		LOGGER.info("processRequest " + BaseServlet.PROJECTS);
 		when(req.getParameter(BaseServlet.TYPE)).thenReturn(BaseServlet.PROJECTS);
 		instance = getGetServlet();
 		String content = sw.getBuffer().toString();
@@ -77,7 +79,7 @@ public class GetServletTest {
 	@Test
 	public void test_processRequestHolidays()
 			throws ServletException, IOException {
-		System.out.println("processRequest " + BaseServlet.HOLIDAYS);
+		LOGGER.info("processRequest " + BaseServlet.HOLIDAYS);
 		when(req.getParameter(BaseServlet.TYPE)).thenReturn(BaseServlet.HOLIDAYS);
 		when(req.getParameter(BaseServlet.ME)).thenReturn("true");
 		instance = getGetServlet();
@@ -89,7 +91,7 @@ public class GetServletTest {
 	@Test
 	public void test_processRequestSpecialDays()
 			throws ServletException, IOException {
-		System.out.println("processRequest " + BaseServlet.SPECIALDAYS);
+		LOGGER.info("processRequest " + BaseServlet.SPECIALDAYS);
 		when(req.getParameter(BaseServlet.TYPE)).thenReturn(BaseServlet.SPECIALDAYS);
 		when(req.getParameter(BaseServlet.YEAR)).thenReturn("2015");
 		instance = getGetServlet();
@@ -101,7 +103,7 @@ public class GetServletTest {
 	@Test
 	public void test_processRequestTimesheets()
 			throws ServletException, IOException {
-		System.out.println("processRequest " + BaseServlet.TIMESHEETS);
+		LOGGER.info("processRequest " + BaseServlet.TIMESHEETS);
 		when(req.getParameter(BaseServlet.TYPE)).thenReturn(BaseServlet.TIMESHEETS);
 		when(req.getParameter(BaseServlet.YEAR)).thenReturn("2015");
 		when(req.getParameter(BaseServlet.ME)).thenReturn("true");
