@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 
@@ -22,6 +23,8 @@ import org.apache.commons.dbutils.QueryRunner;
  * @author Bernhard Molz
  */
 public class PublicHolidayUtil {
+
+	private static final Logger LOG = Logger.getLogger(PublicHolidayUtil.class.getName());
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 	private static final int
@@ -75,7 +78,7 @@ public class PublicHolidayUtil {
 		for (Entry<String, GregorianCalendar> entrySet : publicHolidays.entrySet()) {
 			String name = entrySet.getKey();
 			Date date = entrySet.getValue().getTime();
-			System.out.println(df.format(date) + ":" + name);
+			LOG.info(df.format(date) + ":" + name);
 			q.update(conn, sqlInsert, df.format(date), name);
 		}
 		DbUtils.closeQuietly(conn);
@@ -167,7 +170,7 @@ public class PublicHolidayUtil {
 				holidays.remove(fullNames[H_BUSSUNDBET]);
 				break;
 			default:
-				System.err.println(stateCode + " not supported");
+				LOG.warning(stateCode + " not supported");
 		}
 		return holidays;
 	}
@@ -242,24 +245,24 @@ public class PublicHolidayUtil {
 		int yearFrom = from.get(Calendar.YEAR);
 		int yearTo = to.get(Calendar.YEAR);
 		Map<String, GregorianCalendar> holidays = PublicHolidayUtil.getPublicHolidays(stateCode, yearFrom);
-		System.out.println(yearFrom + "holidays.size vorher: " + holidays.size());
+		LOG.fine(yearFrom + "holidays.size vorher: " + holidays.size());
 		if (yearTo > yearFrom) {
 			Map<String, GregorianCalendar> holidaysTo = PublicHolidayUtil.getPublicHolidays(stateCode, yearTo);
 			for (Entry<String, GregorianCalendar> set : holidaysTo.entrySet()) {
 				holidays.put(set.getKey(), set.getValue());
 			}
-			System.out.println(yearTo + "holidays.size nachher: " + holidays.size());
+			LOG.fine(yearTo + "holidays.size nachher: " + holidays.size());
 		}
 		Map<String, GregorianCalendar> holidaysFromTo = new HashMap<>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
 			Iterator<String> keySetIt = holidays.keySet().iterator();
-			System.out.println("from=" + sdf.format(new Date(from.getTimeInMillis())));
+			LOG.fine("from=" + sdf.format(new Date(from.getTimeInMillis())));
 			while (keySetIt.hasNext()) {
 				String key = keySetIt.next();
 				GregorianCalendar g = holidays.get(key);
 				if (isDateEqual(from, g)) {
 					holidaysFromTo.put(key, g);
-					System.out.println("added " + g);
+					LOG.fine("added " + g);
 				}
 			}
 			from.add(Calendar.DAY_OF_YEAR, 1);
@@ -271,7 +274,6 @@ public class PublicHolidayUtil {
 	private static boolean isDateEqual(GregorianCalendar g1, GregorianCalendar g2) {
 		Date d1 = new Date(g1.getTimeInMillis());
 		Date d2 = new Date(g2.getTimeInMillis());
-		System.out.println("Vergleiche " + sdf.format(d1) + " mit " + sdf.format(d2));
 		if (g1.get(Calendar.DAY_OF_YEAR) != g2.get(Calendar.DAY_OF_YEAR)) {
 			return false;
 		}

@@ -6,16 +6,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Random;
+import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import persistence.MyDataSource;
 
 /**
- * Hilfsklasse, um Timesheets einzufügen>
+ * Hilfsklasse, um Timesheets einzufügen
  * @author Bernhard Molz
  */
 public class TimesheetUtil {
 
+	private static final Logger LOG = Logger.getLogger(TimesheetUtil.class.getName());
+	
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
@@ -26,7 +29,7 @@ public class TimesheetUtil {
 		}
 	}
 
-	public boolean writeHolidaysToDB(int employeeId, int year, int upToMonth) throws SQLException, ClassNotFoundException {
+	public boolean writeHolidaysToDB(int employeeId, int year, int upToMonth) throws SQLException {
 		long t1 = System.currentTimeMillis();
 		Connection conn = new MyDataSource().getConnection();
 
@@ -46,12 +49,12 @@ public class TimesheetUtil {
 			int fromHour = Integer.parseInt(from.substring(0,2));
 			String to = String.valueOf(fromHour + worktimeInHours) + from.substring(2);
 			String duration = String.valueOf(worktimeInHours) + ":00";
-			System.out.println("day/from/to/pause/duration=" + dateStr + "/" + from + "/" + to + "/" + pause + "/" + duration);
+			LOG.info("day/from/to/pause/duration=" + dateStr + "/" + from + "/" + to + "/" + pause + "/" + duration);
 			q.update(conn, sqlInsert, employeeId, 1, dateStr, from, to, pause, duration, "comment");
 			cal.add(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_WEEK) == 6 ? 3 : 1);
 		}
 		DbUtils.closeQuietly(conn);
-		System.out.println("Dauer: " + (System.currentTimeMillis() - t1));
+		LOG.info("Dauer: " + (System.currentTimeMillis() - t1));
 		return true;
 	}
 
