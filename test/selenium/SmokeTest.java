@@ -110,7 +110,7 @@ public class SmokeTest {
 			return driver.findElement(By.className(clazz));
 		} catch (NoSuchElementException nse) {
 			LOGGER.warning("Couldn't find element with ." + clazz);
-			return null;
+			throw nse;
 		}
 	}
 
