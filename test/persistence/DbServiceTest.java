@@ -107,7 +107,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t20TestInsertOrUpdateEmployee() throws Exception {
+	public void t20TestInsertOrUpdateEmployee() throws SQLException {
 		LOG.info("insertOrUpdateEmployee INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		int id = EMPLOYEE_ID;
@@ -127,7 +127,7 @@ public class DbServiceTest {
 
 	@Test
 	@SuppressWarnings("deprecation")
-	public void t21TestInsertOrUpdateHoliday() throws Exception {
+	public void t21TestInsertOrUpdateHoliday() throws SQLException {
 		LOG.info("insertOrUpdateHoliday INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
@@ -140,7 +140,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t22TestInsertOrUpdateProject() throws Exception {
+	public void t22TestInsertOrUpdateProject() throws SQLException {
 		LOG.info("insertOrUpdateProject INSERT");
 		DbService.SQL_INSERT_UPDATE type = null;
 		Integer id = 0;
@@ -153,7 +153,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t23TestInsertOrUpdateTimesheet() throws Exception {
+	public void t23TestInsertOrUpdateTimesheet() throws SQLException {
 		LOG.info("insertOrUpdateTimesheet INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
@@ -173,7 +173,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t30TestInsertOrUpdateEmployee() throws Exception {
+	public void t30TestInsertOrUpdateEmployee() throws SQLException {
 		LOG.info("insertOrUpdateEmployee UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("employee");
@@ -193,7 +193,7 @@ public class DbServiceTest {
 
 	@Test
 	@SuppressWarnings("deprecation")
-	public void t31TestInsertOrUpdateHoliday() throws Exception {
+	public void t31TestInsertOrUpdateHoliday() throws SQLException {
 		LOG.info("insertOrUpdateHoliday UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("holiday");
@@ -206,7 +206,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t32TestInsertOrUpdateProject() throws Exception {
+	public void t32TestInsertOrUpdateProject() throws SQLException {
 		LOG.info("insertOrUpdateProject UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("project");
@@ -219,7 +219,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t33TestInsertOrUpdateTimesheet() throws Exception {
+	public void t33TestInsertOrUpdateTimesheet() throws SQLException {
 		LOG.info("insertOrUpdateTimesheet UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("timesheet");
@@ -239,7 +239,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t40TestDeleteEmployee() throws Exception {
+	public void t40TestDeleteEmployee() throws SQLException {
 		LOG.info("deleteEmployee");
 		int id = instance.getLastInsertedId("employee");
 		boolean result = instance.deleteEmployee(id);
@@ -247,7 +247,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t41TestDeleteProject() throws Exception {
+	public void t41TestDeleteProject() throws SQLException {
 		LOG.info("deleteProject");
 		int id = instance.getLastInsertedId("project");
 		boolean result = instance.deleteProject(id);
@@ -255,7 +255,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t42TestDeleteHoliday() throws Exception {
+	public void t42TestDeleteHoliday() throws SQLException {
 		LOG.info("deleteHoliday");
 		int id = instance.getLastInsertedId("holiday");
 		boolean result = instance.deleteHoliday(id);
@@ -263,7 +263,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t43TestDeleteTimesheet() throws Exception {
+	public void t43TestDeleteTimesheet() throws SQLException {
 		LOG.info("deleteTimesheet");
 		int id = instance.getLastInsertedId("timesheet");
 		boolean result = instance.deleteTimesheet(id);
