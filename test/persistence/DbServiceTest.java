@@ -1,6 +1,7 @@
 package persistence;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
@@ -19,11 +20,11 @@ import static persistence.DbService.SQL_INSERT_UPDATE.UPDATE;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DbServiceTest {
 	private static final Logger LOG = Logger.getLogger(DbServiceTest.class.getName());
-	private final int YEAR = 2015;
-	private final Integer EMPLOYEE_ID = 4;
-	private final int FIX_DATE_ID = 1;
-	private final int PROJECT_ID = 1;
-	private final int YEAR_DATE = 199;
+	private static final int YEAR = 2015;
+	private static final Integer EMPLOYEE_ID = 4;
+	private static final int FIX_DATE_ID = 1;
+	private static final int PROJECT_ID = 1;
+	private static final int YEAR_DATE = 199;
 	DbService instance;
 
 	public DbServiceTest() {
@@ -31,7 +32,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t01_testGetUserId() throws Exception {
+	public void t01TestGetUserId() throws SQLException {
 		LOG.info("getUserId");
 		String email = "bernhard.molz@triona.de";
 		Integer result = instance.getUserId(email);
@@ -39,7 +40,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t02_testGetEmployee() throws Exception {
+	public void t02TestGetEmployee() throws Exception {
 		LOG.info("getEmployee(1)");
 		String result = instance.getEmployee(EMPLOYEE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -47,7 +48,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t03_testGetEmployees() throws Exception {
+	public void t03TestGetEmployees() throws Exception {
 		LOG.info("getEmployees");
 		String result = instance.getEmployees();
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -55,7 +56,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t04_testGetProjects() throws Exception {
+	public void t04TestGetProjects() throws Exception {
 		LOG.info("getProjects");
 		String result = instance.getProjects();
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -63,7 +64,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t05_testGetHolidays() throws Exception {
+	public void t05TestGetHolidays() throws Exception {
 		LOG.info("getHolidays");
 		String result = instance.getHolidays(EMPLOYEE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -72,7 +73,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t06_testGetTimesheets() throws Exception {
+	public void t06TestGetTimesheets() throws Exception {
 		LOG.info("getTimesheets");
 		String result = instance.getTimesheets(EMPLOYEE_ID, YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -80,7 +81,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t07_testGetSpecialDays() throws Exception {
+	public void t07TestGetSpecialDays() throws Exception {
 		LOG.info("getSpecialDays");
 		String result = instance.getSpecialDays(YEAR);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -88,7 +89,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t08_testGetFixedDate() throws Exception {
+	public void t08TestGetFixedDate() throws Exception {
 		LOG.info("getFixedDate");
 		String result = instance.getFixedDate(1);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -97,7 +98,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t09_testGetFixedDateEmployees() throws Exception {
+	public void t09TestGetFixedDateEmployees() throws Exception {
 		LOG.info("getFixedDateEmployees");
 		String result = instance.getFixedDateEmployees(FIX_DATE_ID);
 		JSONArray jsonArray = (JSONArray)JSONValue.parseWithException(result);
@@ -106,7 +107,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t20_testInsertOrUpdateEmployee() throws Exception {
+	public void t20TestInsertOrUpdateEmployee() throws Exception {
 		LOG.info("insertOrUpdateEmployee INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		int id = EMPLOYEE_ID;
@@ -126,7 +127,7 @@ public class DbServiceTest {
 
 	@Test
 	@SuppressWarnings("deprecation")
-	public void t21_testInsertOrUpdateHoliday() throws Exception {
+	public void t21TestInsertOrUpdateHoliday() throws Exception {
 		LOG.info("insertOrUpdateHoliday INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
@@ -139,7 +140,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t22_testInsertOrUpdateProject() throws Exception {
+	public void t22TestInsertOrUpdateProject() throws Exception {
 		LOG.info("insertOrUpdateProject INSERT");
 		DbService.SQL_INSERT_UPDATE type = null;
 		Integer id = 0;
@@ -152,7 +153,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t23_testInsertOrUpdateTimesheet() throws Exception {
+	public void t23TestInsertOrUpdateTimesheet() throws Exception {
 		LOG.info("insertOrUpdateTimesheet INSERT");
 		DbService.SQL_INSERT_UPDATE type = INSERT;
 		Integer id = 0;
@@ -172,7 +173,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t30_testInsertOrUpdateEmployee() throws Exception {
+	public void t30TestInsertOrUpdateEmployee() throws Exception {
 		LOG.info("insertOrUpdateEmployee UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("employee");
@@ -192,7 +193,7 @@ public class DbServiceTest {
 
 	@Test
 	@SuppressWarnings("deprecation")
-	public void t31_testInsertOrUpdateHoliday() throws Exception {
+	public void t31TestInsertOrUpdateHoliday() throws Exception {
 		LOG.info("insertOrUpdateHoliday UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("holiday");
@@ -205,7 +206,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t32_testInsertOrUpdateProject() throws Exception {
+	public void t32TestInsertOrUpdateProject() throws Exception {
 		LOG.info("insertOrUpdateProject UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		Integer id = instance.getLastInsertedId("project");
@@ -218,7 +219,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t33_testInsertOrUpdateTimesheet() throws Exception {
+	public void t33TestInsertOrUpdateTimesheet() throws Exception {
 		LOG.info("insertOrUpdateTimesheet UPDATE");
 		DbService.SQL_INSERT_UPDATE type = UPDATE;
 		int id = instance.getLastInsertedId("timesheet");
@@ -238,7 +239,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t40_testDeleteEmployee() throws Exception {
+	public void t40TestDeleteEmployee() throws Exception {
 		LOG.info("deleteEmployee");
 		int id = instance.getLastInsertedId("employee");
 		boolean result = instance.deleteEmployee(id);
@@ -246,7 +247,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t41_testDeleteProject() throws Exception {
+	public void t41TestDeleteProject() throws Exception {
 		LOG.info("deleteProject");
 		int id = instance.getLastInsertedId("project");
 		boolean result = instance.deleteProject(id);
@@ -254,7 +255,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t42_testDeleteHoliday() throws Exception {
+	public void t42TestDeleteHoliday() throws Exception {
 		LOG.info("deleteHoliday");
 		int id = instance.getLastInsertedId("holiday");
 		boolean result = instance.deleteHoliday(id);
@@ -262,7 +263,7 @@ public class DbServiceTest {
 	}
 
 	@Test
-	public void t43_testDeleteTimesheet() throws Exception {
+	public void t43TestDeleteTimesheet() throws Exception {
 		LOG.info("deleteTimesheet");
 		int id = instance.getLastInsertedId("timesheet");
 		boolean result = instance.deleteTimesheet(id);
