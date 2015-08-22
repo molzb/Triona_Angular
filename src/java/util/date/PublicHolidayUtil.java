@@ -55,6 +55,9 @@ public class PublicHolidayUtil {
 		"2. Weihnachtstag" // [16] 26. Dezember
 	};
 
+	private PublicHolidayUtil() {
+	}
+
 	/** Alle gesetzl. Feiertage in Rheinland-Pfalz (Sitz der Triona GmbH) im Jahr <code>year</code>*/
 	public static Map<String, GregorianCalendar> getPublicHolidays(int year) {
 		return getPublicHolidays(EnumState.RP, year);
