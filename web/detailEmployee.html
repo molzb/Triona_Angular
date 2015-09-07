@@ -1,4 +1,4 @@
-	<div ng-controller="EmployeesCtrl as ec">
+	<div data-ng-controller="EmployeesCtrl as ec">
 		<h1 class="page-header">Details about {{ec.emp.fullName}}</h1>
 		<div id="detailEmployee" class="panel panel-default">
 			<div class="panel-heading">
@@ -7,7 +7,7 @@
 			<div class="panel-body">
 				<table>
 					<tr>
-						<td><img ng-src="images/{{ec.emp.image}}" alt="Missing picture for {{ec.emp.fullName}}"/>
+						<td><img data-ng-src="images/{{ec.emp.image}}" alt="Missing picture for {{ec.emp.fullName}}"/>
 						<td>
 							<h2>{{ec.emp.fullName}}</h2>
 							<h3>{{ec.emp.jobtitle}}</h3>
