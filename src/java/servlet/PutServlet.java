@@ -31,6 +31,7 @@ public class PutServlet extends BaseServlet {
 
 	private static final Logger LOG = Logger.getLogger(PutServlet.class.getName());
 
+	@Override
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("text/plain;charset=UTF-8");
@@ -103,10 +104,9 @@ public class PutServlet extends BaseServlet {
 					break;
 				case TIMESHEETS:
 					for (int i = 1; i <= 31; i++) {
-						if (req.getParameter("id" + i) == null)
-							continue;
+						String idX = req.getParameter("id" + i);
 						String idTimesheet = req.getParameter("id" + i);
-						if (req.getParameter("from" + i).isEmpty() || req.getParameter("to" + i).isEmpty())
+						if (idX == null || req.getParameter("from" + i).isEmpty() || req.getParameter("to" + i).isEmpty())
 							continue;
 
 						dbService.insertOrUpdateTimesheet(idTimesheet.isEmpty() ? INSERT : UPDATE,
@@ -137,7 +137,6 @@ public class PutServlet extends BaseServlet {
 //					"sel0Time1=10%3A00", "sel0Time2=12%3A00", "sel0Time3=", ..., "sel5Time1=", ..., "sel5Time3="
 					out.println(dbService.insertOrUpdateFixedDate(
 							getIntParam(req, ID),
-							getUserId(req),
 							req.getParameter("txtTitle"),
 							req.getParameter("txtLocation"),
 							req.getParameter("txtDescription"),

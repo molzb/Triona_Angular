@@ -22,7 +22,7 @@ public enum EnumState {
 	SH ("Schleswig-Holstein"),
 	TH ("Thüringen");
 
-	public String name;
+	public final String name;
 
 	EnumState(String name) {
 		this.name = name;

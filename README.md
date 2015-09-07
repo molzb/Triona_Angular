@@ -1,6 +1,9 @@
 # Triona_Angular
 Test project for my company, written in Angular
 
+The app:
+http://h1881812.stratoserver.net:8080/Triona_Angular/
+
 Dependencies Web:  Apache dbUtils, JSON Simple (Google)
 
 Dependencies Test: JUnit 4.12, Selenium, Guava, Http Components, GSON, CommonsExec

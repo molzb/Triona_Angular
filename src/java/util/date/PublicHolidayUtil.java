@@ -1,7 +1,6 @@
 package util.date;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -12,8 +11,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import persistence.MyDataSource;
 
 /**
  * Hilfsklasse, um die gesetzlichen Feiertage abhängig vom Bundesland zu bestimmen. Quellen: <br>
@@ -22,6 +23,8 @@ import org.apache.commons.dbutils.QueryRunner;
  * @author Bernhard Molz
  */
 public class PublicHolidayUtil {
+
+	private static final Logger LOG = Logger.getLogger(PublicHolidayUtil.class.getName());
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 	private static final int
@@ -32,7 +35,7 @@ public class PublicHolidayUtil {
 	/**
 	 * Die Namen der gesetzlichen Feiertage in Deutschland ohne Berücksichtigung der Bundesländer
 	 */
-	static final String[] fullNames = {
+	private static final String[] fullNames = {
 		"Neujahrstag", // [0] 1. Januar
 		"Heilige Drei Könige", // [1] 6. Januar
 		"Gründonnerstag", // [2] Ostersonntag - 3 Tage
@@ -52,20 +55,22 @@ public class PublicHolidayUtil {
 		"2. Weihnachtstag" // [16] 26. Dezember
 	};
 
+	private PublicHolidayUtil() {
+	}
+
 	/** Alle gesetzl. Feiertage in Rheinland-Pfalz (Sitz der Triona GmbH) im Jahr <code>year</code>*/
 	public static Map<String, GregorianCalendar> getPublicHolidays(int year) {
 		return getPublicHolidays(EnumState.RP, year);
 	}
 
-	public static void main(String[] args) throws SQLException, ClassNotFoundException {
+	public static void main(String[] args) throws SQLException {
 		for (int i = 2000; i < 2040; i++)
 			writeHolidaysToDB(EnumState.RP, i);
 	}
 
-	public static boolean writeHolidaysToDB(EnumState stateCode, int year) throws SQLException, ClassNotFoundException {
+	public static boolean writeHolidaysToDB(EnumState stateCode, int year) throws SQLException {
 		Map<String, GregorianCalendar> publicHolidays = PublicHolidayUtil.getPublicHolidays(stateCode, year);
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/triona", "root", "Pianoman65536");
+		Connection conn = new MyDataSource().getConnection();
 
 		String sqlInsert = "INSERT INTO specialday (day, type, name) VALUES (?, 'holiday', ?)";
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -75,7 +80,7 @@ public class PublicHolidayUtil {
 		for (Entry<String, GregorianCalendar> entrySet : publicHolidays.entrySet()) {
 			String name = entrySet.getKey();
 			Date date = entrySet.getValue().getTime();
-			System.out.println(df.format(date) + ":" + name);
+			LOG.info(df.format(date) + ":" + name);
 			q.update(conn, sqlInsert, df.format(date), name);
 		}
 		DbUtils.closeQuietly(conn);
@@ -166,12 +171,14 @@ public class PublicHolidayUtil {
 				holidays.remove(fullNames[H_ALLERHEILIGEN]);
 				holidays.remove(fullNames[H_BUSSUNDBET]);
 				break;
+			default:
+				LOG.warning(stateCode + " not supported");
 		}
 		return holidays;
 	}
 
 	public static Map<String, GregorianCalendar> getAllLegalHolidaysFor(int year) {
-		Map<String, GregorianCalendar> holidayMap = new HashMap<String, GregorianCalendar>();
+		Map<String, GregorianCalendar> holidayMap = new HashMap<>();
 		GregorianCalendar easter = getEaster(year);
 		GregorianCalendar gruenDonnerstag = (GregorianCalendar) easter.clone();
 		gruenDonnerstag.add(Calendar.DAY_OF_YEAR, -3);
@@ -231,7 +238,7 @@ public class PublicHolidayUtil {
 		int N = (4 + k - q) % 7;
 		int d = (19 * a + M) % 30;
 		int e = (2 * b + 4 * c + 6 * d + N) % 7;
-		int nthMarch = (22 + d + e);
+		int nthMarch = 22 + d + e;
 		return new GregorianCalendar(year, 2, nthMarch);
 	}
 
@@ -240,24 +247,24 @@ public class PublicHolidayUtil {
 		int yearFrom = from.get(Calendar.YEAR);
 		int yearTo = to.get(Calendar.YEAR);
 		Map<String, GregorianCalendar> holidays = PublicHolidayUtil.getPublicHolidays(stateCode, yearFrom);
-		System.out.println(yearFrom + "holidays.size vorher: " + holidays.size());
+		LOG.fine(yearFrom + "holidays.size vorher: " + holidays.size());
 		if (yearTo > yearFrom) {
 			Map<String, GregorianCalendar> holidaysTo = PublicHolidayUtil.getPublicHolidays(stateCode, yearTo);
 			for (Entry<String, GregorianCalendar> set : holidaysTo.entrySet()) {
 				holidays.put(set.getKey(), set.getValue());
 			}
-			System.out.println(yearTo + "holidays.size nachher: " + holidays.size());
+			LOG.fine(yearTo + "holidays.size nachher: " + holidays.size());
 		}
-		Map<String, GregorianCalendar> holidaysFromTo = new HashMap<String, GregorianCalendar>();
+		Map<String, GregorianCalendar> holidaysFromTo = new HashMap<>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
 			Iterator<String> keySetIt = holidays.keySet().iterator();
-			System.out.println("from=" + sdf.format(new Date(from.getTimeInMillis())));
+			LOG.fine("from=" + sdf.format(new Date(from.getTimeInMillis())));
 			while (keySetIt.hasNext()) {
 				String key = keySetIt.next();
 				GregorianCalendar g = holidays.get(key);
 				if (isDateEqual(from, g)) {
 					holidaysFromTo.put(key, g);
-					System.out.println("added " + g);
+					LOG.fine("added " + g);
 				}
 			}
 			from.add(Calendar.DAY_OF_YEAR, 1);
@@ -267,9 +274,6 @@ public class PublicHolidayUtil {
 	}
 
 	private static boolean isDateEqual(GregorianCalendar g1, GregorianCalendar g2) {
-		Date d1 = new Date(g1.getTimeInMillis());
-		Date d2 = new Date(g2.getTimeInMillis());
-		System.out.println("Vergleiche " + sdf.format(d1) + " mit " + sdf.format(d2));
 		if (g1.get(Calendar.DAY_OF_YEAR) != g2.get(Calendar.DAY_OF_YEAR)) {
 			return false;
 		}
