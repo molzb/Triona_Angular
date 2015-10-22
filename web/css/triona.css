@@ -12,6 +12,8 @@
 .sidebar { position: fixed; }
 #triona #hiUser { color: white; font-weight: bold; }
 
+#home { padding-top: 2px; }
+
 #detailEmployee table tr { vertical-align: top; }
 #detailEmployee table img { padding-right: 10px; }
 

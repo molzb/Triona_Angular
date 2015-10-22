@@ -50,31 +50,31 @@
 			</div>
 		</nav>
 
-		<div class="container-fluid" ng-app="routeApp">
-			<div class="row" ng-controller="RouteCtrl">
+		<div class="container-fluid" data-ng-app="routeApp">
+			<div class="row" data-ng-controller="RouteCtrl">
 				<div class="col-sm-3 col-md-2 sidebar">
 					<ul class="nav nav-sidebar">
-						<li ng-class="classActive('/home')"><a href="#home">Home</a></li>
-						<li ng-class="classActive('/team')">
+						<li data-ng-class="classActive('/home')"><a href="#home">Home</a></li>
+						<li data-ng-class="classActive('/team')">
 							<a href="#team">The team</a>
 							<c:if test="${userIsManager == 'true'}">
 								<ul class="nav nav-sidebar l2">
-									<li ng-class="classActive('/addEmployee')"><a href="#addEmployee">Add employee</a></li>
+									<li data-ng-class="classActive('/addEmployee')"><a href="#addEmployee">Add employee</a></li>
 								</ul>
 							</c:if>
 						</li>
-						<li ng-class="classActive('/projects')"><a href="#projects">Projects</a></li>
-						<li ng-class="classActive('/holidays')"><a href="#holidays">Holidays</a></li>
-						<li ng-class="classActive('/timesheets')"><a href="#timesheets">Timesheets</a></li>
-						<li ng-class="classActive('/fixedDates')">
+						<li data-ng-class="classActive('/projects')"><a href="#projects">Projects</a></li>
+						<li data-ng-class="classActive('/holidays')"><a href="#holidays">Holidays</a></li>
+						<li data-ng-class="classActive('/timesheets')"><a href="#timesheets">Timesheets</a></li>
+						<li data-ng-class="classActive('/fixedDates')">
 							<a href="#fixedDates">Fixed Dates</a>
 							<ul class="nav nav-sidebar l2">
-								<li ng-class="classActive('/editFixedDate/1')"><a href="#editFixedDate/1">Add date</a></li>
+								<li data-ng-class="classActive('/editFixedDate/1')"><a href="#editFixedDate/1">Add date</a></li>
 							</ul>
 						</li>
 					</ul>
 				</div>
-				<div id="contentPane" class="col-sm-9 col-md-10 main" ng-view>
+				<div id="contentPane" class="col-sm-9 col-md-10 main" data-ng-view>
 					<h1 class="page-header">Content</h1>
 				</div>
 			</div>
