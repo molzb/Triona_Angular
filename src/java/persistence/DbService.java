@@ -235,7 +235,7 @@ public class DbService {
 				+ "IF(suggested_date6 IS NULL, NULL, DATE_FORMAT(suggested_date6, '%b %Y, %a %d, %H:%i')) AS suggestedDate6 "
 				+ "    FROM fixed_date "
 				+ "INNER JOIN employee ON employee.id = employee_id";
-		sql += (id != null ? " WHERE id=" + id : "");
+		sql += (id != null ? " WHERE fixed_date.id=" + id : "");
 		List mapList = (List) new QueryRunner(ds).query(sql, new MapListHandler());
 		return JSONValue.toJSONString(mapList);
 	}
