@@ -12,7 +12,7 @@ public class MyDataSource extends MysqlDataSource {
 	@Override
 	public Connection getConnection() throws SQLException {
 		setUser("root");
-		setPassword("Pianoman65536");
+		setPassword("xxxxx");
 		setURL("jdbc:mysql://localhost:3306/triona");
 		return super.getConnection();
 	}
