@@ -7,7 +7,7 @@
 	</target>
 	<target name="packOwnJs">
 		<concat destfile="web/js/own.js">
-			<filelist dir="web/js" files="routeApp.js,employeesController.js,projectsController.js,holidaysController.js,fixedDateController.js,timesheetsController.js,MyService.js,fileupload.js"/>
+			<filelist dir="web/js" files="routeApp.js,CalendarService.js,employeesController.js,projectsController.js,holidaysController.js,fixedDateController.js,timesheetsController.js,MyService.js,fileupload.js"/>
 		</concat>
 	</target>
 	<target name="packThirdParty">
