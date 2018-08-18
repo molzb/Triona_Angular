@@ -68,7 +68,6 @@ body {
 	margin-left: 10px;
 }
 .nav-sidebar.l2 li {
-	display: list-item;
 	list-style-type: disc;
 	list-style-position: inside;
 }
